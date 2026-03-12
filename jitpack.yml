@@ -1,0 +1,11 @@
+# JitPack 构建配置
+# https://jitpack.io/docs/BUILDING/
+
+jdk:
+  - openjdk17
+
+before_install:
+  - echo "Building Android Common Library"
+
+install:
+  - ./gradlew build publishToMavenLocal
