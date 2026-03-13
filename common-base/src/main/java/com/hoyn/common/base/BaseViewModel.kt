@@ -1,12 +1,12 @@
-package com.hoyn.common.ui.base
+package com.hoyn.common.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hoyn.common.core.IBaseResponse
 import com.hoyn.common.core.Message
 import com.hoyn.common.core.ThrowableBean
-import com.hoyn.common.ui.event.GlobalEventBus
-import com.hoyn.common.ui.event.SingleLiveEvent
+import com.hoyn.common.base.event.GlobalEventBus
+import com.hoyn.common.base.event.SingleLiveEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

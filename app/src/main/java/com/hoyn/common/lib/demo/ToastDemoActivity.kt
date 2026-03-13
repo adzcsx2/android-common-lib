@@ -3,51 +3,74 @@ package com.hoyn.common.lib.demo
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.databinding.ActivityToastDemoBinding
 import com.hoyn.common.ui.ext.onClick
-import com.hoyn.common.ui.toast.ToastUtils
+import com.hoyn.common.ui.toast.ToastUtil
 
 /**
  * Toast 示例页面
+ *
+ * 使用新的 ToastUtil API：
+ * - 无需传入 Context
+ * - 使用 Application Context 避免内存泄漏
+ * - 新 Toast 会取消前一个 Toast
  */
-class ToastDemoActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityToastDemoBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityToastDemoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        setupViews()
-    }
-
-    private fun setupViews() {
-        // 短 Toast
-        binding.btnShortToast.onClick {
-            ToastUtils.show(this, "这是一个短 Toast")
-        }
-
-        // 长 Toast
-        binding.btnLongToast.onClick {
-            ToastUtils.show(this, "这是一个长 Toast， 显示时间较长", 2000)
-        }
-
-        // 中间 Toast
-        binding.btnCenterToast.onClick {
-            ToastUtils.showCenterToast(this, "这是一个中间 Toast")
-        }
-
-        // 返回
-        binding.btnBack.onClick {
-            finish()
-        }
-    }
+class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding>() {
 
     companion object {
         fun start(context: Context) {
             context.startActivity(Intent(context, ToastDemoActivity::class.java))
+        }
+    }
+
+    override fun createBinding(): ActivityToastDemoBinding {
+        return ActivityToastDemoBinding.inflate(layoutInflater)
+    }
+
+    override fun initView(savedInstanceState: Bundle?) {
+        setupViews()
+    }
+
+    private fun setupViews() {
+        // 返回
+        binding.btnBack.onClick { finish() }
+
+        // 短 Toast - 无需 Context
+        binding.btnShortToast.onClick {
+            ToastUtil.show("这是一个短 Toast")
+        }
+
+        // 长 Toast
+        binding.btnLongToast.onClick {
+            ToastUtil.showLong("这是一个长 Toast，显示时间较长")
+        }
+
+        // 中间 Toast
+        binding.btnCenterToast.onClick {
+            ToastUtil.showCenter("这是一个中间 Toast")
+        }
+
+        // 中间长 Toast
+        binding.btnCenterLongToast.onClick {
+            ToastUtil.showCenterLong("这是一个中间长 Toast")
+        }
+
+        // 队列优先级测试 - 快速连续显示多个 Toast
+        binding.btnQueueTest.onClick {
+            // 模拟快速连续点击，新 Toast 会取消前一个
+            var count = 0
+            repeat(5) {
+                binding.root.postDelayed({
+                    count++
+                    ToastUtil.show("Toast #$count - 新的会取消前一个")
+                }, (it * 300).toLong())
+            }
+        }
+
+        // 取消当前 Toast
+        binding.btnCancel.onClick {
+            ToastUtil.cancel()
         }
     }
 }

@@ -6,6 +6,7 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.WindowMetrics
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
@@ -13,6 +14,7 @@ import androidx.window.layout.WindowInfoTracker
 import androidx.window.layout.WindowLayoutInfo
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -26,13 +28,13 @@ enum class ScreenState {
     NORMAL_SCREEN,
 
     /** 折叠屏完全展开状态 */
-    FOLDING_FLAT_OPEN,
+    FOLDING_FLAT,
 
     /** 折叠屏半折叠状态（桌面模式/悬停模式） */
-    FOLDING_HALF_OPENED,
+    FOLDING_HALF_OPEN,
 
     /** 折叠屏完全折叠状态 */
-    FOLDING_CLOSED,
+    FOLDING_FOLD,
 
     /** 未知状态 */
     UNKNOWN
@@ -77,6 +79,18 @@ data class ScreenInfo(
 )
 
 /**
+ * 屏幕状态变化监听器接口
+ * 用于在 Activity 不重建时接收屏幕状态变化通知
+ */
+interface ScreenStateListener {
+    /**
+     * 屏幕状态变化时回调
+     * @param screenInfo 最新的屏幕信息
+     */
+    fun onScreenStateChanged(screenInfo: ScreenInfo)
+}
+
+/**
  * 引入Window,但是无法获取到VTL-202502的悬停状态,暂时取消
  * 如需使用,需取消build.gradle注释
  * //    implementation "androidx.window:window:1.3.0"
@@ -112,6 +126,12 @@ object ScreenUtils {
     // 异步更新 Job，用于节流控制
     @Volatile
     private var updateJob: Job? = null
+
+    // 监听器 Job 映射表（Activity -> Job）
+    private val listenerJobs = mutableMapOf<Activity, Job>()
+
+    // 生命周期观察者映射表（用于自动注销）
+    private val lifecycleObservers = mutableMapOf<Activity, DefaultLifecycleObserver>()
 
     /**
      * 获取当前屏幕状态
@@ -198,14 +218,90 @@ object ScreenUtils {
     @JvmStatic
     fun isInTableTopMode(activity: Activity): Boolean {
         // 复用 getScreenInfo 更新状态并返回判断结果
-        return getScreenInfo(activity).state == ScreenState.FOLDING_HALF_OPENED
+        return getScreenInfo(activity).state == ScreenState.FOLDING_HALF_OPEN
     }
 
     /**
      * 判断是不是book设备打开状态
      */
     fun isBookOpen(activity: Activity): Boolean {
-        return isBookFoldDevice(activity) && getScreenInfo(activity).state == ScreenState.FOLDING_FLAT_OPEN
+        return isBookFoldDevice(activity) && getScreenInfo(activity).state == ScreenState.FOLDING_FLAT
+    }
+
+    /**
+     * 设置屏幕状态监听器
+     * 监听器会在 Activity 生命周期结束时自动注销
+     * @param activity Activity上下文（必须实现 LifecycleOwner）
+     * @param listener 屏幕状态变化监听器
+     */
+    @OptIn(InternalCoroutinesApi::class)
+    @JvmStatic
+    fun setScreenStateListener(activity: Activity, listener: ScreenStateListener) {
+        if (activity !is LifecycleOwner) {
+            Log.w(TAG, "Activity 未实现 LifecycleOwner，无法设置监听器")
+            return
+        }
+
+        // 如果该 Activity 已有监听器，先取消旧的
+        listenerJobs[activity]?.cancel()
+
+        // 创建生命周期观察者，用于自动注销
+        val lifecycleObserver = object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                Log.d(TAG, "Activity onDestroy，自动注销监听器")
+                removeScreenStateListener(activity)
+            }
+        }
+
+        // 注册生命周期观察者
+        activity.lifecycle.addObserver(lifecycleObserver)
+        lifecycleObservers[activity] = lifecycleObserver
+
+        // 启动 Flow 监听
+        val job = activity.lifecycleScope.launch {
+            try {
+                val windowInfoTracker = WindowInfoTracker.getOrCreate(activity)
+                windowInfoTracker.windowLayoutInfo(activity).collect { layoutInfo ->
+                    val screenInfo = parseScreenInfo(activity, layoutInfo)
+                    lastScreenInfo = screenInfo
+                    Log.d(
+                        TAG,
+                        "监听到屏幕状态变化: state=${screenInfo.state}, deviceType=${screenInfo.deviceType}"
+                    )
+                    listener.onScreenStateChanged(screenInfo)
+                }
+            } catch (e: CancellationException) {
+                // 协程取消是正常行为
+            } catch (e: Exception) {
+                Log.e(TAG, "监听屏幕状态失败: ${e.message}")
+            }
+        }
+
+        listenerJobs[activity] = job
+        Log.d(TAG, "已设置屏幕状态监听器")
+    }
+
+    /**
+     * 移除屏幕状态监听器
+     * @param activity Activity上下文
+     */
+    @JvmStatic
+    fun removeScreenStateListener(activity: Activity) {
+        // 取消监听 Job
+        listenerJobs[activity]?.let {
+            it.cancel()
+            listenerJobs.remove(activity)
+            Log.d(TAG, "已取消监听 Job")
+        }
+
+        // 移除生命周期观察者
+        lifecycleObservers[activity]?.let {
+            if (activity is LifecycleOwner) {
+                activity.lifecycle.removeObserver(it)
+            }
+            lifecycleObservers.remove(activity)
+            Log.d(TAG, "已移除生命周期观察者")
+        }
     }
 
 
@@ -247,13 +343,26 @@ object ScreenUtils {
             // 优先使用已确认的设备类型
             val deviceType = when {
                 confirmedDeviceType != FoldingDeviceType.UNKNOWN -> {
-//                    Log.d(TAG,"使用已确认的设备类型: $confirmedDeviceType")
                     confirmedDeviceType
                 }
 
                 confirmedIsFoldingDevice && smallestWidthDp >= 600 -> {
-                    Log.d(TAG, "根据大屏尺寸推测为书本式折叠屏")
+                    // 展开状态下的大屏折叠设备，推断为 BOOK_FOLD 并缓存
+                    Log.d(TAG, "根据大屏尺寸推测为书本式折叠屏并缓存")
+                    confirmedDeviceType = FoldingDeviceType.BOOK_FOLD
                     FoldingDeviceType.BOOK_FOLD
+                }
+
+                confirmedIsFoldingDevice && smallestWidthDp < 600 -> {
+                    // 折叠状态下，如果已确认是折叠设备但设备类型未知，尝试基于屏幕比例推断
+                    val inferredType = inferDeviceTypeFromScreenSize(activity)
+                    if (inferredType != FoldingDeviceType.UNKNOWN) {
+                        Log.d(TAG, "折叠状态下根据屏幕特征推断设备类型: $inferredType")
+                        confirmedDeviceType = inferredType
+                        inferredType
+                    } else {
+                        FoldingDeviceType.UNKNOWN
+                    }
                 }
 
                 else -> FoldingDeviceType.UNKNOWN
@@ -263,13 +372,13 @@ object ScreenUtils {
             val (state, logMsg) = when {
                 smallestWidthDp >= 600 -> {
                     val s =
-                        if (confirmedIsFoldingDevice) ScreenState.FOLDING_FLAT_OPEN else ScreenState.UNKNOWN
+                        if (confirmedIsFoldingDevice) ScreenState.FOLDING_FLAT else ScreenState.UNKNOWN
                     s to "大屏设备（sw >= 600dp），可能是书本式折叠屏展开状态"
                 }
 
                 else -> {
                     val s =
-                        if (confirmedIsFoldingDevice) ScreenState.FOLDING_CLOSED else ScreenState.UNKNOWN
+                        if (confirmedIsFoldingDevice) ScreenState.FOLDING_FOLD else ScreenState.UNKNOWN
                     s to "中小屏幕，可能是普通设备或折叠状态"
                 }
             }
@@ -289,6 +398,97 @@ object ScreenUtils {
                 isFoldingDevice = confirmedIsFoldingDevice,
                 deviceType = confirmedDeviceType
             )
+        }
+    }
+
+    /**
+     * 基于屏幕尺寸特征推断折叠屏设备类型
+     * BOOK_FOLD: 展开后宽度较大（通常 sw >= 600dp），折叠后为普通手机尺寸
+     * FLIP_FOLD: 展开后为普通手机尺寸，折叠后更窄
+     * @param activity Activity上下文
+     * @return 推断的设备类型
+     */
+    private fun inferDeviceTypeFromScreenSize(activity: Activity): FoldingDeviceType {
+        return try {
+            val screenDimensions = getScreenDimensionsDp(activity)
+            val widthDp = screenDimensions.first
+            val heightDp = screenDimensions.second
+            val smallestWidth = minOf(widthDp, heightDp)
+            val largestWidth = maxOf(widthDp, heightDp)
+
+            Log.d(
+                TAG,
+                "推断设备类型 - 宽度: ${widthDp}dp, 高度: ${heightDp}dp, 最小宽度: ${smallestWidth}dp"
+            )
+
+            // BOOK_FOLD 设备特征：
+            // - 折叠状态下 smallestWidth 通常在 360-420dp 范围（普通手机尺寸）
+            // - 展开后 smallestWidth >= 600dp
+            // - 如果设备有铰链传感器且当前是普通手机尺寸，很可能是 BOOK_FOLD 折叠状态
+
+            // FLIP_FOLD 设备特征：
+            // - 展开后与普通手机尺寸相似
+            // - 折叠后宽度更窄（通常 < 360dp）
+            // - 由于我们只在确认是折叠设备时才调用此方法，且当前 sw < 600
+            //   如果 sw 在正常手机范围内，更可能是 BOOK_FOLD 的折叠状态
+
+            when {
+                // 如果之前曾经检测到大屏状态（通过某种方式记录），可以确定是 BOOK_FOLD
+                // 这里使用保守策略：确认是折叠设备且 sw 在正常范围，优先判断为 BOOK_FOLD
+                smallestWidth >= 350 && smallestWidth < 600 -> {
+                    Log.d(TAG, "屏幕尺寸在正常手机范围，推断为 BOOK_FOLD 折叠状态")
+                    FoldingDeviceType.BOOK_FOLD
+                }
+
+                smallestWidth < 350 -> {
+                    // 很窄的屏幕，可能是 FLIP_FOLD 折叠状态
+                    Log.d(TAG, "屏幕尺寸较窄，可能是 FLIP_FOLD 折叠状态")
+                    FoldingDeviceType.FLIP_FOLD
+                }
+
+                else -> {
+                    Log.d(TAG, "无法确定设备类型")
+                    FoldingDeviceType.UNKNOWN
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "推断设备类型失败: ${e.message}")
+            FoldingDeviceType.UNKNOWN
+        }
+    }
+
+    /**
+     * 获取屏幕尺寸（dp）
+     * @param activity Activity上下文
+     * @return Pair<宽度dp, 高度dp>
+     */
+    private fun getScreenDimensionsDp(activity: Activity): Pair<Float, Float> {
+        return try {
+            val widthPixels: Int
+            val heightPixels: Int
+            val density: Float
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowMetrics: WindowMetrics = activity.windowManager.currentWindowMetrics
+                val bounds = windowMetrics.bounds
+                widthPixels = bounds.width()
+                heightPixels = bounds.height()
+                density = activity.resources.displayMetrics.density
+            } else {
+                val displayMetrics = DisplayMetrics()
+                @Suppress("DEPRECATION")
+                activity.windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+                widthPixels = displayMetrics.widthPixels
+                heightPixels = displayMetrics.heightPixels
+                density = displayMetrics.density
+            }
+
+            val widthDp = widthPixels / density
+            val heightDp = heightPixels / density
+            Pair(widthDp, heightDp)
+        } catch (e: Exception) {
+            Log.e(TAG, "获取屏幕尺寸失败: ${e.message}")
+            Pair(0f, 0f)
         }
     }
 
@@ -380,12 +580,12 @@ object ScreenUtils {
                     // 大屏（sw >= 600dp），判定为展开状态
                     smallestWidthDp >= 600 -> {
                         Log.d(TAG, "屏幕尺寸较大，判定为展开状态")
-                        ScreenState.FOLDING_FLAT_OPEN
+                        ScreenState.FOLDING_FLAT
                     }
                     // 中小屏幕，判定为折叠状态
                     else -> {
                         Log.d(TAG, "屏幕尺寸较小，判定为折叠状态")
-                        ScreenState.FOLDING_CLOSED
+                        ScreenState.FOLDING_FOLD
                     }
                 }
             } else {
@@ -421,13 +621,13 @@ object ScreenUtils {
         val state = when (fold.state) {
             FoldingFeature.State.HALF_OPENED -> {
                 Log.d(TAG, "当前设备处于半折叠状态（桌面模式/悬停模式）")
-                ScreenState.FOLDING_HALF_OPENED
+                ScreenState.FOLDING_HALF_OPEN
             }
 
             FoldingFeature.State.FLAT -> {
                 // FLAT 状态表示完全展开
                 Log.d(TAG, "当前设备完全展开")
-                ScreenState.FOLDING_FLAT_OPEN
+                ScreenState.FOLDING_FLAT
             }
 
             else -> {

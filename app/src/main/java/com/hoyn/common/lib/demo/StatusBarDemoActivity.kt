@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.databinding.ActivityStatusBarDemoBinding
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtils
@@ -12,16 +12,22 @@ import com.hoyn.common.ui.utils.StatusBarHelper
 
 /**
  * 状态栏示例页面
+ *
+ * 使用 BaseActivity 作为基类
  */
-class StatusBarDemoActivity : AppCompatActivity() {
+class StatusBarDemoActivity : BaseActivity<ActivityStatusBarDemoBinding>() {
 
-    private lateinit var binding: ActivityStatusBarDemoBinding
+    companion object {
+        fun start(context: Context) {
+            context.startActivity(Intent(context, StatusBarDemoActivity::class.java))
+        }
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityStatusBarDemoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun createBinding(): ActivityStatusBarDemoBinding {
+        return ActivityStatusBarDemoBinding.inflate(layoutInflater)
+    }
 
+    override fun initView(savedInstanceState: Bundle?) {
         setupViews()
     }
 
@@ -62,12 +68,6 @@ class StatusBarDemoActivity : AppCompatActivity() {
         binding.btnLight.setOnClickListener {
             StatusBarHelper.translucent(this, Color.WHITE)
             ToastUtils.show(this, "已设置为浅色（深色图标）")
-        }
-    }
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, StatusBarDemoActivity::class.java))
         }
     }
 }

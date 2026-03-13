@@ -23,6 +23,7 @@
         </activity>
 
         <!-- Demo Activities -->
+        <activity android:name=".compose.ComposeDemoActivity" />
         <activity android:name=".demo.ToastDemoActivity" />
         <activity android:name=".demo.NetworkDemoActivity" />
         <activity android:name=".demo.MmkvDemoActivity" />

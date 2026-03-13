@@ -1,4 +1,4 @@
-package com.hoyn.common.ui.base
+package com.hoyn.common.base
 
 import android.content.Context
 import android.content.Intent
@@ -10,15 +10,10 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
-import com.hoyn.common.core.Message
-import com.hoyn.common.core.ThrowableBean
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
 /**
  * BaseFragment
@@ -27,7 +22,6 @@ import kotlinx.coroutines.launch
  * 支持协程、ViewBinding、ViewModel
  *
  * @param VB ViewBinding 类型
- * @param VM ViewModel 类型（可选）
  */
 abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by MainScope() {
 

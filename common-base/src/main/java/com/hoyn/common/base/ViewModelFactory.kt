@@ -1,4 +1,4 @@
-package com.hoyn.common.ui.base
+package com.hoyn.common.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

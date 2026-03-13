@@ -1,16 +1,13 @@
-package com.hoyn.common.ui.base
+package com.hoyn.common.base
 
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Looper
 import android.os.StrictMode
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
-import com.hoyn.common.ui.toast.ToastUtils
-import com.hoyn.common.utils.fixInputMethodManagerLeak
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -124,12 +121,17 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineSc
 
     override fun onDestroy() {
         cancel()
-        // 移除所有 Activity 类型的 Toast 防止内存泄漏
-        ToastUtils.cancelActivityToast(this)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            fixInputMethodManagerLeak(this)
-        }
+        // 子类可以重写 onCleanUp 来执行清理操作
+        onCleanUp()
         super.onDestroy()
+    }
+
+    /**
+     * 清理资源，子类可以重写此方法来执行额外的清理操作
+     * 例如取消 Toast、关闭对话框等
+     */
+    protected open fun onCleanUp() {
+        // 默认实现为空，子类可以重写
     }
 
     /**

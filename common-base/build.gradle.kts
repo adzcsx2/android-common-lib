@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hoyn.common.network"
+    namespace = "com.hoyn.common.base"
     compileSdk = 36
 
     defaultConfig {
@@ -27,29 +27,26 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     api(project(":common-core"))
     api(project(":common-utils"))
 
-    // Network
-    api(libs.retrofit)
-    api(libs.retrofit.converter.gson)
-    api(libs.okhttp)
-    api(libs.okhttp.logging)
-    api(libs.gson)
-
-
-
-    api(libs.utilcodex)
+    // AndroidX UI (for BaseActivity/BaseFragment)
+    api(libs.androidx.appcompat)
+    api(libs.androidx.activity.ktx)
+    api(libs.androidx.fragment.ktx)
+    api(libs.androidx.lifecycle.runtime)
+    api(libs.androidx.lifecycle.viewmodel)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
-
-    // AndroidX Core
-    implementation(libs.androidx.core.ktx)
 
     // Testing
     testImplementation(libs.junit)

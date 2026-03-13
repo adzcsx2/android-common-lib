@@ -1,263 +1,277 @@
-# AI 协作交接文档
+# AI Handoff
 
-> **文档版本**: 1.0
-> **创建时间**: 2026-03-13
-> **创建窗口**: 1号窗口（审计与交接）
-> **目标读者**: 2号窗口、3号窗口
+> Version: 2.0
+> Updated: 2026-03-13
+> Purpose: Single execution contract for Claude Code
 
----
+## 1. Goal
 
-## 1. 项目现状摘要
+This repository must be refactored into a stable modular library plus a complete app architecture sample.
 
-### 1.1 模块结构
+Claude Code should not stop at analysis. It must execute the full refactor, update documentation, and leave behind an app architecture document that future AI sessions can follow without re-auditing the repository.
 
-当前 `common-lib` 项目包含以下模块：
+## 2. Fixed Decisions
 
-| 模块 | 包名 | 职责 | 当前状态 |
-|------|------|------|----------|
-| `app` | `com.hoyn.common.lib` | Demo 应用 | 基础结构，仅 MainActivity/MainApplication |
-| `common-core` | `com.hoyn.common.core` | 核心抽象层 | 几乎空模块，仅 CommonLib.kt |
-| `common-utils` | `com.hoyn.common.utils` | 工具类 | 已有 MMKVUtils、Logger、ScreenUtils、DeviceHelper、DisplayUtils、ContextExtensions、CoroutinesExtensions |
-| `common-network` | `com.hoyn.common.network` | 网络层 | 已有 ApiResponse、RetrofitFactory、OkHttpClientFactory、ExceptionHandle、ResponseThrowable、ERROR、SSLManager、LoggingInterceptor、Printer |
-| `common-ui` | `com.hoyn.common.ui` | UI 层 | 已有 BaseActivity、BaseFragment、ToastUtils、StatusBarHelper、NotchHelper、PressEffectHelper、LivePermissions、ViewExtensions |
-| `common-image` | `com.hoyn.common.image` | 图片加载 | 已有 ImageLoader、ImageExtensions |
+The following decisions are already made and must not be debated again:
 
-### 1.2 已有基础能力
+1. Add a new module named `common-base`.
+2. Do not keep `common-log` as a formal module.
+3. Logging stays in `common-utils`.
+4. `Logger` must have a single implementation under `common-utils`.
+5. `common-core` must stay focused on stable cross-layer contracts and models.
+6. `common-base` becomes the architecture foundation module.
+7. `common-ui` keeps UI helpers and presentation utilities only.
+8. `app` must become a complete architecture sample, not just a demo launcher.
+9. README and architecture docs must be updated to match the real project state.
+10. A final app architecture document must be created for future AI-driven development.
 
-**common-ui 模块**:
-- ✅ `BaseActivity<VB : ViewBinding>` - 支持协程、ViewBinding、触摸事件分发、Fragment 结果回调
-- ✅ `BaseFragment<VB : ViewBinding>` - 支持协程、ViewBinding、懒加载、返回键处理
-- ✅ `ToastUtils` - 完整 Toast 封装
-- ✅ `StatusBarHelper` - 状态栏辅助
-- ✅ `NotchHelper` - 刘海屏适配
-- ✅ `PressEffectHelper` - 按压效果
-- ✅ `LivePermissions` - 权限请求封装
+## 3. Current Facts To Respect
 
-**common-network 模块**:
-- ✅ `ApiResponse<T>` - 通用响应封装
-- ✅ `RetrofitFactory` - Retrofit 工厂
-- ✅ `OkHttpClientFactory` - OkHttp 工厂
-- ✅ `ExceptionHandle` - 异常处理
-- ✅ `ResponseThrowable` - 响应异常
-- ✅ `ERROR` - 错误码枚举
-- ✅ `SSLManager` - SSL 证书管理
+These facts have already been confirmed in the current repository state:
 
-**common-utils 模块**:
-- ✅ `MMKVUtils` - MMKV 封装（腾讯 MMKV 2.3.0）
-- ✅ `Logger` - 日志工具
-- ✅ `ScreenUtils` - 屏幕工具
-- ✅ `DeviceHelper` / `DisplayUtils` - 设备/显示工具
-- ✅ `ContextExtensions` / `CoroutinesExtensions` - 扩展函数
+1. `app` currently uses `AppCompatActivity` directly in its main sample pages instead of consistently using base architecture classes.
+2. `common-ui` currently contains `BaseActivity`, `BaseFragment`, `BaseViewModel`, `EventBus`, and `SingleLiveEvent`, so its responsibility is too broad.
+3. `common-core` already contains `UIState`, `IBaseResponse`, `Message`, and `ThrowableBean`.
+4. `common-core` already exposes Lifecycle and Coroutines dependencies, so the old "zero dependency" description is no longer true.
+5. The repository documentation still refers to `common-log`, but the target architecture for this task removes that module.
+6. `app` currently uses `com.hoyn.common.utils.Logger` and this direction should be kept.
+7. `IBaseResponse.isSuccess()` and `ApiResponse.isSuccess()` currently use inconsistent success semantics and must be unified.
+8. README, architecture docs, Gradle module declarations, and actual code imports are currently out of sync.
 
-### 1.3 缺失能力（需从 ybase 迁移或新建）
+## 4. Target Module Responsibilities
 
-- ❌ `BaseViewModel` - 无
-- ❌ `BaseRepository` - 无
-- ❌ `IBaseResponse` 接口 - 无（当前只有 ApiResponse data class）
-- ❌ `ViewModelFactory` - 无
-- ❌ `SingleLiveEvent` / 事件机制 - 无
-- ❌ `UpdateGlobal` / `ThrowableReportGlobal` - 全局事件总线
-- ❌ `SubscribeLifecycle` - Lifecycle DSL
-- ❌ `Message` / `ThrowableBean` - 事件载体
-- ❌ `StateNavigator` - 导航状态
-- ❌ Compose 配置 - 无
+### 4.1 common-core
 
----
+Keep only the lowest-level stable abstractions and models:
 
-## 2. 来源项目审计摘要
+- `UIState`
+- `Message`
+- `ThrowableBean`
+- `IBaseResponse`
+- shared result and error contracts if needed
+- other stable cross-layer data contracts
 
-### 2.1 项目路径
+Rules:
 
-- **来源项目**: `/Users/hoyn/Downloads/dzbl-android`
-- **主要迁移来源**: `ybase` 模块
-- **次要来源**: `basic` 模块（腾讯音视频相关，非主要迁移目标）
+- Do not place `BaseActivity` or `BaseFragment` here.
+- Do not place UI helper utilities here.
+- Do not place concrete network implementation here.
+- Do not place logging implementation here.
+- Keep the API stable and narrow.
 
-### 2.2 ybase 模块分析
+### 4.2 common-base
 
-**包路径**: `com.screson.baselibrary`
+This is the new architecture foundation module.
 
-| 子目录 | 内容 | 迁移优先级 |
-|--------|------|-----------|
-| `base/` | BaseActivity, BaseFragment, BaseViewModel, BaseRepository, IBaseResponse, ViewModelFactory, Clazz, SubscribeLifecycle, StateNavigator | **高** |
-| `http/` | ExceptionHandle, ResponseThrowable, ERROR, SSLManager, UpdateGlobal, ThrowableReportGlobal, LoggingInterceptor, Printer, ClientUtils | 中（部分已有） |
-| `http/event/` | SingleLiveEvent, Message | **高** |
-| `extention/` | ContextEx, ViewEx, StatusBarHelper, NotchHelper, NavigationExt, DeviceHelper, DisplayHelper | 中（部分已有） |
-| `toast/` | YToast, 内部实现类 | 低（已有 ToastUtils） |
-| `utils/` | LivePermissions, PressEffectHelper, SharePreferencesUtils, NetUtils | 低（已有或废弃） |
-| `widget/` | RoundImageView | 可选 |
+Move or create the following here:
 
-### 2.3 basic 模块分析
+- `BaseActivity`
+- `BaseFragment`
+- `BaseDialogFragment` if needed
+- `BaseViewModel`
+- `ViewModelFactory`
+- page-level event mechanism
+- global event mechanism
+- `SingleEvent`, `EventFlow`, or `SharedFlow` wrappers
+- common page loading, message, and error handling
+- ViewBinding-based screen foundation support
 
-**包路径**: `com.tencent.liteav.basic`
+Rules:
 
-| 文件 | 内容 | 迁移建议 |
-|------|------|---------|
-| `AvatarConstant.java` | 腾讯头像常量 | **不迁移** - 业务特定 |
-| `Constants.java` | 腾讯常量 | **不迁移** - 业务特定 |
-| `ImageLoader.java` | 图片加载 | **不迁移** - 已有 common-image |
-| `OnSingleClickListener.java` | 防抖点击 | 可考虑迁移到 common-ui |
-| `MD5Utils.java` | MD5 工具 | 可考虑迁移到 common-utils |
-| `UserModel*.java` | 用户模型 | **不迁移** - 业务特定 |
+- `common-base` depends on `common-core` and `common-utils`.
+- It may depend on required AndroidX lifecycle, fragment, activity, and appcompat libraries.
+- It must not become a dumping ground for generic UI tools like status bar helpers or toast utilities.
 
-**结论**: `basic` 主要是腾讯音视频 SDK 相关工具和业务杂项，**不是主迁移目标**。`ybase` 才是 base、event、viewmodel、repository 的主要来源。
+### 4.3 common-ui
 
----
+Keep presentation helpers only:
 
-## 3. 迁移矩阵
+- `ToastUtils`
+- `StatusBarHelper`
+- `NotchHelper`
+- `PressEffectHelper`
+- `LivePermissions`
+- `ViewExtensions`
+- UI widgets, helper views, adapter utilities, or similar presentation tooling
 
-| 来源类/能力 | 目标模块 | 处理方式 | 原因 |
-|------------|----------|----------|------|
-| `BaseActivity` | common-ui | **已实现**，需对比补充 | 当前版本已支持 ViewBinding，缺少 MyTouchListener（已改名 OnTouchListener） |
-| `BaseFragment` | common-ui | **已实现**，需对比补充 | 当前版本已支持 ViewBinding，缺少 ViewModel 泛型支持 |
-| `BaseViewModel` | common-core | **需新建** | 核心架构类，放入 common-core |
-| `BaseRepository` | common-network 或 common-core | **需新建** | 数据层基类，建议放入 common-network |
-| `IBaseResponse` | common-network | **需新建接口** | 当前只有 ApiResponse data class，需抽象为接口 |
-| `SingleLiveEvent` | common-core | **需重写** | 原实现有单观察者限制，建议用 SharedFlow 或 Channel 替代 |
-| `UpdateGlobal` | common-core | **需重写** | 依赖 LiveEventBus，建议用 SharedFlow 替代 |
-| `ThrowableReportGlobal` | common-core | **需重写** | 依赖 LiveEventBus，建议用 SharedFlow 替代 |
-| `Message` | common-core | **需迁移** | 简单数据类，可直接迁移 |
-| `ThrowableBean` | common-core | **需迁移** | 简单数据类，可直接迁移 |
-| `ViewModelFactory` | common-core | **需重写** | 原实现用反射 newInstance，需改用 AndroidX ViewModelProvider.Factory |
-| `SubscribeLifecycle` | common-core | **需重写** | 原实现用 `@OnLifecycleEvent` 注解（已废弃），需改用 DefaultLifecycleObserver |
-| `Clazz` | common-core | **不迁移** | 反射工具类，不推荐使用 |
-| `StateNavigator` | common-ui | **可选迁移** | 导航状态管理，视业务需求 |
-| `NavigationExt.kt` | common-ui | **不迁移** | 简单扩展，已在项目中有类似实现 |
+Rules:
 
----
+- Remove architecture foundation classes from this module.
+- `common-ui` should be a presentation toolbox, not the app architecture root.
 
-## 4. 禁止直接迁移的内容
+### 4.4 common-network
 
-以下内容**禁止照搬**，需要重新设计或使用现代替代方案：
+Keep network and data access implementation here:
 
-| 禁止内容 | 原因 | 替代方案 |
-|----------|------|----------|
-| `LiveEventBus` | 第三方库，维护状态不明 | Kotlin SharedFlow / Channel |
-| `SingleLiveEvent` 原实现 | 有单观察者限制，Google 示例代码已过时 | `SharedFlow<T>(replay=1, extraBufferCapacity=0, onBufferOverflow=DROP_OLDEST)` |
-| `AndroidAutoSize` | 屏幕适配库，现代方案已变化 | 今日头条方案 / 不使用（推荐） |
-| `kotlin-android-extensions` | 已废弃 | ViewBinding（已配置） |
-| 反射式 Repository 注入 (`Clazz.getClass`) | 反射性能差，不安全 | Koin / Hilt DI 或手动注入 |
-| `@OnLifecycleEvent` 注解写法 | 已废弃 | `DefaultLifecycleObserver` 接口 |
-| `ViewModelProvider.NewInstanceFactory` | 已废弃 | `ViewModelProvider.AndroidViewModelFactory` |
-| 废弃的 Navigation 扩展 | 简单包装，无实际价值 | 直接使用 Navigation API |
-| `SharePreferencesUtils` | 旧实现 | 已有 MMKVUtils |
+- `RetrofitFactory`
+- `OkHttpClientFactory`
+- `ApiResponse`
+- `BaseRepository`
+- `ExceptionHandle`
+- `ResponseThrowable`
+- `SSLManager`
+- logging interceptors and HTTP printers if still needed
 
----
+Rules:
 
-## 5. 模块边界
+- Unify response success semantics with `IBaseResponse`.
+- Do not move UI event logic into this module.
+- Keep repository abstractions oriented around data access.
 
-### 5.1 模块职责定义
+### 4.5 common-utils
 
-```
-common-core (最底层，无 Android 依赖或最小依赖)
-├── 架构抽象接口
-├── BaseViewModel
-├── 事件机制 (EventBus 替代)
-├── 通用数据类 (Message, ThrowableBean)
-└── Lifecycle 相关工具
+Keep reusable non-UI or cross-cutting utilities here, including logging:
 
-common-utils (依赖 common-core)
-├── Android 工具类
-├── 扩展函数
-├── MMKV 封装
-└── 设备/屏幕工具
+- `Logger`
+- `MMKVUtils`
+- context extensions
+- device and screen helpers
+- generic coroutine helpers
 
-common-network (依赖 common-core)
-├── Retrofit/OkHttp 封装
-├── ApiResponse / IBaseResponse
-├── ExceptionHandle / ResponseThrowable
-├── BaseRepository (可选)
-└── SSL/日志拦截器
+Rules:
 
-common-ui (依赖 common-utils, common-core)
-├── BaseActivity / BaseFragment
-├── ViewBinding 支持
-├── Toast / StatusBar / Dialog
-├── 权限请求
-└── UI 扩展函数
+- `Logger` must exist only once and live here.
+- `common-log` must not remain a supported formal module.
 
-common-image (依赖 common-core)
-├── Glide 封装
-└── 图片加载扩展
+### 4.6 app
 
-app (依赖所有模块)
-├── Demo 展示
-└── 不定义任何 lib 架构
-```
+`app` must become the complete sample application for this library architecture.
 
-### 5.2 依赖规则
+It must demonstrate a real recommended usage flow:
 
-- `common-core` → 只依赖 AndroidX Core，保持最轻量
-- `common-utils` → 依赖 `common-core`
-- `common-network` → 依赖 `common-core`
-- `common-ui` → 依赖 `common-core`, `common-utils`
-- `common-image` → 依赖 `common-core`
-- `app` → 依赖所有模块，但**不反向定义 lib 架构**
+- `Application` initialization
+- one entry screen using base architecture
+- `BaseActivity` and or `BaseFragment`
+- `ViewModel`
+- `Repository`
+- Retrofit API service
+- `ApiResponse`
+- `UIState`
+- page events
+- global events
+- loading, empty, success, and error states
 
-### 5.3 禁止的依赖
+Rules:
 
-- ❌ `common-core` 不能依赖 `common-ui`
-- ❌ `common-core` 不能依赖 `common-network`
-- ❌ `app` 不能定义被 lib 使用的类
+- `app` is no longer just a collection of disconnected demos.
+- The sample should be suitable for future product teams to copy as a starting point.
 
----
+## 5. Required Execution Order
 
-## 6. 并发协作规则
+Claude Code must execute in this order.
 
-### 6.1 窗口职责划分
+### Phase 1: Architecture Refactor
 
-| 窗口 | 职责 | 允许修改的模块 | 禁止修改 |
-|------|------|---------------|----------|
-| **1号窗口** | 审计与交接 | 仅 `docs/AI_HANDOFF.md` | 所有业务代码、Gradle |
-| **2号窗口** | 架构实现 | `common-core`, `common-network`, `common-ui` | Gradle、app、版本配置 |
-| **3号窗口** | 配置与集成 | `gradle/`, `build.gradle.kts`, `app`, 版本目录 | 架构代码 |
+1. Audit the current module boundaries and dependencies.
+2. Add `common-base` and wire it into Gradle.
+3. Move architecture foundation classes out of `common-ui` into `common-base`.
+4. Remove `common-log` from formal module structure and documentation.
+5. Standardize all logging imports to `common-utils.Logger`.
+6. Unify `IBaseResponse` and `ApiResponse` success semantics.
+7. Ensure module responsibilities match the target architecture.
 
-### 6.2 并发限制
+### Phase 2: Documentation Alignment
 
-1. **Gradle 文件互斥**: 任何人都不能并行修改 Gradle 文件
-   - `settings.gradle.kts`
-   - `build.gradle.kts` (root)
-   - `gradle/libs.versions.toml`
-   - 各模块 `build.gradle.kts`
+1. Update `README.md` to reflect the new module list and dependency hierarchy.
+2. Remove `common-log` references from README and architecture docs.
+3. Add `common-base` to all relevant documentation.
+4. Make documentation match the real Gradle and source structure.
 
-2. **app 模块独占**: app 模块只能在最后阶段由 3号窗口独占修改
+### Phase 3: App Sample Refactor
 
-3. **common-core 优先**: 2号窗口必须先完成 common-core 的基础类，才能开始 common-ui 的补充
+1. Refactor `app` from a demo launcher into a complete architecture sample.
+2. Keep or reorganize old demos only if they do not distract from the main architecture sample.
+3. Add at least one end-to-end sample flow showing the recommended usage pattern.
+4. Make the app structure reflect the intended architecture, not an ad hoc demo package layout.
 
-### 6.3 文件锁定规则
+### Phase 4: App Architecture Document
 
-```
-锁定给 2号窗口:
-- common-core/src/main/java/**/*.kt
-- common-network/src/main/java/**/*.kt (除已有文件需谨慎)
-- common-ui/src/main/java/**/*.kt (除已有 BaseActivity/BaseFragment 需协调)
+Create a final app architecture document for future AI sessions.
 
-锁定给 3号窗口:
-- gradle/libs.versions.toml
-- */build.gradle.kts
-- app/src/**/*.kt
-```
+This document must explain:
 
----
+1. project goals
+2. module responsibilities
+3. dependency direction
+4. forbidden dependencies
+5. recommended app package structure
+6. `Application` initialization rules
+7. responsibilities of `BaseActivity`, `BaseFragment`, and `BaseViewModel`
+8. collaboration between `UIState`, repository, `ApiResponse`, and event flows
+9. standard page template
+10. standard steps for adding a new page
+11. boundary between page events and global events
+12. recommended usage of logging, storage, permissions, navigation, and networking
+13. Do and Don't guidance
+14. explicit instruction that future AI modifications must read this document first
 
-## 7. 架构升级候选项
+## 6. Acceptance Criteria
 
-以下框架选择需要用户确认，文档中给出推荐值：
+The task is not complete until all items below are true:
 
-### 7.1 事件机制
+1. `common-base` exists and is wired in Gradle.
+2. `common-ui` no longer owns the core base architecture classes.
+3. `common-log` is no longer part of the supported architecture.
+4. `Logger` is unified under `common-utils`.
+5. response success semantics are consistent across core and network layers.
+6. README and architecture docs reflect the actual repository structure.
+7. `app` contains at least one real end-to-end architecture sample.
+8. `app` uses the new architecture foundation instead of only direct `AppCompatActivity` usage.
+9. a dedicated app architecture document has been created.
+10. the final summary includes remaining risks or follow-up items.
 
-| 选项 | 说明 | 推荐 |
-|------|------|------|
-| **Kotlin SharedFlow** | 官方协程方案，轻量 | ✅ **推荐** |
-| Kotlin Channel | 更像队列，适合生产消费 | 可选 |
-| RxJava | 重量级 | 不推荐 |
-| LiveEventBus (旧) | 已禁止 | ❌ |
+## 7. Constraints
 
-**推荐实现**:
-```kotlin
-// 在 common-core 中
-class EventFlow<T> {
-    private val flow = MutableSharedFlow<T>(replay = 1, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    fun emit(value: T) = flow.tryEmit(value)
+1. Do not stop at planning.
+2. Do not leave docs and code inconsistent.
+3. Do not preserve `common-log` as an official module just to avoid edits.
+4. Do not move new base abstractions back into `common-ui`.
+5. Do not let `common-core` grow into a catch-all module.
+6. Do not do unrelated large-scale cleanup.
+
+## 8. Files That Must Be Reviewed
+
+At minimum, inspect and update these areas when necessary:
+
+- `settings.gradle.kts`
+- `README.md`
+- `docs/ARCHITECTURE.md`
+- `app/build.gradle.kts`
+- `common-core/build.gradle.kts`
+- `common-ui/build.gradle.kts`
+- `common-network/build.gradle.kts`
+- `common-utils/build.gradle.kts`
+- `app/src/main/java/**`
+- `common-ui/src/main/java/**`
+- `common-core/src/main/java/**`
+- `common-network/src/main/java/**`
+- `common-utils/src/main/java/**`
+
+## 9. Final Deliverables
+
+Claude Code must finish with all of the following:
+
+1. a corrected modular architecture
+2. updated README and architecture documentation
+3. a complete app architecture sample
+4. a dedicated app architecture document for future AI development
+5. a concise final summary containing:
+    - issue list
+    - module ownership matrix
+    - key implementation changes
+    - documentation changes
+    - app sample summary
+    - path to the new app architecture document
+    - remaining risks or recommended next steps
+
+## 10. Operating Instruction For Future AI Sessions
+
+Before making architecture-related changes in this repository:
+
+1. read this file first
+2. read the final app architecture document created by this task
+3. follow the documented module boundaries
+4. avoid reopening already-settled architecture decisions unless the user explicitly requests a new direction
     fun observe(): SharedFlow<T> = flow.asSharedFlow()
 }
 ```

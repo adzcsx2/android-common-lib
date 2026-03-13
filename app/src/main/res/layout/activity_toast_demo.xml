@@ -29,28 +29,67 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="ToastUtil (无需 Context)"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnShortToast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="短 Toast" />
+        android:layout_marginTop="8dp"
+        android:text="短 Toast (show)" />
 
     <Button
         android:id="@+id/btnLongToast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="长 Toast" />
+        android:layout_marginTop="8dp"
+        android:text="长 Toast (showLong)" />
 
     <Button
         android:id="@+id/btnCenterToast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="中间 Toast" />
+        android:layout_marginTop="8dp"
+        android:text="中间 Toast (showCenter)" />
+
+    <Button
+        android:id="@+id/btnCenterLongToast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="中间长 Toast (showCenterLong)" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="队列优先级测试"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnQueueTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="连续点击测试 (新 Toast 会取消前一个)" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="取消当前 Toast"
+        android:textColor="@android:color/holo_red_dark" />
 
 </LinearLayout>

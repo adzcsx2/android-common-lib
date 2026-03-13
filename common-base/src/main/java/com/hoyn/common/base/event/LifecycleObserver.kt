@@ -1,4 +1,4 @@
-package com.hoyn.common.ui.event
+package com.hoyn.common.base.event
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner

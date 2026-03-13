@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -34,12 +35,15 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
 }
 
 dependencies {
     // 依赖所有模块用于演示
     implementation(project(":common-core"))
+    implementation(project(":common-base"))
+    implementation(project(":common-compose"))
     implementation(project(":common-utils"))
     implementation(project(":common-network"))
     implementation(project(":common-image"))

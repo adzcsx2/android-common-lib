@@ -3,7 +3,7 @@ package com.hoyn.common.lib.demo
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.databinding.ActivityLogDemoBinding
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtils
@@ -11,16 +11,22 @@ import com.hoyn.common.utils.Logger
 
 /**
  * 日志示例页面
+ *
+ * 使用 BaseActivity 作为基类
  */
-class LogDemoActivity : AppCompatActivity() {
+class LogDemoActivity : BaseActivity<ActivityLogDemoBinding>() {
 
-    private lateinit var binding: ActivityLogDemoBinding
+    companion object {
+        fun start(context: Context) {
+            context.startActivity(Intent(context, LogDemoActivity::class.java))
+        }
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityLogDemoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun createBinding(): ActivityLogDemoBinding {
+        return ActivityLogDemoBinding.inflate(layoutInflater)
+    }
 
+    override fun initView(savedInstanceState: Bundle?) {
         setupViews()
     }
 
@@ -41,32 +47,9 @@ class LogDemoActivity : AppCompatActivity() {
             Logger.i("这是一条 INFO 日志")
             showToast("已输出 INFO 日志")
         }
-
-        binding.btnWarn.setOnClickListener {
-            Logger.w("这是一条 WARN 日志")
-            showToast("已输出 WARN 日志")
-        }
-
-        binding.btnError.setOnClickListener {
-            Logger.e("这是一条 ERROR 日志")
-            showToast("已输出 ERROR 日志")
-        }
-
-        binding.btnJson.setOnClickListener {
-            val json = """{"name": "CommonLib", "version": "1.0.0"}"""
-            Logger.json(json)
-            showToast("已输出 JSON 日志")
-        }
     }
 
     private fun showToast(message: String) {
         ToastUtils.show(this, message)
-        binding.tvResult.text = "最后操作: $message"
-    }
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, LogDemoActivity::class.java))
-        }
     }
 }

@@ -10,30 +10,32 @@ Android Common Library follows a modular architecture with clear separation of c
 
 The library is organized into focused, single-responsibility modules:
 
-- **common-core** - Foundation with zero external dependencies
-- **common-utils** - Extension functions for common operations
-- **common-log** - Unified logging interface
-- **common-network** - Network layer abstraction
-- **common-image** - Image loading utilities
-- **common-ui** - UI components and base classes
+- **common-core** - Core abstractions and stable contracts (UIState, IBaseResponse, Message)
+- **common-base** - Architecture foundation (BaseActivity, BaseFragment, BaseViewModel, Event system)
+- **common-utils** - Extension functions, Logger, MMKV utilities
+- **common-network** - Network layer abstraction with Retrofit/OkHttp
+- **common-image** - Image loading utilities with Glide
+- **common-ui** - UI presentation helpers (Toast, StatusBar, Permissions)
 
 ### 2. Dependency Hierarchy
 
 ```
-                    common-core (zero dependencies)
+                    common-core (core abstractions)
                            │
          ┌─────────────────┼─────────────────┐
          │                 │                 │
-   common-log       common-utils        common-ui
+   common-utils       common-base        (future modules)
          │                 │
-         └─────────┬───────┘
-                   │
-         ┌─────────┴─────────┐
-         │                   │
-   common-network      common-image
-         │                   │
-         └─────────┬─────────┘
-                   │
+         └────────┬────────┘
+                  │
+         ┌────────┴────────┐
+         │                 │
+   common-network     common-image
+         │                 │
+         └────────┬────────┘
+                  │
+             common-ui
+                  │
               Your App
 ```
 
@@ -51,57 +53,71 @@ This ensures:
 
 ### common-core
 
-**Purpose**: Foundation module providing base functionality
+**Purpose**: Core abstractions and stable contracts
 
 **Dependencies**:
 - androidx.core:core-ktx (implementation)
+- androidx.lifecycle (api)
+- kotlinx-coroutines (api)
 
 **Responsibilities**:
-- Version information
-- Common interfaces
-- Base types
+- UIState sealed class for page state management
+- IBaseResponse interface for API response contracts
+- Message data class for event communication
+- ThrowableBean data class for error encapsulation
 
 **Design Decisions**:
-- Minimal dependencies to ensure maximum compatibility
-- No business logic, only foundation
 - Stable API for long-term support
+- No business logic, only core abstractions
+- Minimal but sufficient dependencies
+
+### common-base
+
+**Purpose**: Architecture foundation for app development
+
+**Dependencies**:
+- common-core (api)
+- common-utils (api)
+- AndroidX Activity/Fragment/AppCompat (api)
+- AndroidX Lifecycle/ViewModel (api)
+
+**Responsibilities**:
+- BaseActivity with ViewBinding support
+- BaseFragment with lazy loading
+- BaseViewModel with coroutine management and network request helpers
+- ViewModelFactory for custom ViewModel creation
+- SingleLiveEvent for one-time UI events
+- GlobalEventBus for cross-component communication
+- ViewModel extensions for observing UI events
+
+**Design Decisions**:
+- Single place for all architecture foundation classes
+- Not a dumping ground for generic UI tools
+- ViewBinding for compile-time safety
+- SharedFlow-based event system (replaces LiveData/LiveEventBus)
 
 ### common-utils
 
-**Purpose**: Extension functions for Android SDK and Kotlin
+**Purpose**: Extension functions and utilities
 
 **Dependencies**:
 - common-core (api)
 - AndroidX KTX libraries (implementation)
 - Kotlin Coroutines (implementation)
+- MMKV (api)
+- Gson (api)
 
 **Responsibilities**:
-- Context extensions (toast, etc.)
-- Coroutine dispatchers
-- Common utilities
+- Logger unified logging interface
+- MMKVUtils key-value storage
+- Context extensions
+- Device and screen helpers
+- Coroutine helpers
 
 **Design Decisions**:
 - Uses Kotlin extension functions for clean API
 - Follows Android/Kotlin best practices
 - Reactive design with coroutines
-
-### common-log
-
-**Purpose**: Unified logging with debug/release support
-
-**Dependencies**:
-- common-core (api)
-- androidx.core:core-ktx (implementation)
-
-**Responsibilities**:
-- Tag-based logging
-- Debug mode filtering
-- Formatted output (JSON)
-
-**Design Decisions**:
-- Singleton pattern for global configuration
-- Error logging always enabled
-- Simple API without external logging libraries
 
 ### common-network
 
@@ -109,7 +125,7 @@ This ensures:
 
 **Dependencies**:
 - common-core (api)
-- common-log (api)
+- common-utils (api)
 - Retrofit libraries (api)
 - OkHttp libraries (api)
 
@@ -118,10 +134,11 @@ This ensures:
 - Request/Response handling
 - Timeout configuration
 - Interceptor management
+- SSL/TLS support
 
 **Design Decisions**:
 - Factory pattern for instance creation
-- Generic response wrapper
+- Generic response wrapper (ApiResponse implements IBaseResponse)
 - Automatic logging integration
 - Configurable timeouts
 - Interceptor support for auth, caching, etc.
@@ -149,23 +166,27 @@ This ensures:
 
 ### common-ui
 
-**Purpose**: UI components and base classes
+**Purpose**: UI presentation helpers
 
 **Dependencies**:
-- common-core (api)
-- AndroidX UI libraries (api)
+- common-base (api)
 - Material Design (api)
+- SmartRefreshLayout (api)
+- BaseRecyclerViewAdapterHelper (api)
+- Navigation (api)
 
 **Responsibilities**:
-- BaseActivity with ViewBinding
-- BaseFragment with ViewBinding
+- ToastUtils for toast notifications
+- StatusBarHelper for status bar styling
+- NotchHelper for notch device support
+- PressEffectHelper for view press effects
+- LivePermissions for runtime permissions
 - View extensions (visibility, clicks, etc.)
 
 **Design Decisions**:
-- Generic base classes for type safety
-- ViewBinding for compile-time safety
 - Extension functions for clean API
-- Separation of init and data loading
+- Separation of concerns from architecture classes
+- Presentation toolbox, not architecture root
 
 ## Communication Patterns
 
@@ -174,17 +195,16 @@ This ensures:
 For data access:
 
 ```kotlin
-class UserRepository(
-    private val apiService: ApiService,
-    private val context: Context
-) {
+class UserRepository : BaseRepository<UserApi>() {
+    override val api: UserApi by lazy { createApi("https://api.example.com/", UserApi::class.java) }
+
     suspend fun getUser(id: String): Result<User> = withIO {
         try {
-            val response = apiService.getUser(id)
-            if (response.isSuccess) {
+            val response = api.getUser(id)
+            if (response.isSuccess()) {
                 Result.success(response.data!!)
             } else {
-                Result.failure(Exception(response.message))
+                Result.failure(Exception(response.msg()))
             }
         } catch (e: Exception) {
             Logger.e("Failed to get user", e)
@@ -194,32 +214,63 @@ class UserRepository(
 }
 ```
 
-### 2. Factory Pattern
+### 2. ViewModel Pattern
 
-For creating instances:
+With BaseViewModel:
 
 ```kotlin
-// Network
-RetrofitFactory.createService<ApiService>(baseUrl)
+class UserViewModel : BaseViewModel<UserRepository>() {
+    override val repository: UserRepository by lazy { UserRepository() }
 
-// Image
-ImageLoader.load(context, url, imageView)
+    private val _userState = MutableStateFlow<UIState<User>>(UIState.Loading)
+    val userState: StateFlow<UIState<User>> = _userState
+
+    fun loadUser(id: Int) {
+        launchOnlyResult(
+            block = { repository.api.getUser(id) },
+            success = { user -> _userState.value = UIState.Success(user) },
+            error = { e -> _userState.value = UIState.Error(-1, e.message ?: "Unknown error") }
+        )
+    }
+}
 ```
 
-### 3. Extension Functions
+### 3. Event System
 
-For clean APIs:
+Using SharedFlow-based events:
 
 ```kotlin
-// View
-view.visible()
-view.onClick { }
+// In ViewModel
+fun doSomething() {
+    showToast("Operation completed")
+    showDialog("Loading...")
+    dismissDialog()
+}
 
-// Context
-context.showToast("Message")
+// In Activity/Fragment
+observeAllUIEvents(
+    viewModel = viewModel,
+    onToast = { ToastUtils.show(this, it) },
+    onShowDialog = { showLoading(it) },
+    onDismissDialog = { hideLoading() },
+    onError = { handleError(it) }
+)
+```
 
-// ImageView
-imageView.loadImage(url)
+### 4. Global Events
+
+For cross-component communication:
+
+```kotlin
+// Send global event
+GlobalEventBus.sendMessage(Message(code = 1001, msg = "Login expired"))
+
+// Observe global events
+observeGlobalMessage { message ->
+    when (message.code) {
+        1001 -> navigateToLogin()
+    }
+}
 ```
 
 ## Error Handling Strategy
@@ -229,10 +280,10 @@ imageView.loadImage(url)
 ```kotlin
 try {
     val response = apiService.getData()
-    if (response.isSuccess) {
+    if (response.isSuccess()) {
         // Handle success
     } else {
-        // Handle API error (check response.code)
+        // Handle API error (check response.code())
     }
 } catch (e: Exception) {
     // Handle network/parse error
@@ -240,14 +291,14 @@ try {
 }
 ```
 
-### UI Errors
+### UI State Management
 
 ```kotlin
-viewModel.error.observe(viewLifecycleOwner) { error ->
-    if (error != null) {
-        errorView.visible()
-        errorMessage.text = error.message
-    }
+when (state) {
+    is UIState.Loading -> showLoading()
+    is UIState.Success -> showData(state.data)
+    is UIState.Error -> showError(state.message)
+    is UIState.Empty -> showEmpty()
 }
 ```
 
@@ -263,7 +314,7 @@ class UserRepositoryTest {
     fun `getUser returns success when API succeeds`() = runTest {
         // Given
         val mockApi = mockk<ApiService>()
-        val repository = UserRepository(mockApi)
+        val repository = UserRepository()
 
         // When
         coEvery { mockApi.getUser(any()) } returns ApiResponse.success(user)
@@ -276,29 +327,13 @@ class UserRepositoryTest {
 }
 ```
 
-### Integration Tests
-
-Test module interactions:
-
-```kotlin
-@Module
-@TestInstallIn(components = AppComponent::class, replaces = NetworkModule::class)
-object TestNetworkModule {
-    @Provides
-    @Singleton
-    fun provideTestApiService(): ApiService = mockk()
-}
-```
-
 ## Performance Considerations
 
 ### 1. Lazy Initialization
 
 ```kotlin
-class MyViewModel : ViewModel() {
-    private val _apiService by lazy {
-        RetrofitFactory.createService<ApiService>(baseUrl)
-    }
+class MyViewModel : BaseViewModel<MyRepository>() {
+    override val repository: MyRepository by lazy { MyRepository() }
 }
 ```
 
@@ -373,34 +408,12 @@ class AuthInterceptor(private val tokenProvider: () -> String?) : Interceptor {
 3. Wait for one major version
 4. Remove in next major version
 
-## Migration Guide
-
-### From 1.0.0 to 1.1.0
-
-No breaking changes. New features include:
-
-- New image transformations
-- Additional view extensions
-
-Simply update dependency version:
-
-```gradle
-implementation("com.gitee.Hoyn:android-common-lib:1.1.0")
-```
-
 ## Future Considerations
 
 ### Potential Enhancements
 
 1. **common-database** - Room database utilities
-2. **common-storage** - File and preferences utilities
+2. **common-compose** - Jetpack Compose components
 3. **common-camera** - Camera and image capture
 4. **common-location** - Location services
-5. **common-permissions** - Runtime permissions
-6. **common-analytics** - Analytics tracking
-
-### Architecture Evolution
-
-- Consider Kotlin Flow for reactive streams
-- Evaluate Paging 3 for pagination
-- Investigate WorkManager for background tasks
+5. **common-analytics** - Analytics tracking

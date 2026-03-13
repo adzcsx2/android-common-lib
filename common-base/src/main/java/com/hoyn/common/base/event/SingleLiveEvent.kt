@@ -1,4 +1,4 @@
-package com.hoyn.common.ui.event
+package com.hoyn.common.base.event
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

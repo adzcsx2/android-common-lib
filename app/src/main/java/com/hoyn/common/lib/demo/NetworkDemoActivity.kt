@@ -2,44 +2,60 @@ package com.hoyn.common.lib.demo
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.flowWithLifecycle
+import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.flowWithLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.BaseViewModel
+import com.hoyn.common.base.createViewModel
+import com.hoyn.common.base.ext.observeAllUIEvents
+import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.databinding.ActivityNetworkDemoBinding
 import com.hoyn.common.lib.databinding.ItemPostBinding
+import com.hoyn.common.network.BaseRepository
 import com.hoyn.common.network.RetrofitFactory
+import com.hoyn.common.network.exception.ExceptionHandle
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.http.GET
 
 /**
  * 网络请求示例页面
- * 使用 JSONPlaceholder 公开 API
+ *
+ * 展示完整架构链路：
+ * - BaseActivity -> BaseViewModel -> BaseRepository -> Api -> UIState -> Event
  */
-class NetworkDemoActivity : AppCompatActivity() {
+class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding>() {
 
-    private lateinit var binding: ActivityNetworkDemoBinding
-    private val viewModel: PostViewModel by lazy { PostViewModel() }
+    companion object {
+        fun start(context: Context) {
+            context.startActivity(Intent(context, NetworkDemoActivity::class.java))
+        }
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityNetworkDemoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private val viewModel: PostViewModel by lazy { createViewModel { PostViewModel() } }
 
+    override fun createBinding(): ActivityNetworkDemoBinding {
+        return ActivityNetworkDemoBinding.inflate(layoutInflater)
+    }
+
+    override fun initView(savedInstanceState: Bundle?) {
         setupViews()
         observeData()
-        loadPosts()
+    }
+
+    override fun initData() {
+        viewModel.loadPosts()
     }
 
     private fun setupViews() {
@@ -47,7 +63,7 @@ class NetworkDemoActivity : AppCompatActivity() {
         binding.rvPosts.adapter = PostAdapter()
 
         binding.btnRefresh.onClick {
-            loadPosts()
+            viewModel.loadPosts()
         }
 
         binding.btnBack.onClick {
@@ -56,33 +72,59 @@ class NetworkDemoActivity : AppCompatActivity() {
     }
 
     private fun observeData() {
+        // 观察 UI 状态
         lifecycleScope.launch {
-            viewModel.posts.flowWithLifecycle(lifecycle).collect { posts ->
-                (binding.rvPosts.adapter as PostAdapter).submitList(posts)
-                binding.tvEmpty.visibility = if (posts.isEmpty()) android.view.View.VISIBLE else android.view.View.GONE
-            }
+            viewModel.uiState
+                .flowWithLifecycle(lifecycle)
+                .collect { state -> renderState(state) }
         }
 
-        lifecycleScope.launch {
-            viewModel.isLoading.flowWithLifecycle(lifecycle).collect { isLoading ->
-                binding.progressBar.visibility = if (isLoading) android.view.View.VISIBLE else android.view.View.GONE
-            }
-        }
+        // 观察 UI 事件
+        observeAllUIEvents(
+            viewModel = viewModel,
+            onToast = { ToastUtils.show(this, it) },
+            onShowDialog = { showLoading(it) },
+            onDismissDialog = { hideLoading() }
+        )
+    }
 
-        lifecycleScope.launch {
-            viewModel.error.flowWithLifecycle(lifecycle).collect { error ->
-                if (error != null) {
-                    binding.tvError.text = error
-                    binding.tvError.visibility = android.view.View.VISIBLE
-                } else {
-                    binding.tvError.visibility = android.view.View.GONE
-                }
+    private fun renderState(state: UIState<List<Post>>) {
+        when (state) {
+            is UIState.Loading -> {
+                binding.progressBar.visibility = View.VISIBLE
+                binding.rvPosts.visibility = View.GONE
+                binding.tvEmpty.visibility = View.GONE
+                binding.tvError.visibility = View.GONE
+            }
+            is UIState.Success -> {
+                binding.progressBar.visibility = View.GONE
+                binding.rvPosts.visibility = View.VISIBLE
+                binding.tvEmpty.visibility = View.GONE
+                binding.tvError.visibility = View.GONE
+                (binding.rvPosts.adapter as PostAdapter).submitList(state.data)
+            }
+            is UIState.Error -> {
+                binding.progressBar.visibility = View.GONE
+                binding.rvPosts.visibility = View.GONE
+                binding.tvEmpty.visibility = View.GONE
+                binding.tvError.visibility = View.VISIBLE
+                binding.tvError.text = state.message
+            }
+            is UIState.Empty -> {
+                binding.progressBar.visibility = View.GONE
+                binding.rvPosts.visibility = View.GONE
+                binding.tvEmpty.visibility = View.VISIBLE
+                binding.tvError.visibility = View.GONE
             }
         }
     }
 
-    private fun loadPosts() {
-        viewModel.loadPosts()
+    private fun showLoading(message: String?) {
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading() {
+        binding.progressBar.visibility = View.GONE
     }
 
     /**
@@ -118,12 +160,6 @@ class NetworkDemoActivity : AppCompatActivity() {
             binding.tvBody.text = post.body
         }
     }
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, NetworkDemoActivity::class.java))
-        }
-    }
 }
 
 /**
@@ -145,36 +181,69 @@ interface PostApi {
 }
 
 /**
- * 帖子 ViewModel（简化版，不使用 Repository）
+ * 帖子 Repository
  */
-class PostViewModel : androidx.lifecycle.ViewModel() {
+class PostRepository : BaseRepository<PostApi>() {
 
-    private val api: PostApi by lazy {
-        RetrofitFactory.createService("https://jsonplaceholder.typicode.com/", PostApi::class.java)
+    companion object {
+        private const val BASE_URL = "https://jsonplaceholder.typicode.com/"
     }
 
-    private val _posts = MutableStateFlow<List<Post>>(emptyList())
-    val posts: StateFlow<List<Post>> = _posts
+    override val api: PostApi by lazy {
+        createApi(BASE_URL, PostApi::class.java)
+    }
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    /**
+     * 获取帖子列表
+     */
+    suspend fun getPosts(): Result<List<Post>> = withContext(Dispatchers.IO) {
+        try {
+            val posts = api.getPosts().take(10)
+            Result.success(posts.toList())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+/**
+ * 帖子 ViewModel
+ *
+ * 继承 BaseViewModel，展示完整架构模式
+ */
+class PostViewModel : BaseViewModel<PostRepository>() {
 
+    override val repository: PostRepository by lazy { PostRepository() }
+
+    private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)
+    val uiState: StateFlow<UIState<List<Post>>> = _uiState
+
+    override fun handleException(throwable: Throwable): com.hoyn.common.core.ThrowableBean {
+        val handled = ExceptionHandle.handleException(throwable)
+        return com.hoyn.common.core.ThrowableBean(handled.code, handled.errMsg)
+    }
+
+    /**
+     * 加载帖子列表
+     */
     fun loadPosts() {
-        _isLoading.value = true
-        _error.value = null
+        _uiState.value = UIState.Loading
 
-        viewModelScope.launch(kotlinx.coroutines.Dispatchers.IO) {
-            try {
-                val result = api.getPosts().take(10)
-                _posts.value = result
-                _isLoading.value = false
-            } catch (e: Exception) {
-                _isLoading.value = false
-                _error.value = e.message ?: "Unknown error"
-            }
+        launchUI {
+            val result = repository.getPosts()
+            result.fold(
+                onSuccess = { posts ->
+                    if (posts.isEmpty()) {
+                        _uiState.value = UIState.Empty
+                    } else {
+                        _uiState.value = UIState.Success(posts)
+                    }
+                },
+                onFailure = { error ->
+                    _uiState.value = UIState.Error(-1, error.message ?: "Unknown error")
+                    showToast(error.message ?: "Unknown error")
+                }
+            )
         }
     }
 }

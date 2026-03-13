@@ -3,7 +3,7 @@ package com.hoyn.common.lib.demo
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.databinding.ActivityMmkvDemoBinding
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtils
@@ -11,16 +11,22 @@ import com.hoyn.common.utils.MMKVUtils
 
 /**
  * MMKV 示例页面
+ *
+ * 使用 BaseActivity 作为基类
  */
-class MmkvDemoActivity : AppCompatActivity() {
+class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding>() {
 
-    private lateinit var binding: ActivityMmkvDemoBinding
+    companion object {
+        fun start(context: Context) {
+            context.startActivity(Intent(context, MmkvDemoActivity::class.java))
+        }
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMmkvDemoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun createBinding(): ActivityMmkvDemoBinding {
+        return ActivityMmkvDemoBinding.inflate(layoutInflater)
+    }
 
+    override fun initView(savedInstanceState: Bundle?) {
         setupViews()
         loadSavedValue()
     }
@@ -28,19 +34,19 @@ class MmkvDemoActivity : AppCompatActivity() {
     private fun setupViews() {
         binding.btnBack.onClick { finish() }
 
-        // 保存字符串
+        // 保存
         binding.btnSaveString.setOnClickListener {
             val value = binding.etInput.text.toString()
             if (value.isNotBlank()) {
                 MMKVUtils.put("demo_string", value)
-                ToastUtils.show(this, "已保存: $value")
-                loadSavedValue()
+                binding.tvResult.text = "已保存: $value"
+                ToastUtils.show(this, "保存成功")
             } else {
                 ToastUtils.show(this, "请输入内容")
             }
         }
 
-        // 读取字符串
+        // 读取
         binding.btnLoadString.setOnClickListener {
             val value = MMKVUtils.getString("demo_string", "")
             if (value.isNotBlank()) {
@@ -66,12 +72,6 @@ class MmkvDemoActivity : AppCompatActivity() {
             binding.tvResult.text = "当前保存的值: $value"
         } else {
             binding.tvResult.text = "暂无保存数据"
-        }
-    }
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, MmkvDemoActivity::class.java))
         }
     }
 }

@@ -13,9 +13,12 @@ import com.hoyn.common.ui.toast.ToastDuration
 
 /**
  * 系统 Toast 封装
+ * 注意：内部使用 applicationContext 避免内存泄漏
  */
-class SystemToast(var mContext: Context) : IToast, Cloneable {
+class SystemToast(context: Context) : IToast, Cloneable {
 
+    // 使用 applicationContext 避免内存泄漏
+    private val mContext: Context = context.applicationContext
     private var mToast: Toast? = null
     private var priority: Int = 0
     private var contentView: View? = null
@@ -101,7 +104,7 @@ class SystemToast(var mContext: Context) : IToast, Cloneable {
         var mToast: SystemToast? = null
         try {
             mToast = super.clone() as SystemToast
-            mToast.mContext = this.mContext
+            // mContext 是 val，通过构造函数已设置，无需重新赋值
             mToast.contentView = this.contentView
             mToast.duration = this.duration
             mToast.animation = this.animation

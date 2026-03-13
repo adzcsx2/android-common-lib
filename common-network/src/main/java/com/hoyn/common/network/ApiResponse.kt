@@ -18,7 +18,7 @@ data class ApiResponse<T>(
 
     override fun data(): T? = data
 
-    override fun isSuccess(): Boolean = code == 1
+    override fun isSuccess(): Boolean = code == 0
 
     companion object {
         fun <T> success(data: T?): ApiResponse<T> {

@@ -1,13 +1,13 @@
-package com.hoyn.common.ui.ext
+package com.hoyn.common.base.ext
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.hoyn.common.base.BaseViewModel
+import com.hoyn.common.base.event.GlobalEventBus
 import com.hoyn.common.core.Message
 import com.hoyn.common.core.ThrowableBean
-import com.hoyn.common.ui.base.BaseViewModel
-import com.hoyn.common.ui.event.GlobalEventBus
 import kotlinx.coroutines.launch
 
 /**
@@ -141,9 +141,7 @@ fun <R> Fragment.observeAllUIEvents(
     observeMessage(owner, viewModel, onMessage)
 }
 
-/**
- * Activity 扩展方法
- */
+// ============== Activity 扩展方法 ==============
 
 /**
  * 观察 Toast 事件

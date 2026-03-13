@@ -7,8 +7,9 @@ Android 模块化公共库，提供常用的工具类、网络请求、图片加
 - [Getting Started Guide](/docs/guides/getting-started.md) - 快速开始使用本库
 - [API Documentation](/docs/api/) - 各模块的详细 API 文档
   - [common-core](/docs/api/common-core.md) - 核心基础模块
+  - [common-base](/docs/api/common-base.md) - 架构基础模块
   - [common-utils](/docs/api/common-utils.md) - 工具类扩展
-  - [common-log](/docs/api/common-log.md) - 日志封装
+  - [common-compose](/docs/api/common-compose.md) - Compose 组件
   - [common-network](/docs/api/common-network.md) - 网络请求
   - [common-image](/docs/api/common-image.md) - 图片加载
   - [common-ui](/docs/api/common-ui.md) - UI 组件
@@ -25,40 +26,51 @@ common-lib/
 ├── settings.gradle.kts        # 模块配置
 ├── gradle/libs.versions.toml  # 版本目录
 ├── scripts/publish.gradle.kts # 通用发布脚本
-├── common-core/               # 核心模块 (零依赖)
-├── common-utils/              # 工具类扩展
-├── common-log/                # 日志封装
+├── common-core/               # 核心模块 (稳定抽象层)
+├── common-base/               # 架构基础模块 (BaseActivity/BaseFragment/BaseViewModel)
+├── common-compose/            # Compose 组件 (主题/基础组件/扩展)
+├── common-utils/              # 工具类扩展 (含 Logger)
 ├── common-network/            # 网络请求
 ├── common-image/              # 图片加载
-├── common-ui/                 # UI 组件
-└── app/                       # 示例应用
+├── common-ui/                 # UI 组件 (Toast/状态栏/权限等)
+└── app/                       # 示例应用 (Compose + View 混用)
 ```
 
 ## 模块说明
 
 | 模块 | 说明 | 依赖 |
 |------|------|------|
-| common-core | 核心基础模块 | 无 |
-| common-utils | Context 扩展、协程扩展 | common-core |
-| common-log | 统一日志工具 | common-core |
-| common-network | Retrofit + OkHttp 封装 | common-core, common-log |
+| common-core | 核心基础模块 (UIState/IBaseResponse/Message/ThrowableBean) | Lifecycle, Coroutines |
+| common-base | 架构基础模块 (BaseActivity/BaseFragment/BaseViewModel/事件机制) | common-core, common-utils |
+| common-compose | Compose 组件 (主题/基础Activity&Fragment/扩展) | common-core, common-base |
+| common-utils | Context 扩展、协程扩展、Logger、MMKV | common-core |
+| common-network | Retrofit + OkHttp 封装 | common-core, common-utils |
 | common-image | Glide 图片加载封装 | common-core, common-utils |
-| common-ui | BaseActivity/BaseFragment、View 扩展 | common-core |
+| common-ui | Toast/状态栏/权限/View 扩展 | common-base |
 
 ## 依赖关系
 
 ```
-            common-core (零依赖)
+                    common-core (核心抽象层)
+                           │
+         ┌─────────────────┼─────────────────┐
+         │                 │                 │
+   common-utils       common-base      common-compose
+         │                 │                 │
+         └────────┬────────┘                 │
+                  │                          │
+         ┌────────┴────────┐                 │
+         │                 │                 │
+   common-network     common-image          │
+         │                 │                 │
+         └────────┬────────┘                 │
+                  │                          │
+             common-ui ←────────────────────┘
                   │
-    ┌─────────────┼─────────────┐
-    │             │             │
-common-log   common-utils   common-ui
-    │             │
-    └──────┬──────┘
-           │
-    common-network
-    common-image
+              Your App
 ```
+
+**注意**: common-compose 依赖 common-base，可以在 Compose 中使用相同的架构模式。
 
 ## 使用方式 (通过 JitPack)
 
@@ -167,7 +179,33 @@ dependencies {
 
 ## 模块使用示例
 
-### common-log
+### common-base (架构基础)
+
+```kotlin
+// BaseActivity 使用
+class MainActivity : BaseActivity<ActivityMainBinding>() {
+    override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
+
+    override fun initView(savedInstanceState: Bundle?) {
+        // 初始化视图
+    }
+}
+
+// BaseViewModel 使用
+class UserViewModel : BaseViewModel<UserRepository>() {
+    override val repository: UserRepository by lazy { UserRepository() }
+
+    fun getUser(id: Int) {
+        launchOnlyResult(
+            block = { repository.api.getUser(id) },
+            success = { user -> /* 处理成功 */ },
+            error = { e -> /* 处理错误 */ }
+        )
+    }
+}
+```
+
+### common-utils (Logger)
 
 ```kotlin
 // 初始化
@@ -196,7 +234,7 @@ val api = RetrofitFactory.createService<ApiService>("https://api.example.com/")
 
 // 使用
 val response = api.getUserInfo()
-if (response.isSuccess) {
+if (response.isSuccess()) {
     // response.data
 }
 ```
@@ -219,12 +257,42 @@ view.visible()
 view.gone()
 view.onClick { /* click */ }
 
-// BaseActivity
-class MainActivity : BaseActivity<ActivityMainBinding>() {
-    override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
+// Toast
+ToastUtils.show(this, "Hello World")
+```
 
-    override fun initView(savedInstanceState: Bundle?) {
-        // 初始化视图
+### common-compose (Jetpack Compose)
+
+```kotlin
+// 纯 Compose Activity
+class MyComposeActivity : BaseComposeActivity() {
+    override fun Content() {
+        AppTheme {
+            MyScreen()
+        }
+    }
+}
+
+// 混用 Compose 和 View 的 Fragment
+class MyHybridFragment : BaseComposeFragment() {
+    override fun onCreateView(...): View {
+        return FrameLayout(requireContext()).apply {
+            // 添加传统 View
+            addView(myNativeView)
+            // 添加 Compose
+            addView(composeView)
+        }
+    }
+}
+
+// 使用主题颜色
+@Composable
+fun MyScreen() {
+    val colors = useAppThemeColors()
+    Box(
+        modifier = Modifier.background(colors.primary)
+    ) {
+        Text("Hello Compose", color = colors.onPrimary)
     }
 }
 ```
@@ -260,8 +328,8 @@ dependencies {
 - compileSdk: 36
 - minSdk: 24
 - targetSdk: 36
-- Kotlin: 2.1.0
-- AGP: 9.0.0-rc01
+- Kotlin: 2.3.0
+- AGP: 9.0.0
 
 ## License
 

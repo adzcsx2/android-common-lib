@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
     `maven-publish`
 }
 
 android {
-    namespace = "com.hoyn.common.ui"
+    namespace = "com.hoyn.common.compose"
     compileSdk = 36
 
     defaultConfig {
@@ -29,45 +30,49 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        compose = true
+    }
+
+    // 使用 Kotlin Compose Compiler Plugin 时，不需要手动设置 kotlinCompilerExtensionVersion
+    // Plugin 会自动管理版本
+    composeOptions {
     }
 }
 
 dependencies {
     api(project(":common-core"))
-    api(project(":common-utils"))
     api(project(":common-base"))
 
-    // AndroidX UI
-    api(libs.androidx.appcompat)
-    api(libs.androidx.recyclerview)
-    api(libs.androidx.activity.ktx)
-    api(libs.androidx.fragment.ktx)
-    api(libs.androidx.lifecycle.runtime)
-    api(libs.androidx.lifecycle.viewmodel)
+    // Compose BOM
+    api(platform(libs.compose.bom))
+    api(libs.compose.ui)
+    api(libs.compose.ui.graphics)
+    api(libs.compose.ui.tooling.preview)
+    api(libs.compose.material3)
+    api(libs.compose.material.icons)
+    api(libs.compose.foundation)
+    api(libs.compose.runtime)
+    api(libs.compose.runtime.livedata)
 
-    // Material
-    api(libs.material)
+    // Activity Compose
+    api(libs.activity.compose)
 
-    // SmartRefreshLayout
-    api(libs.smart.refresh)
-    api(libs.smart.refresh.header)
+    // Lifecycle Compose
+    api(libs.lifecycle.compose)
+    api(libs.lifecycle.viewmodel.compose)
 
-    // BaseRecyclerViewAdapterHelper
-    api(libs.base.recycler.view.adapter.helper)
+    // Coil Compose
+    api(libs.coil.compose)
 
-    // Navigation
-    api(libs.navigation.fragment)
-    api(libs.navigation.ui)
-
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
+    // Debug
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.test.manifest)
 
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.compose.ui.test.junit4)
 }
 
 // 应用发布配置
