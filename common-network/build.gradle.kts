@@ -31,7 +31,6 @@ android {
 
 dependencies {
     api(project(":common-core"))
-    api(project(":common-log"))
 
     // Network
     api(libs.retrofit)
@@ -39,6 +38,10 @@ dependencies {
     api(libs.okhttp)
     api(libs.okhttp.logging)
     api(libs.gson)
+
+
+
+    api(libs.utilcodex)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

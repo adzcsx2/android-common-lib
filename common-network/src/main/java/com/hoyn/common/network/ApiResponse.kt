@@ -1,15 +1,24 @@
 package com.hoyn.common.network
 
+import com.hoyn.common.core.IBaseResponse
+
 /**
  * 通用 API 响应封装
+ * 实现 IBaseResponse 接口以支持统一的响应处理
  */
 data class ApiResponse<T>(
     val code: Int = 0,
     val message: String = "",
     val data: T? = null
-) {
-    val isSuccess: Boolean
-        get() = code == 0
+) : IBaseResponse<T> {
+
+    override fun code(): Int = code
+
+    override fun msg(): String = message
+
+    override fun data(): T? = data
+
+    override fun isSuccess(): Boolean = code == 1
 
     companion object {
         fun <T> success(data: T?): ApiResponse<T> {

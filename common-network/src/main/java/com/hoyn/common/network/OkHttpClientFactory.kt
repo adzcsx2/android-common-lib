@@ -1,9 +1,7 @@
 package com.hoyn.common.network
 
-import com.hoyn.common.log.Logger
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
 /**
@@ -21,16 +19,9 @@ object OkHttpClientFactory {
             writeTimeout(NetworkConfig.writeTimeout, TimeUnit.SECONDS)
 
             // 添加日志拦截器
-            if (NetworkConfig.isDebug) {
-                addInterceptor(
-                    HttpLoggingInterceptor { message ->
-                        Logger.d(message, "OkHttp")
-                    }.apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-                    }
-                )
-            }
-
+            addInterceptor(
+                LoggingInterceptor()
+            )
             // 添加自定义拦截器
             interceptors.forEach { addInterceptor(it) }
             networkInterceptors.forEach { addNetworkInterceptor(it) }

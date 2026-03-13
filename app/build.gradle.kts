@@ -41,7 +41,6 @@ dependencies {
     // 依赖所有模块用于演示
     implementation(project(":common-core"))
     implementation(project(":common-utils"))
-    implementation(project(":common-log"))
     implementation(project(":common-network"))
     implementation(project(":common-image"))
     implementation(project(":common-ui"))
@@ -50,6 +49,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    // Navigation
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
 
     // Testing
     testImplementation(libs.junit)

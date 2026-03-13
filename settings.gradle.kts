@@ -27,7 +27,6 @@ rootProject.name = "common-lib"
 include(":app")
 include(":common-core")
 include(":common-utils")
-include(":common-log")
 include(":common-network")
 include(":common-image")
 include(":common-ui")

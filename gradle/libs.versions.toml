@@ -1,6 +1,6 @@
 [versions]
-agp = "9.0.0-rc01"
-kotlin = "2.1.0"
+agp = "9.0.0"
+kotlin = "2.3.0"
 coreKtx = "1.17.0"
 appcompat = "1.7.1"
 material = "1.13.0"
@@ -8,9 +8,11 @@ junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 recyclerview = "1.3.2"
-activityKtx = "1.9.3"
-fragmentKtx = "1.8.5"
-lifecycle = "2.8.7"
+activityKtx = "1.10.1"
+fragmentKtx = "1.8.7"
+lifecycle = "2.9.2"
+navigation = "2.9.7"
+
 
 # Network
 retrofit = "2.11.0"
@@ -21,7 +23,18 @@ gson = "2.11.0"
 glide = "4.16.0"
 
 # Coroutines
-coroutines = "1.9.0"
+coroutines = "1.10.1"
+
+# Utils
+utilcodex = "1.31.0"
+mmkv = "2.3.0"
+window = "1.3.0"
+
+# UI
+smartRefresh = "2.0.6"
+baseRecyclerViewAdapterHelper = "3.0.14"
+
+
 
 [libraries]
 # AndroidX Core
@@ -32,6 +45,10 @@ androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", ve
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+
+# Navigation
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
+navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
 
 # Material
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -54,6 +71,16 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+
+# Utils
+utilcodex = { group = "com.blankj", name = "utilcodex", version.ref = "utilcodex" }
+mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
+androidx-window = { group = "androidx.window", name = "window", version.ref = "window" }
+
+# UI
+smart-refresh = { group = "io.github.scwang90", name = "refresh-layout-kernel", version.ref = "smartRefresh" }
+smart-refresh-header = { group = "io.github.scwang90", name = "refresh-header-classics", version.ref = "smartRefresh" }
+base-recycler-view-adapter-helper = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper", version.ref = "baseRecyclerViewAdapterHelper" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

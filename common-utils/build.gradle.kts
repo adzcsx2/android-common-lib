@@ -32,10 +32,22 @@ android {
 dependencies {
     api(project(":common-core"))
 
+    // Utils
+    api(libs.utilcodex)
+
+    // MMKV
+    api(libs.mmkv)
+
+    // Gson (for object serialization in MMKVUtils)
+    api(libs.gson)
+
     // AndroidX Extensions
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
+
+    // Window Manager (foldable/multi-window support)
+    implementation(libs.androidx.window)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

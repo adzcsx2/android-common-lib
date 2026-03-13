@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ViewExtensions 点击事件相关 ID -->
+    <item type="id" name="id_tag_click" />
+    <item type="id" name="id_tag_click2" />
+</resources>

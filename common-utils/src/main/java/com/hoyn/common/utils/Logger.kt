@@ -1,6 +1,7 @@
-package com.hoyn.common.log
+package com.hoyn.common.utils
 
 import android.util.Log
+import com.blankj.utilcode.util.LogUtils
 
 /**
  * 日志工具类
@@ -15,6 +16,10 @@ object Logger {
     fun init(debug: Boolean, tag: String = "CommonLib") {
         isDebug = debug
         defaultTag = tag
+        LogUtils.getConfig()
+            .setLogSwitch(isDebug)  // Debug才开启日志
+            .setGlobalTag("BaseLib")               // 全局Tag
+            .stackDeep = 3                          // 调用栈深度
     }
 
     fun v(message: String, tag: String = defaultTag) {

@@ -33,6 +33,14 @@ dependencies {
     // 仅依赖 AndroidX Core，保持轻量
     implementation(libs.androidx.core.ktx)
 
+    // Lifecycle (for BaseViewModel migration)
+    api(libs.androidx.lifecycle.runtime)
+    api(libs.androidx.lifecycle.viewmodel)
+
+    // Coroutines (for EventFlow)
+    api(libs.kotlinx.coroutines.core)
+    api(libs.kotlinx.coroutines.android)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

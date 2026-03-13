@@ -35,6 +35,7 @@ android {
 
 dependencies {
     api(project(":common-core"))
+    api(project(":common-utils"))
 
     // AndroidX UI
     api(libs.androidx.appcompat)
@@ -46,6 +47,17 @@ dependencies {
 
     // Material
     api(libs.material)
+
+    // SmartRefreshLayout
+    api(libs.smart.refresh)
+    api(libs.smart.refresh.header)
+
+    // BaseRecyclerViewAdapterHelper
+    api(libs.base.recycler.view.adapter.helper)
+
+    // Navigation
+    api(libs.navigation.fragment)
+    api(libs.navigation.ui)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

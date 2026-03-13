@@ -1,0 +1,15 @@
+package com.hoyn.common.lib
+
+import android.app.Application
+import com.hoyn.common.utils.Logger
+import com.hoyn.common.utils.MMKVUtils
+
+class MainApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        // 初始化日志
+        Logger.init(BuildConfig.DEBUG, getString(R.string.app_name))
+        // 初始化 MMKV
+        MMKVUtils.init(this)
+    }
+}
