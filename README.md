@@ -93,13 +93,13 @@ dependencyResolutionManagement {
 ```kotlin
 dependencies {
     // 只引入需要的模块，减少 APK 体积
-    implementation("com.gitee.Hoyn:common-core:1.0.0")      // 核心基础模块
-    implementation("com.gitee.Hoyn:common-base:1.0.0")      // 架构基础模块
-    implementation("com.gitee.Hoyn:common-utils:1.0.0")     // 工具类扩展
-    implementation("com.gitee.Hoyn:common-compose:1.0.0")   // Compose 组件
-    implementation("com.gitee.Hoyn:common-network:1.0.0")   // 网络请求
-    implementation("com.gitee.Hoyn:common-image:1.0.0")     // 图片加载
-    implementation("com.gitee.Hoyn:common-ui:1.0.0")        // UI 组件
+    implementation("com.github.adzcsx2:common-core:1.0.1")      // 核心基础模块
+    implementation("com.github.adzcsx2:common-base:1.0.1")      // 架构基础模块
+    implementation("com.github.adzcsx2:common-utils:1.0.1")     // 工具类扩展
+    implementation("com.github.adzcsx2:common-compose:1.0.1")   // Compose 组件
+    implementation("com.github.adzcsx2:common-network:1.0.1")   // 网络请求
+    implementation("com.github.adzcsx2:common-image:1.0.1")     // 图片加载
+    implementation("com.github.adzcsx2:common-ui:1.0.1")        // UI 组件
 }
 ```
 
@@ -108,11 +108,9 @@ dependencies {
 ```kotlin
 dependencies {
     // 引入所有模块
-    implementation("com.gitee.Hoyn:android-common-lib:1.0.0")
+    implementation("com.github.adzcsx2:android-common-lib:1.0.1")
 }
 ```
-
-> **注意**: 方式一需要发布新版本 (1.0.1 及以上) 才能使用，因为需要 `.jitpack.yml` 配置文件支持。
 
 ### 3. 使用最新版本 (SNAPSHOT)
 
@@ -121,10 +119,10 @@ dependencies {
 ```kotlin
 dependencies {
     // 开发阶段 - 使用 SNAPSHOT，始终获取最新代码
-    implementation("com.gitee.Hoyn:android-common-lib:-SNAPSHOT")
+    implementation("com.github.adzcsx2:android-common-lib:-SNAPSHOT")
 
     // 生产环境 - 使用固定版本，稳定可靠
-    implementation("com.gitee.Hoyn:android-common-lib:1.0.1")
+    implementation("com.github.adzcsx2:android-common-lib:1.0.1")
 }
 ```
 

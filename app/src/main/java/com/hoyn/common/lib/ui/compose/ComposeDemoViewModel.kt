@@ -51,7 +51,7 @@ class ComposeDemoViewModel(
         _uiState.value = UIState.Loading
         _isFromCache.value = false
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val result = repository.getPosts()
 
             result.fold(
