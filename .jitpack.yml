@@ -1,0 +1,12 @@
+# JitPack 配置文件
+# 用于支持多模块项目的独立发布
+
+jdk:
+  - openjdk17
+
+before_install:
+  - echo "Starting JitPack build for multi-module project"
+
+install:
+  # 发布所有模块到本地 Maven 仓库
+  - ./gradlew publishToMavenLocal

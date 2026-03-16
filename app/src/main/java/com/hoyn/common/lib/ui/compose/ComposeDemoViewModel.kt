@@ -39,7 +39,7 @@ class ComposeDemoViewModel(
     val isFromCache: StateFlow<Boolean> = _isFromCache.asStateFlow()
 
     init {
-        loadPosts()
+        // 初始化时不自动加载数据， 由外部调用 loadPosts() 触发
     }
 
     /**

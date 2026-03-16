@@ -88,14 +88,31 @@ dependencyResolutionManagement {
 
 ### 2. 在模块 build.gradle.kts 中添加依赖
 
+#### 方式一：按需引入单个模块 (推荐)
+
 ```kotlin
 dependencies {
-    // 按需引入模块 (版本号使用 Gitee 仓库的 tag)
+    // 只引入需要的模块，减少 APK 体积
+    implementation("com.gitee.Hoyn:common-core:1.0.0")      // 核心基础模块
+    implementation("com.gitee.Hoyn:common-base:1.0.0")      // 架构基础模块
+    implementation("com.gitee.Hoyn:common-utils:1.0.0")     // 工具类扩展
+    implementation("com.gitee.Hoyn:common-compose:1.0.0")   // Compose 组件
+    implementation("com.gitee.Hoyn:common-network:1.0.0")   // 网络请求
+    implementation("com.gitee.Hoyn:common-image:1.0.0")     // 图片加载
+    implementation("com.gitee.Hoyn:common-ui:1.0.0")        // UI 组件
+}
+```
+
+#### 方式二：引入整个库
+
+```kotlin
+dependencies {
+    // 引入所有模块
     implementation("com.gitee.Hoyn:android-common-lib:1.0.0")
 }
 ```
 
-> **注意**: JitPack 会将整个项目作为一个包发布，所有模块都会包含在内。
+> **注意**: 方式一需要发布新版本 (1.0.1 及以上) 才能使用，因为需要 `.jitpack.yml` 配置文件支持。
 
 ### 3. 使用最新版本 (SNAPSHOT)
 
