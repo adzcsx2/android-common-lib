@@ -4,12 +4,12 @@ import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityMainBinding
-import com.hoyn.common.lib.ui.activity.LogDemoActivity
-import com.hoyn.common.lib.ui.activity.MmkvDemoActivity
-import com.hoyn.common.lib.ui.activity.StatusBarDemoActivity
-import com.hoyn.common.lib.ui.activity.ToastDemoActivity
 import com.hoyn.common.lib.ui.compose.ComposeDemoActivity
+import com.hoyn.common.lib.ui.log_demo.LogDemoActivity
+import com.hoyn.common.lib.ui.mmkv_demo.MmkvDemoActivity
 import com.hoyn.common.lib.ui.network.NetworkDemoActivity
+import com.hoyn.common.lib.ui.statusbar_demo.StatusBarDemoActivity
+import com.hoyn.common.lib.ui.toast_demo.ToastDemoActivity
 
 /**
  * Demo 列表入口

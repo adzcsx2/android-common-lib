@@ -23,11 +23,11 @@
 
         <!-- Demo Activities -->
         <activity android:name=".ui.compose.ComposeDemoActivity" />
-        <activity android:name=".ui.activity.ToastDemoActivity" />
+        <activity android:name=".ui.toast_demo.ToastDemoActivity" />
         <activity android:name=".ui.network.NetworkDemoActivity" />
-        <activity android:name=".ui.activity.MmkvDemoActivity" />
-        <activity android:name=".ui.activity.LogDemoActivity" />
-        <activity android:name=".ui.activity.StatusBarDemoActivity" />
+        <activity android:name=".ui.mmkv_demo.MmkvDemoActivity" />
+        <activity android:name=".ui.log_demo.LogDemoActivity" />
+        <activity android:name=".ui.statusbar_demo.StatusBarDemoActivity" />
 
     </application>
 

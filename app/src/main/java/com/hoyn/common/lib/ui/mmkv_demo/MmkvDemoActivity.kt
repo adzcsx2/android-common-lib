@@ -1,4 +1,4 @@
-package com.hoyn.common.lib.ui.activity
+package com.hoyn.common.lib.ui.mmkv_demo
 
 import android.content.Context
 import android.content.Intent
@@ -13,6 +13,7 @@ import com.hoyn.common.utils.MMKVUtils
  * MMKV 示例页面
  *
  * 使用 BaseActivity 作为基类
+ * 语言设置由 BaseActivity 统一处理
  */
 class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding>() {
 
