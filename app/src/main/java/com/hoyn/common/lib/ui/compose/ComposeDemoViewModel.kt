@@ -9,6 +9,7 @@ import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.data.repository.PostRepository
 import com.hoyn.common.ui.toast.ToastUtils
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,9 +24,11 @@ import kotlinx.coroutines.launch
  * - 调用 Repository 获取数据
  * - 处理业务逻辑
  */
-class ComposeDemoViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = PostRepository.getInstance(application)
+class ComposeDemoViewModel(
+    application: Application,
+    private val repository: PostRepository = PostRepository.getInstance(application),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : AndroidViewModel(application) {
 
     // UI 状态流
     private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)
