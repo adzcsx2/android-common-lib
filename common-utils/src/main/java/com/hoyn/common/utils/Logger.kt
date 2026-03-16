@@ -1,6 +1,5 @@
 package com.hoyn.common.utils
 
-import android.util.Log
 import com.blankj.utilcode.util.LogUtils
 
 /**
@@ -23,32 +22,31 @@ object Logger {
     }
 
     fun v(message: String, tag: String = defaultTag) {
-        if (isDebug) Log.v(tag, message)
+        if (isDebug) LogUtils.v(tag, message)
     }
 
     fun d(message: String, tag: String = defaultTag) {
-        if (isDebug) Log.d(tag, message)
+        if (isDebug) LogUtils.d(tag, message)
     }
 
     fun i(message: String, tag: String = defaultTag) {
-        if (isDebug) Log.i(tag, message)
+        if (isDebug) LogUtils.i(tag, message)
     }
 
     fun w(message: String, tag: String = defaultTag) {
-        if (isDebug) Log.w(tag, message)
+        if (isDebug) LogUtils.w(tag, message)
     }
 
     fun e(message: String, tag: String = defaultTag) {
-        Log.e(tag, message)
+        LogUtils.e(tag, message)
     }
 
     fun e(message: String, throwable: Throwable, tag: String = defaultTag) {
-        Log.e(tag, message, throwable)
+        LogUtils.e(tag, message, throwable)
     }
 
-    fun json(json: String, tag: String = defaultTag) {
-        if (isDebug) {
-            Log.d(tag, "JSON: $json")
-        }
+    fun json(obj: Any, tag: String = defaultTag) {
+        if (isDebug) LogUtils.json(defaultTag, obj)
+
     }
 }

@@ -1,16 +1,25 @@
 package com.hoyn.common.compose.base
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import com.hoyn.common.utils.LanguageHelper
 
 /**
  * Base Compose Activity
  *
  * 提供纯 Compose Activity 的基类
+ * 支持多语言设置
  */
 abstract class BaseComposeActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        // 统一应用语言设置
+        val context = LanguageHelper.applyLanguage(newBase)
+        super.attachBaseContext(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

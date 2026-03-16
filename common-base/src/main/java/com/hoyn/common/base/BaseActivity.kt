@@ -1,5 +1,6 @@
 package com.hoyn.common.base
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.hoyn.common.utils.LanguageHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -16,7 +18,7 @@ import kotlinx.coroutines.cancel
  * BaseActivity
  *
  * 提供通用的 Activity 基类功能
- * 支持协程、ViewBinding、触摸事件分发
+ * 支持协程、ViewBinding、触摸事件分发、多语言
  */
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineScope by MainScope() {
 
@@ -31,6 +33,12 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineSc
     private var startNavigation: Boolean = false
 
     fun getIsNavigate(): Boolean = startNavigation
+
+    override fun attachBaseContext(newBase: Context) {
+        // 统一应用语言设置
+        val context = LanguageHelper.applyLanguage(newBase)
+        super.attachBaseContext(context)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         onCreateBefore()

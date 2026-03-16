@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.appcompat)
 
     // Window Manager (foldable/multi-window support)
     implementation(libs.androidx.window)

@@ -1,0 +1,50 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">通用库示例</string>
+
+    <!-- Common -->
+    <string name="back">返回</string>
+    <string name="retry">重试</string>
+    <string name="loading">加载中…</string>
+    <string name="no_data">暂无数据</string>
+    <string name="unknown_error">未知错误</string>
+    <string name="load_failed">加载失败</string>
+
+    <!-- Demo List -->
+    <string name="compose_demo">Compose 示例</string>
+    <string name="compose_demo_desc">Jetpack Compose 完整示例</string>
+    <string name="toast_demo">Toast 示例</string>
+    <string name="toast_demo_desc">展示各种 Toast 样式</string>
+    <string name="network_demo">网络请求示例</string>
+    <string name="network_demo_desc">ViewModel + Repository + 网络请求 + Room 缓存</string>
+    <string name="mmkv_demo">MMKV 示例</string>
+    <string name="mmkv_demo_desc">展示键值存储操作</string>
+    <string name="log_demo">日志示例</string>
+    <string name="log_demo_desc">展示不同级别日志输出</string>
+    <string name="status_bar_demo">状态栏示例</string>
+    <string name="status_bar_demo_desc">展示状态栏设置</string>
+    <string name="recommended">推荐</string>
+
+    <!-- Compose Demo -->
+    <string name="compose_demo_title">Compose 示例</string>
+    <string name="load_data">加载数据</string>
+    <string name="test_toast">测试 Toast</string>
+
+    <!-- Network Demo -->
+    <string name="network_demo_title">网络请求示例</string>
+    <string name="refresh">刷新</string>
+    <string name="using_cached_data">网络不可用，显示缓存数据</string>
+
+    <!-- Theme -->
+    <string name="theme_settings">主题设置</string>
+    <string name="theme_light">浅色模式</string>
+    <string name="theme_dark">深色模式</string>
+    <string name="theme_system">跟随系统</string>
+
+    <!-- Language -->
+    <string name="language_settings">语言设置</string>
+    <string name="language_en">English</string>
+    <string name="language_zh">简体中文</string>
+    <string name="language_zh_tw">繁體中文</string>
+    <string name="language_system">跟随系统</string>
+</resources>

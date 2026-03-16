@@ -1,4 +1,4 @@
-package com.hoyn.common.lib.demo
+package com.hoyn.common.lib.ui.activity
 
 import android.content.Context
 import android.content.Intent
@@ -15,6 +15,7 @@ import com.hoyn.common.ui.toast.ToastUtil
  * - 无需传入 Context
  * - 使用 Application Context 避免内存泄漏
  * - 新 Toast 会取消前一个 Toast
+ * - 语言设置由 BaseActivity 统一处理
  */
 class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding>() {
 

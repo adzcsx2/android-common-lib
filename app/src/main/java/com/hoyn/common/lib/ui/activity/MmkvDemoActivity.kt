@@ -1,4 +1,4 @@
-package com.hoyn.common.lib.demo
+package com.hoyn.common.lib.ui.activity
 
 import android.content.Context
 import android.content.Intent
