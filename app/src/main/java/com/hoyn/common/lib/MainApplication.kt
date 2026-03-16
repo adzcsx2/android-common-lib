@@ -8,8 +8,14 @@ import com.hoyn.common.utils.ThemeManager
 
 class MainApplication : Application() {
 
+    companion object {
+        lateinit var instance: MainApplication
+            private set
+    }
+
     override fun onCreate() {
         super.onCreate()
+        instance = this
         // 初始化日志
         Logger.init(BuildConfig.DEBUG, getString(R.string.app_name))
         // 初始化 MMKV

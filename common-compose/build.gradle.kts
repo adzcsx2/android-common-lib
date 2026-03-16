@@ -32,11 +32,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    // 使用 Kotlin Compose Compiler Plugin 时，不需要手动设置 kotlinCompilerExtensionVersion
-    // Plugin 会自动管理版本
-    composeOptions {
-    }
 }
 
 dependencies {

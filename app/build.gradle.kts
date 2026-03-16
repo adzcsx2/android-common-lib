@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 android {
@@ -39,6 +41,10 @@ android {
     }
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 dependencies {
     // 依赖所有模块用于演示
     implementation(project(":common-core"))
@@ -58,8 +64,13 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
 
+    // Room
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+
     // Testing
     testImplementation(libs.junit)
+    testImplementation(libs.room.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

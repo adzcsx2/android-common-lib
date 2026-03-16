@@ -1,5 +1,7 @@
 package com.hoyn.common.lib.ui.network
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hoyn.common.core.UIState
@@ -18,9 +20,9 @@ import kotlinx.coroutines.launch
  * - 调用 Repository 获取数据
  * - 处理业务逻辑
  */
-class NetworkDemoViewModel : ViewModel() {
+class NetworkDemoViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = PostRepository()
+    private val repository = PostRepository.getInstance(application)
 
     // UI 状态流
     private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)
@@ -49,29 +51,17 @@ class NetworkDemoViewModel : ViewModel() {
             val result = repository.getPosts()
 
             result.fold(
-                onSuccess = { posts ->
-                    if (posts.isEmpty()) {
+                onSuccess = { resultData ->
+                    _isFromCache.value = resultData.isFromCache
+
+                    if (resultData.posts.isEmpty()) {
                         _uiState.value = UIState.Empty
                     } else {
-                        _uiState.value = UIState.Success(posts)
+                        _uiState.value = UIState.Success(resultData.posts)
                     }
                 },
                 onFailure = { error ->
-                    // 尝试从本地加载
-                    val localResult = repository.getPostsFromLocal()
-                    localResult.fold(
-                        onSuccess = { localPosts ->
-                            if (localPosts.isNotEmpty()) {
-                                _uiState.value = UIState.Success(localPosts)
-                                _isFromCache.value = true
-                            } else {
-                                _uiState.value = UIState.Error(-1, error.message ?: "Unknown error")
-                            }
-                        },
-                        onFailure = {
-                            _uiState.value = UIState.Error(-1, error.message ?: "Unknown error")
-                        }
-                    )
+                    _uiState.value = UIState.Error(-1, error.message ?: "Unknown error")
                 }
             )
         }
