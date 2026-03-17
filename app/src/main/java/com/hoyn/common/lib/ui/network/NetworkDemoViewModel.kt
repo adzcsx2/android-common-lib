@@ -1,9 +1,8 @@
 package com.hoyn.common.lib.ui.network
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hoyn.common.base.BaseViewModel
 import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.data.repository.PostRepository
@@ -24,9 +23,17 @@ import kotlinx.coroutines.launch
  */
 class NetworkDemoViewModel(
     application: Application,
-    private val repository: PostRepository = PostRepository.getInstance(application),
+    repository: PostRepository? = null,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : AndroidViewModel(application) {
+) : BaseViewModel<PostRepository>() {
+
+    constructor(application: Application) : this(
+        application = application,
+        repository = null,
+        ioDispatcher = Dispatchers.IO
+    )
+
+    override val repository: PostRepository = repository ?: PostRepository.getInstance(application)
 
     // UI 状态流
     private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)

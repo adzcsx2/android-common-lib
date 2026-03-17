@@ -26,7 +26,7 @@ In your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.4")
+    implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.5")
 }
 ```
 
@@ -34,7 +34,7 @@ Need a single module only?
 
 ```kotlin
 dependencies {
-    implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.4")
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.5")
 }
 ```
 
@@ -420,7 +420,7 @@ lifecycleScope.launchIO {
 If you encounter dependency conflicts, use exclude:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.4") {
+implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.5") {
     exclude(group = "com.google.android.material")
 }
 ```

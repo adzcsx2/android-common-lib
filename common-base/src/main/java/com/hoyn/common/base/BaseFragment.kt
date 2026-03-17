@@ -1,7 +1,6 @@
 package com.hoyn.common.base
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +9,9 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.viewbinding.ViewBinding
+import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -23,20 +24,31 @@ import kotlinx.coroutines.cancel
  *
  * @param VB ViewBinding 类型
  */
-abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by MainScope() {
+abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
+    Fragment(),
+    CoroutineScope by MainScope() {
 
     protected lateinit var binding: VB
+    protected val viewModel: VM by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelFactory.createAuto(
+            owner = viewModelStoreOwner(),
+            savedStateOwner = savedStateRegistryOwner(),
+            application = requireActivity().application,
+            modelClass = resolveViewModelClass(),
+            defaultArgs = arguments
+        )
+    }
 
     // 是否第一次加载
     private var isFirst: Boolean = true
 
     // 页面基础信息
-    internal lateinit var mActivity: BaseActivity<*>
+    internal lateinit var mActivity: BaseActivity<*, *>
     internal lateinit var mContext: Context
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mActivity = requireActivity() as BaseActivity<*>
+        mActivity = requireActivity() as BaseActivity<*, *>
         mContext = context
     }
 
@@ -45,7 +57,12 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by Ma
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = createBinding(inflater, container)
+        binding = ViewBindingClassResolver.inflateFragmentBinding(
+            owner = this,
+            baseClass = BaseFragment::class.java,
+            inflater = inflater,
+            container = container
+        )
         return binding.root
     }
 
@@ -60,6 +77,10 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by Ma
         super.onResume()
         onVisible()
     }
+
+    protected open fun viewModelStoreOwner(): ViewModelStoreOwner = this
+
+    protected open fun savedStateRegistryOwner(): SavedStateRegistryOwner = this
 
     /**
      * 是否需要懒加载
@@ -76,17 +97,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by Ma
      */
     protected open fun lazyLoadData() {}
 
-    protected abstract fun createBinding(inflater: LayoutInflater, container: ViewGroup?): VB
+    private fun resolveViewModelClass(): Class<VM> {
+        return ViewModelClassResolver.resolve(this, BaseFragment::class.java)
+    }
 
     protected open fun initView(view: View, savedInstanceState: Bundle?) {}
 
     protected open fun initData() {}
-
-    /**
-     * Fragment 结果回调
-     */
-    open fun onFragmentResult(requestCode: Int, resultCode: Int, data: Intent?) {}
-
     /**
      * 返回键处理
      */

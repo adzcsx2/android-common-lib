@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import com.hoyn.common.base.ActivityStackManager
+import com.hoyn.common.compose.theme.AppTheme
 import com.hoyn.common.utils.LanguageHelper
 
 /**
@@ -32,7 +33,9 @@ abstract class BaseComposeActivity : ComponentActivity() {
         ActivityStackManager.push(this)
         super.onCreate(savedInstanceState)
         setContent {
-            Content()
+            AppTheme {
+                Content()
+            }
         }
     }
 

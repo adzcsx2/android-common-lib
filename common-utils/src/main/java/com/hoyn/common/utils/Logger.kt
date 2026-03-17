@@ -17,7 +17,7 @@ object Logger {
         defaultTag = tag
         LogUtils.getConfig()
             .setLogSwitch(isDebug)  // Debug才开启日志
-            .setGlobalTag("BaseLib")               // 全局Tag
+            .setGlobalTag(tag)               // 全局Tag
             .stackDeep = 3                          // 调用栈深度
     }
 

@@ -2,10 +2,12 @@ package com.hoyn.common.lib.ui.main
 
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.base.startActivity
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityMainBinding
 import com.hoyn.common.lib.ui.compose.ComposeDemoActivity
+import com.hoyn.common.lib.ui.fragment_demo.FragmentDemoActivity
 import com.hoyn.common.lib.ui.log_demo.LogDemoActivity
 import com.hoyn.common.lib.ui.mmkv_demo.MmkvDemoActivity
 import com.hoyn.common.lib.ui.network.NetworkDemoActivity
@@ -20,11 +22,7 @@ import com.hoyn.common.lib.ui.liveevent.LiveEventDemoActivity
  * 语言设置由 BaseActivity 统一处理
  * 使用扩展函数启动其他 Activity
  */
-class MainActivity : BaseActivity<ActivityMainBinding>() {
-
-    override fun createBinding(): ActivityMainBinding {
-        return ActivityMainBinding.inflate(layoutInflater)
-    }
+class MainActivity : BaseActivity<ActivityMainBinding, NoViewModel>() {
 
     // Demo 列表 - 使用字符串资源
     private val demoList by lazy {
@@ -47,6 +45,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 description = getString(R.string.network_demo_desc)
             ) {
                 startActivity<NetworkDemoActivity>()
+            },
+            DemoItem(
+                title = getString(R.string.fragment_demo),
+                description = getString(R.string.fragment_demo_desc),
+                badge = getString(R.string.recommended)
+            ) {
+                startActivity<FragmentDemoActivity>()
             },
             DemoItem(
                 title = getString(R.string.mmkv_demo),

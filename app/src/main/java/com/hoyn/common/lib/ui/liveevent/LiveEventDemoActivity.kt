@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.base.event.GlobalLiveEvent
 import com.hoyn.common.core.Message
 import com.hoyn.common.lib.R
@@ -15,7 +16,7 @@ import java.util.Locale
 /**
  * LiveEvent Demo Activity
  */
-class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding>() {
+class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewModel>() {
 
     private val timeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault())
     private val logBuilder = StringBuilder()
@@ -24,10 +25,6 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding>() {
     private var manualObserver: Observer<Message>? = null
     private var componentObserver: Observer<Message>? = null
     private var serviceStarted = false
-
-    override fun createBinding(): ActivityLiveEventDemoBinding {
-        return ActivityLiveEventDemoBinding.inflate(layoutInflater)
-    }
 
     override fun initView(savedInstanceState: Bundle?) {
         setupClickListeners()

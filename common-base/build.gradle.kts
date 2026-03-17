@@ -49,6 +49,7 @@ dependencies {
     api(libs.androidx.fragment.ktx)
     api(libs.androidx.lifecycle.runtime)
     api(libs.androidx.lifecycle.viewmodel)
+    api(libs.androidx.lifecycle.viewmodel.savedstate)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)

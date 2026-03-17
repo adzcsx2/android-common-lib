@@ -2,6 +2,7 @@ package com.hoyn.common.lib.ui.toast_demo
 
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityToastDemoBinding
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtil
@@ -18,11 +19,7 @@ import com.hoyn.common.ui.toast.ToastUtil
  * TAG 由 BaseActivity 自动提供
  * 启动方式：context.startActivity<ToastDemoActivity>()
  */
-class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding>() {
-
-    override fun createBinding(): ActivityToastDemoBinding {
-        return ActivityToastDemoBinding.inflate(layoutInflater)
-    }
+class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() {
 
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()

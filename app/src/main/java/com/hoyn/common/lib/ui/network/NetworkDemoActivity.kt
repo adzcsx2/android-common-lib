@@ -25,17 +25,9 @@ import kotlinx.coroutines.launch
  * TAG 由 BaseActivity 自动提供
  * 启动方式：context.startActivity<NetworkDemoActivity>()
  */
-class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding>() {
-
-    private val viewModel: NetworkDemoViewModel by lazy {
-        androidx.lifecycle.ViewModelProvider(this)[NetworkDemoViewModel::class.java]
-    }
+class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemoViewModel>() {
 
     private val adapter = PostAdapter()
-
-    override fun createBinding(): ActivityNetworkDemoBinding {
-        return ActivityNetworkDemoBinding.inflate(layoutInflater)
-    }
 
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()

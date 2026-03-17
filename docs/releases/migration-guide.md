@@ -8,6 +8,23 @@ Since this is the initial release, there are no migration steps needed. Simply a
 
 As new versions are released, migration guides will be added here to help you upgrade your code smoothly.
 
+## Version 1.0.5 Migration
+
+Update your dependency version to `1.0.5` to get the new base screen generics and fragment saved-state demo:
+
+```gradle
+dependencies {
+   implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.5")
+   // or
+   implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.5")
+}
+```
+
+Notes:
+- `BaseActivity` and `BaseFragment` subclasses now declare both ViewBinding and ViewModel generic parameters.
+- Screens without a dedicated ViewModel should use `NoViewModel`.
+- `startActivityForResult` helper usage should be migrated to `registerStartActivityForResult` plus `launchActivity`.
+
 ## Version 1.0.4 Migration
 
 If you were using older documentation or unpublished local artifacts, update to the new JitPack coordinates:
@@ -105,6 +122,7 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
+| 1.0.5 | 24 | 36 | 2.3.10 |
 | 1.0.4 | 24 | 36 | 2.3.10 |
 | 1.0.0 | 24 | 36 | 2.1.0 |
 

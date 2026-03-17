@@ -55,6 +55,7 @@ import com.hoyn.common.lib.data.model.Post
  *
  * 展示完整的 Compose 架构示例：
  * - BaseComposeActivity -> ViewModel -> Repository -> Api -> UIState
+ * - 基类统一提供 AppTheme
  * - Material3 主题
  * - 列表展示
  * - 网络优先策略，离线缓存支持
@@ -91,61 +92,57 @@ fun ComposeDemoScreen(
     onRefresh: () -> Unit,
     onShowToast: () -> Unit
 ) {
-    AppTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(stringResource(R.string.compose_demo_title)) },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.back)
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        titleContentColor = Color.White,
-                        navigationIconContentColor = Color.White
-                    )
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)
-            ) {
-                // 功能按钮区
-                FeatureButtons(
-                    onRefresh = onRefresh,
-                    onShowToast = onShowToast
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // 内容区
-                when {
-                    uiState.isLoading -> {
-                        LoadingContent()
-                    }
-
-                    uiState.isError -> {
-                        ErrorContent(
-                            message = uiState.getErrorOrNull() ?: stringResource(R.string.unknown_error),
-                            onRetry = onRefresh
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.compose_demo_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back)
                         )
                     }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+            FeatureButtons(
+                onRefresh = onRefresh,
+                onShowToast = onShowToast
+            )
 
-                    uiState.getDataOrNull()?.isEmpty() == true -> {
-                        EmptyContent()
-                    }
+            Spacer(modifier = Modifier.height(16.dp))
 
-                    else -> {
-                        PostList(posts = uiState.getDataOrNull() ?: emptyList())
-                    }
+            when {
+                uiState.isLoading -> {
+                    LoadingContent()
+                }
+
+                uiState.isError -> {
+                    ErrorContent(
+                        message = uiState.getErrorOrNull() ?: stringResource(R.string.unknown_error),
+                        onRetry = onRefresh
+                    )
+                }
+
+                uiState.getDataOrNull()?.isEmpty() == true -> {
+                    EmptyContent()
+                }
+
+                else -> {
+                    PostList(posts = uiState.getDataOrNull() ?: emptyList())
                 }
             }
         }
@@ -284,7 +281,6 @@ fun PostItem(post: Post) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // ID 徽章
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(4.dp))
@@ -322,11 +318,6 @@ fun PostItem(post: Post) {
     }
 }
 
-// ============== Preview Functions ==============
-
-/**
- * 帖子项预览
- */
 @Preview(showBackground = true, name = "PostItem")
 @Composable
 private fun PreviewPostItem() {
@@ -342,9 +333,6 @@ private fun PreviewPostItem() {
     }
 }
 
-/**
- * 空页面预览
- */
 @Preview(showBackground = true, name = "Empty Content")
 @Composable
 private fun PreviewEmptyContent() {
@@ -353,9 +341,6 @@ private fun PreviewEmptyContent() {
     }
 }
 
-/**
- * 加载中预览
- */
 @Preview(showBackground = true, name = "Loading Content")
 @Composable
 private fun PreviewLoadingContent() {
@@ -364,9 +349,6 @@ private fun PreviewLoadingContent() {
     }
 }
 
-/**
- * 错误页面预览
- */
 @Preview(showBackground = true, name = "Error Content")
 @Composable
 private fun PreviewErrorContent() {
@@ -378,9 +360,6 @@ private fun PreviewErrorContent() {
     }
 }
 
-/**
- * 功能按钮预览
- */
 @Preview(showBackground = true, name = "Feature Buttons")
 @Composable
 private fun PreviewFeatureButtons() {

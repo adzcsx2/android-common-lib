@@ -30,6 +30,7 @@
         <activity android:name=".ui.mmkv_demo.MmkvDemoActivity" />
         <activity android:name=".ui.log_demo.LogDemoActivity" />
         <activity android:name=".ui.statusbar_demo.StatusBarDemoActivity" />
+        <activity android:name=".ui.fragment_demo.FragmentDemoActivity" />
         <activity android:name=".ui.liveevent.LiveEventDemoActivity" />
         <service
             android:name=".ui.liveevent.LiveEventDemoService"

@@ -1,8 +1,13 @@
 package com.hoyn.common.base
 
+import android.app.Application
+import android.os.Bundle
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.savedstate.SavedStateRegistryOwner
 
 /**
  * ViewModel 工厂
@@ -52,8 +57,8 @@ class ViewModelFactory<VM : ViewModel>(
          */
         inline fun <reified VM : ViewModel> createWithApplication(
             owner: ViewModelStoreOwner,
-            application: android.app.Application,
-            noinline creator: (android.app.Application) -> VM
+            application: Application,
+            noinline creator: (Application) -> VM
         ): VM {
             return ViewModelProvider(
                 owner,
@@ -64,6 +69,71 @@ class ViewModelFactory<VM : ViewModel>(
                     }
                 }
             )[VM::class.java]
+        }
+
+        fun <VM : ViewModel> createAuto(
+            owner: ViewModelStoreOwner,
+            savedStateOwner: SavedStateRegistryOwner,
+            application: Application,
+            modelClass: Class<VM>,
+            defaultArgs: Bundle? = null
+        ): VM {
+            return ViewModelProvider(
+                owner,
+                object : AbstractSavedStateViewModelFactory(savedStateOwner, defaultArgs) {
+                    @Suppress("UNCHECKED_CAST")
+                    override fun <T : ViewModel> create(
+                        key: String,
+                        modelClass: Class<T>,
+                        handle: SavedStateHandle
+                    ): T {
+                        return instantiate(modelClass, application, handle)
+                    }
+                }
+            )[modelClass]
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        private fun <VM : ViewModel> instantiate(
+            modelClass: Class<VM>,
+            application: Application,
+            savedStateHandle: SavedStateHandle
+        ): VM {
+            val appAndStateConstructor = runCatching {
+                modelClass.getDeclaredConstructor(Application::class.java, SavedStateHandle::class.java)
+            }.getOrNull()
+            if (appAndStateConstructor != null) {
+                appAndStateConstructor.isAccessible = true
+                return appAndStateConstructor.newInstance(application, savedStateHandle)
+            }
+
+            val stateOnlyConstructor = runCatching {
+                modelClass.getDeclaredConstructor(SavedStateHandle::class.java)
+            }.getOrNull()
+            if (stateOnlyConstructor != null) {
+                stateOnlyConstructor.isAccessible = true
+                return stateOnlyConstructor.newInstance(savedStateHandle)
+            }
+
+            val noArgsConstructor = runCatching {
+                modelClass.getDeclaredConstructor()
+            }.getOrNull()
+            if (noArgsConstructor != null) {
+                noArgsConstructor.isAccessible = true
+                return noArgsConstructor.newInstance()
+            }
+
+            val applicationConstructor = runCatching {
+                modelClass.getDeclaredConstructor(Application::class.java)
+            }.getOrNull()
+            if (applicationConstructor != null) {
+                applicationConstructor.isAccessible = true
+                return applicationConstructor.newInstance(application)
+            }
+
+            throw IllegalArgumentException(
+                "${modelClass.name} must expose one of: (), (Application), (SavedStateHandle), (Application, SavedStateHandle)"
+            )
         }
     }
 }
@@ -79,6 +149,6 @@ inline fun <reified VM : ViewModel> ViewModelStoreOwner.createViewModel(
  * 扩展函数：在 ViewModelStoreOwner 中创建带 Application 的 ViewModel
  */
 inline fun <reified VM : ViewModel> ViewModelStoreOwner.createViewModelWithApplication(
-    application: android.app.Application,
-    noinline creator: (android.app.Application) -> VM
+    application: Application,
+    noinline creator: (Application) -> VM
 ): VM = ViewModelFactory.createWithApplication(this, application, creator)

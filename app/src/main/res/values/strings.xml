@@ -17,6 +17,8 @@
     <string name="toast_demo_desc">Show various Toast styles</string>
     <string name="network_demo">Network Demo</string>
     <string name="network_demo_desc">ViewModel + Repository + Network + Room Cache</string>
+    <string name="fragment_demo">Fragment Demo</string>
+    <string name="fragment_demo_desc">BaseFragment + generic ViewModel injection + recreation retention</string>
     <string name="mmkv_demo">MMKV Demo</string>
     <string name="mmkv_demo_desc">Key-value storage operations</string>
     <string name="log_demo">Log Demo</string>
@@ -34,6 +36,13 @@
     <string name="network_demo_title">Network Demo</string>
     <string name="refresh">Refresh</string>
     <string name="using_cached_data">Network unavailable, showing cached data</string>
+
+    <!-- Fragment Demo -->
+    <string name="fragment_demo_title">Fragment Demo</string>
+    <string name="fragment_demo_session_label">Session ID</string>
+    <string name="fragment_demo_count_label">Counter</string>
+    <string name="fragment_demo_increment">Increment Counter</string>
+    <string name="fragment_demo_reset">Reset Counter</string>
 
     <!-- Theme -->
     <string name="theme_settings">Theme Settings</string>

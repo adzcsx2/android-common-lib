@@ -2,6 +2,7 @@ package com.hoyn.common.lib.ui.log_demo
 
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityLogDemoBinding
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtils
@@ -16,11 +17,7 @@ import com.hoyn.common.utils.Logger
  * TAG 由 BaseActivity 自动提供
  * 启动方式：context.startActivity<LogDemoActivity>()
  */
-class LogDemoActivity : BaseActivity<ActivityLogDemoBinding>() {
-
-    override fun createBinding(): ActivityLogDemoBinding {
-        return ActivityLogDemoBinding.inflate(layoutInflater)
-    }
+class LogDemoActivity : BaseActivity<ActivityLogDemoBinding, NoViewModel>() {
 
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()

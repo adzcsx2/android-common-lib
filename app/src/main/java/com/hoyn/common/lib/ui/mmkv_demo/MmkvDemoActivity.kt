@@ -2,6 +2,7 @@ package com.hoyn.common.lib.ui.mmkv_demo
 
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityMmkvDemoBinding
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtils
@@ -16,11 +17,7 @@ import com.hoyn.common.utils.MMKVUtils
  * TAG 由 BaseActivity 自动提供
  * 启动方式：context.startActivity<MmkvDemoActivity>()
  */
-class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding>() {
-
-    override fun createBinding(): ActivityMmkvDemoBinding {
-        return ActivityMmkvDemoBinding.inflate(layoutInflater)
-    }
+class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding, NoViewModel>() {
 
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()

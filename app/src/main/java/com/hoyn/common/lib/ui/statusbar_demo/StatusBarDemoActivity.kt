@@ -3,6 +3,7 @@ package com.hoyn.common.lib.ui.statusbar_demo
 import android.graphics.Color
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityStatusBarDemoBinding
 import com.hoyn.common.ui.ext.onClick
 import com.hoyn.common.ui.toast.ToastUtils
@@ -17,11 +18,7 @@ import com.hoyn.common.ui.utils.StatusBarHelper
  * TAG 由 BaseActivity 自动提供
  * 启动方式：context.startActivity<StatusBarDemoActivity>()
  */
-class StatusBarDemoActivity : BaseActivity<ActivityStatusBarDemoBinding>() {
-
-    override fun createBinding(): ActivityStatusBarDemoBinding {
-        return ActivityStatusBarDemoBinding.inflate(layoutInflater)
-    }
+class StatusBarDemoActivity : BaseActivity<ActivityStatusBarDemoBinding, NoViewModel>() {
 
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()

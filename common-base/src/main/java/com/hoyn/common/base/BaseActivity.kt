@@ -1,7 +1,6 @@
 package com.hoyn.common.base
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -20,9 +19,20 @@ import kotlinx.coroutines.cancel
  * 提供通用的 Activity 基类功能
  * 支持协程、ViewBinding、触摸事件分发、多语言、Activity 栈管理
  */
-abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineScope by MainScope() {
+abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
+    AppCompatActivity(),
+    CoroutineScope by MainScope() {
 
     protected lateinit var binding: VB
+    protected val viewModel: VM by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelFactory.createAuto(
+            owner = this,
+            savedStateOwner = this,
+            application = application,
+            modelClass = ViewModelClassResolver.resolve(this, BaseActivity::class.java),
+            defaultArgs = intent?.extras
+        )
+    }
 
     /**
      * 自动生成的 TAG，使用类名
@@ -50,7 +60,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineSc
         ActivityStackManager.push(this)
         onCreateBefore()
         super.onCreate(savedInstanceState)
-        binding = createBinding()
+        binding = ViewBindingClassResolver.inflateActivityBinding(this, BaseActivity::class.java)
         setContentView(binding.root)
         initView(savedInstanceState)
         initData()
@@ -69,30 +79,10 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineSc
         super.onStop()
     }
 
-    @Deprecated("Use onActivityResult APIs")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        dispatchFragmentResult(requestCode, resultCode, data)
-    }
-
-    private fun dispatchFragmentResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        try {
-            getFragmentListLast()?.let {
-                if (it is IFragmentResult) {
-                    it.onFragmentResult(requestCode, resultCode, data)
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
     /**
      * 页面跳转后返回的回调
      */
     protected open fun onRestartNavigate() {}
-
-    protected abstract fun createBinding(): VB
 
     protected open fun initView(savedInstanceState: Bundle?) {}
 
@@ -179,12 +169,5 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineSc
      */
     interface OnTouchListener {
         fun onTouchEvent(ev: MotionEvent)
-    }
-
-    /**
-     * Fragment 结果回调接口
-     */
-    interface IFragmentResult {
-        fun onFragmentResult(requestCode: Int, resultCode: Int, data: Intent?)
     }
 }
