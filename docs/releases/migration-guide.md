@@ -1,5 +1,22 @@
 # Migration Guide
 
+## Version 1.0.6 Migration
+
+Update your dependency version to `1.0.6` to get the new `GlideUtils` API and rounded image support in `common-image`:
+
+```gradle
+dependencies {
+   implementation("com.github.adzcsx2.android-common-lib:common-image:1.0.6")
+   // or
+   implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.6")
+}
+```
+
+Notes:
+- `ImageLoader` has been renamed to `GlideUtils`.
+- Direct calls should migrate from `ImageLoader.load(context, model, imageView)` to `GlideUtils.load(imageView, model)`.
+- Rounded image APIs now use `radiusPx`, and extension calls can pass values such as `10.dp` from `PxUtils`.
+
 ## Version 1.0.0 Migration
 
 Since this is the initial release, there are no migration steps needed. Simply add the library to your project following the [Getting Started Guide](/docs/guides/getting-started.md).
@@ -122,6 +139,7 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
+| 1.0.6 | 24 | 36 | 2.3.10 |
 | 1.0.5 | 24 | 36 | 2.3.10 |
 | 1.0.4 | 24 | 36 | 2.3.10 |
 | 1.0.0 | 24 | 36 | 2.1.0 |

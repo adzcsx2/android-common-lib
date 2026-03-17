@@ -2,76 +2,113 @@
 
 ## Overview
 
-`common-image` provides a simple yet powerful image loading solution built on Glide, with convenient extension functions for ImageView.
+`common-image` provides a Glide-based image loading solution with lifecycle-aware APIs and convenient ImageView extension functions.
 
 ## Package: `com.hoyn.common.image`
 
-### ImageLoader
+### GlideUtils
 
 Core image loading utility based on Glide.
 
 ```kotlin
-object ImageLoader
+object GlideUtils
 ```
 
 #### Methods
 
-##### `load(context: Context, url: String?, imageView: ImageView, options: RequestOptions.() -> Unit)`
+##### `load(imageView: ImageView, url: String?, options: RequestOptions.() -> Unit)`
 
 Load an image from URL into ImageView.
 
 ```kotlin
 fun load(
-    context: Context,
-    url: String?,
     imageView: ImageView,
+    url: String?,
     options: RequestOptions.() -> Unit = {}
 )
 ```
 
 **Parameters:**
-- `context` - Context
 - `url` - Image URL
 - `imageView` - Target ImageView
 - `options` - Optional RequestOptions configuration
 
+**Notes:**
+- Requests are bound to `imageView` instead of a plain `context`.
+- This gives Glide the correct view lifecycle for recycling and cleanup.
+
 **Example:**
 ```kotlin
-ImageLoader.load(context, "https://example.com/image.jpg", imageView) {
+GlideUtils.load(imageView, "https://example.com/image.jpg") {
     placeholder(R.drawable.placeholder)
     error(R.drawable.error)
 }
 ```
 
-##### `load(context: Context, resourceId: Int, imageView: ImageView, options: RequestOptions.() -> Unit)`
+##### `load(imageView: ImageView, resourceId: Int, options: RequestOptions.() -> Unit)`
 
 Load an image from resource ID.
 
 ```kotlin
 fun load(
-    context: Context,
-    resourceId: Int,
     imageView: ImageView,
+    resourceId: Int,
     options: RequestOptions.() -> Unit = {}
 )
 ```
 
 **Example:**
 ```kotlin
-ImageLoader.load(context, R.drawable.avatar, imageView)
+GlideUtils.load(imageView, R.drawable.avatar)
 ```
 
-##### `clear(context: Context)`
+##### `loadCircle(imageView: ImageView, url: String?, options: RequestOptions.() -> Unit)`
+
+Load a circular cropped network image.
+
+```kotlin
+fun loadCircle(
+    imageView: ImageView,
+    url: String?,
+    options: RequestOptions.() -> Unit = {}
+)
+```
+
+##### `loadRounded(imageView: ImageView, url: String?, radiusPx: Int, options: RequestOptions.() -> Unit)`
+
+Load a rounded image with `CenterCrop` and `RoundedCorners`.
+
+```kotlin
+fun loadRounded(
+    imageView: ImageView,
+    url: String?,
+    radiusPx: Int,
+    options: RequestOptions.() -> Unit = {}
+)
+```
+
+**Parameters:**
+- `radiusPx` - Corner radius in pixels, usually passed as `10.dp`
+
+##### `clear(imageView: ImageView)`
+
+Clear the current Glide request bound to an ImageView.
+
+```kotlin
+fun clear(imageView: ImageView)
+```
+
+##### `clearMemory(context: Context)`
 
 Clear memory cache.
 
 ```kotlin
-fun clear(context: Context)
+fun clearMemory(context: Context)
 ```
 
 **Example:**
 ```kotlin
-ImageLoader.clear(context)
+GlideUtils.clearMemory(context)
 ```
 
 ##### `clearDiskCache(context: Context)`
@@ -84,7 +121,7 @@ fun clearDiskCache(context: Context)
 
 **Example:**
 ```kotlin
-ImageLoader.clearDiskCache(context)
+GlideUtils.clearDiskCache(context)
 ```
 
 ### Image Extensions
@@ -143,14 +180,26 @@ fun ImageView.loadCircleImage(
 avatarImageView.loadCircleImage(user.avatarUrl, R.drawable.default_avatar)
 ```
 
-#### `loadRoundedImage(url: String?, radius: Int, placeholder: Int, error: Int)`
+#### `loadCircleImage(resourceId: Int, placeholder: Int, error: Int)`
+
+Load a circular cropped image from local resources.
+
+```kotlin
+fun ImageView.loadCircleImage(
+    resourceId: Int,
+    placeholder: Int = 0,
+    error: Int = 0
+)
+```
+
+#### `loadRoundedImage(url: String?, radiusPx: Int, placeholder: Int, error: Int)`
 
 Load an image with rounded corners.
 
 ```kotlin
 fun ImageView.loadRoundedImage(
     url: String?,
-    radius: Int,
+    radiusPx: Int = 10.dp,
     placeholder: Int = 0,
     error: Int = 0
 )
@@ -158,7 +207,22 @@ fun ImageView.loadRoundedImage(
 
 **Example:**
 ```kotlin
-imageView.loadRoundedImage(url, radius = 16)
+import com.hoyn.common.utils.PxUtils.dp
+
+imageView.loadRoundedImage(url, radiusPx = 10.dp)
+```
+
+#### `loadRoundedImage(resourceId: Int, radiusPx: Int, placeholder: Int, error: Int)`
+
+Load a rounded local resource image.
+
+```kotlin
+fun ImageView.loadRoundedImage(
+    resourceId: Int,
+    radiusPx: Int = 10.dp,
+    placeholder: Int = 0,
+    error: Int = 0
+)
 ```
 
 ## Usage Examples
@@ -201,16 +265,33 @@ class ProductDetailActivity : AppCompatActivity() {
 }
 ```
 
-### Using ImageLoader Directly
+### Rounded Image with `PxUtils.dp`
 
 ```kotlin
+import com.hoyn.common.utils.PxUtils.dp
+
+class CardViewHolder {
+    fun bind(imageView: ImageView, url: String?) {
+        imageView.loadRoundedImage(
+            url = url,
+            radiusPx = 10.dp,
+            placeholder = R.drawable.placeholder,
+            error = R.drawable.image_error
+        )
+    }
+}
+```
+
+### Using GlideUtils Directly
+
+```kotlin
+import com.hoyn.common.utils.PxUtils.dp
+
 class AdvancedImageLoading {
     fun loadImageWithOptions(imageView: ImageView) {
-        ImageLoader.load(context, "https://example.com/image.jpg", imageView) {
+        GlideUtils.loadRounded(imageView, "https://example.com/image.jpg", 12.dp) {
             placeholder(R.drawable.placeholder)
             error(R.drawable.error)
-            centerCrop()
-            transform(RoundedCorners(16))
         }
     }
 }
@@ -222,17 +303,23 @@ class AdvancedImageLoading {
 class MyApplication : Application() {
     override fun onLowMemory() {
         super.onLowMemory()
-        ImageLoader.clear(this)
+        GlideUtils.clearMemory(this)
     }
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
-            ImageLoader.clear(this)
+            GlideUtils.clearMemory(this)
         }
     }
 }
 ```
+
+## Breaking Change Note
+
+- `ImageLoader` has been renamed to `GlideUtils`.
+- Direct utility calls should migrate from `ImageLoader.load(context, model, imageView)` to `GlideUtils.load(imageView, model)`.
+- Rounded corner APIs now use `radiusPx`, and callers typically pass values such as `10.dp` from `PxUtils`.
 
 ## Dependencies
 

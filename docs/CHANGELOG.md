@@ -11,8 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Room database utilities module
 - File and preferences utilities
 - Runtime permissions handling
-- Additional image transformations
 - Pagination support
+
+## [1.0.6] - 2026-03-17
+
+### Added
+- `GlideUtils` image helper with direct `ImageView`-scoped Glide requests
+- local resource overloads for circle and rounded image loading
+- minimal `common-image` instrumentation smoke tests for resource loading and cache APIs
+
+### Changed
+- renamed `ImageLoader` to `GlideUtils`
+- switched image request lifecycle binding from `Context` to `ImageView`
+- implemented rounded corner transforms with `CenterCrop` and `RoundedCorners`
+- standardized rounded corner usage around `radiusPx`, with extension defaults such as `10.dp`
+- refreshed `common-image` API documentation and migration guidance
 
 ## [1.0.5] - 2026-03-17
 
@@ -100,6 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.0.6 | 2026-03-17 | GlideUtils rename, ImageView lifecycle binding, rounded image implementation, image smoke tests |
 | 1.0.5 | 2026-03-17 | Generic base screen injection, SavedStateHandle demo, Activity Result API cleanup |
 | 1.0.4 | 2026-03-17 | Publishing fix, `common-all` aggregate module, docs refresh |
 | 1.0.0 | 2024-03-12 | Initial release with 6 core modules |
@@ -124,6 +138,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.0.6]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.6
 [1.0.5]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.5
 [1.0.4]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.4
 [1.0.0]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.0
