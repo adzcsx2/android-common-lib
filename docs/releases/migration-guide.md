@@ -1,5 +1,19 @@
 # Migration Guide
 
+## Version 1.0.9 Migration
+
+Update your dependency version to `1.0.9` to stay aligned with the latest published tag:
+
+```gradle
+dependencies {
+   implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.9")
+}
+```
+
+Notes:
+- There are no API or baseline changes from `1.0.8` in this release.
+- This release aligns published documentation and release metadata with tag `1.0.9`.
+
 ## Version 1.0.8 Migration
 
 Update your dependency version to `1.0.8` to align with the new compileSdk 34 baseline:
@@ -154,6 +168,7 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
+| 1.0.9 | 24 | 34 | 2.3.10 |
 | 1.0.8 | 24 | 34 | 2.3.10 |
 | 1.0.7 | 24 | 35 | 2.3.10 |
 | 1.0.6 | 24 | 36 | 2.3.10 |

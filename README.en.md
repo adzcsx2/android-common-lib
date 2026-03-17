@@ -84,13 +84,13 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-	implementation("com.github.adzcsx2.android-common-lib:common-core:1.0.8")
-	implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.8")
-	implementation("com.github.adzcsx2.android-common-lib:common-utils:1.0.8")
-	implementation("com.github.adzcsx2.android-common-lib:common-compose:1.0.8")
-	implementation("com.github.adzcsx2.android-common-lib:common-network:1.0.8")
-	implementation("com.github.adzcsx2.android-common-lib:common-image:1.0.8")
-	implementation("com.github.adzcsx2.android-common-lib:common-ui:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-core:1.0.9")
+	implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.9")
+	implementation("com.github.adzcsx2.android-common-lib:common-utils:1.0.9")
+	implementation("com.github.adzcsx2.android-common-lib:common-compose:1.0.9")
+	implementation("com.github.adzcsx2.android-common-lib:common-network:1.0.9")
+	implementation("com.github.adzcsx2.android-common-lib:common-image:1.0.9")
+	implementation("com.github.adzcsx2.android-common-lib:common-ui:1.0.9")
 }
 ```
 
@@ -98,7 +98,7 @@ To import all modules at once:
 
 ```kotlin
 dependencies {
-	implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.9")
 }
 ```
 

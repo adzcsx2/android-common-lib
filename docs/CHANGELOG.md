@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.0.9] - 2026-03-17
+
+### Changed
+- aligned `libVersion` with the published `1.0.9` tag
+- refreshed README and release documentation snippets to use `1.0.9` as the latest stable version
+
 ## [1.0.8] - 2026-03-17
 
 ### Changed
@@ -128,6 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.0.9 | 2026-03-17 | documentation and release metadata aligned with the published 1.0.9 tag |
 | 1.0.8 | 2026-03-17 | compileSdk and targetSdk baseline unified to 34, AndroidX and Compose stack downgraded for 34 compatibility |
 | 1.0.7 | 2026-03-17 | compileSdk and targetSdk baseline unified to 35, androidx.core downgraded to 1.16.0 |
 | 1.0.6 | 2026-03-17 | GlideUtils rename, ImageView lifecycle binding, rounded image implementation, image smoke tests |
@@ -155,6 +162,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.0.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.9
 [1.0.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.8
 [1.0.7]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.7
 [1.0.6]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.6
