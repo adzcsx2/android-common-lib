@@ -35,18 +35,36 @@ class SystemToast(context: Context) : IToast, Cloneable {
         this.contentView = layoutInflater.inflate(R.layout.layout_toast, null)
     }
 
+    /**
+     * 显示 Toast
+     *
+     * 将 Toast 添加到系统 Toast 显示队列
+     */
     override fun show() {
         SystemTN.instance().add(this)
     }
 
+    /**
+     * 显示长时长 Toast
+     */
     fun showLong() {
         this.setDuration(DURATION_LONG).show()
     }
 
+    /**
+     * 取消 Toast
+     *
+     * 取消系统 Toast 显示
+     */
     override fun cancel() {
         SystemTN.instance().cancelAll()
     }
 
+    /**
+     * 内部显示方法
+     *
+     * 使用系统 Toast 显示内容
+     */
     fun showInternal() {
         mToast = Toast(mContext)
         mToast?.view = contentView
@@ -69,8 +87,19 @@ class SystemToast(context: Context) : IToast, Cloneable {
         return this
     }
 
+    /**
+     * 获取 Toast 显示时长
+     *
+     * @return 显示时长（毫秒）
+     */
     fun getDuration(): Int = this.duration
 
+    /**
+     * 设置 Toast 显示动画
+     *
+     * @param animation 动画资源 ID
+     * @return 当前 SystemToast 实例，支持链式调用
+     */
     override fun setAnimation(animation: Int): SystemToast {
         this.animation = animation
         return this
@@ -87,19 +116,50 @@ class SystemToast(context: Context) : IToast, Cloneable {
         return setGravity(gravity, 0, 0)
     }
 
+    /**
+     * 获取 Toast 显示位置
+     *
+     * @return 显示位置，使用 Gravity 常量
+     */
     fun getGravity(): Int = this.gravity
 
+    /**
+     * 获取 X 轴偏移量
+     *
+     * @return X 轴偏移量（像素）
+     */
     fun getXOffset(): Int = this.xOffset
 
+    /**
+     * 获取 Y 轴偏移量
+     *
+     * @return Y 轴偏移量（像素）
+     */
     fun getYOffset(): Int = this.yOffset
 
+    /**
+     * 获取 Toast 优先级
+     *
+     * @return 优先级值
+     */
     fun getPriority(): Int = priority
 
+    /**
+     * 设置 Toast 优先级
+     *
+     * @param mPriority 优先级值
+     * @return 当前 SystemToast 实例，支持链式调用
+     */
     override fun setPriority(mPriority: Int): SystemToast {
         this.priority = mPriority
         return this
     }
 
+    /**
+     * 克隆当前 Toast
+     *
+     * @return 克隆后的 SystemToast 实例
+     */
     public override fun clone(): SystemToast {
         var mToast: SystemToast? = null
         try {
@@ -119,6 +179,9 @@ class SystemToast(context: Context) : IToast, Cloneable {
     }
 
     companion object {
+        /**
+         * 取消所有系统 Toast
+         */
         fun cancelAll() {
             SystemTN.instance().cancelAll()
         }

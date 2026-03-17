@@ -22,4 +22,18 @@ class BaseLiveEventTest {
     fun testSingleLiveEventUsesBaseLiveEvent() {
         assertTrue(SingleLiveEvent::class.java.superclass == BaseLiveEvent::class.java)
     }
+
+    @Test
+    fun testBaseLiveEventDoesNotExposeDeprecatedCrossProcessApis() {
+        val methodNames = BaseLiveEvent::class.java.declaredMethods.map { it.name }.toSet()
+
+        assertTrue("BaseLiveEvent should not expose postAcrossProcess", "postAcrossProcess" !in methodNames)
+        assertTrue("BaseLiveEvent should not expose postAcrossApp", "postAcrossApp" !in methodNames)
+        assertTrue("BaseLiveEvent should not expose broadcast", "broadcast" !in methodNames)
+    }
+
+    @Test
+    fun testBaseLiveEventNoLongerRequiresUnusedConstructorArgs() {
+        assertTrue(BaseLiveEvent::class.java.declaredConstructors.single().parameterCount == 0)
+    }
 }

@@ -24,6 +24,10 @@ import java.net.UnknownHostException
  * 1. 优先从网络获取数据
  * 2. 网络成功时写入 Room 缓存
  * 3. 网络失败时从 Room 缓存加载
+ *
+ * @param localDataSource 本地数据源（Room）
+ * @param api 网络接口
+ * @param ioDispatcher IO 调度器
  */
 class PostRepository internal constructor(
     private val localDataSource: PostLocalDataSource,
@@ -37,6 +41,12 @@ class PostRepository internal constructor(
         @Volatile
         private var INSTANCE: PostRepository? = null
 
+        /**
+         * 获取 PostRepository 单例实例
+         *
+         * @param context Context 实例
+         * @return PostRepository 实例
+         */
         fun getInstance(context: Context): PostRepository {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: PostRepository(
@@ -78,6 +88,10 @@ class PostRepository internal constructor(
 
     /**
      * 仅从本地获取帖子
+     *
+     * 不尝试网络请求，直接从本地缓存读取
+     *
+     * @return Result 包含帖子列表或错误信息
      */
     suspend fun getPostsFromLocal(): Result<PostLoadResult> = withContext(ioDispatcher) {
         loadCachedPostsOrFailure("无本地缓存")
@@ -92,6 +106,8 @@ class PostRepository internal constructor(
 
     /**
      * 获取缓存数量
+     *
+     * @return 缓存的帖子数量
      */
     suspend fun getCacheCount(): Int = withContext(ioDispatcher) {
         localDataSource.getCount()
@@ -99,11 +115,15 @@ class PostRepository internal constructor(
 
     /**
      * 是否有缓存
+     *
+     * @return true 表示有缓存，false 表示没有
      */
     suspend fun hasCache(): Boolean = getCacheCount() > 0
 
     /**
      * 获取上次更新时间
+     *
+     * @return 最后一次缓存更新的时间戳（毫秒）
      */
     suspend fun getLastUpdateTime(): Long = withContext(ioDispatcher) {
         localDataSource.getLatestCacheTime() ?: 0L

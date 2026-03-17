@@ -11,7 +11,23 @@ Android 模块化公共库，提供常用的工具类、网络请求、图片加
 | 项目 | 版本 |
 |------|------|
 | Android Studio | Panda 2 \| 2025.3.2 |
-| JVM | JetBrains Runtime 21.0.9 |
+| Android Studio Runtime | JetBrains Runtime 21.0.9 |
+| Kotlin | 2.3.10 |
+| Kotlin JVM target | 11 |
+| compileSdk | 34 |
+| minSdk | 24 |
+| targetSdk | 34 |
+
+> 依赖兼容性说明
+>
+> 通过 JitPack 直接引用已发布产物时，消费者项目除了添加依赖外，还需要满足以下最低要求：
+>
+> - Kotlin Gradle Plugin 必须对齐到 `2.3.10`
+> - Kotlin/JVM 编译目标必须为 `11`
+> - `compileSdk` 需要大于等于 `34`
+> - `minSdk` 为 `24`
+>
+> 如果只升级 Kotlin 到 `2.3.10`，但消费者项目仍使用更低的 JVM target，依然可能在编译期出现 Kotlin 分析异常或 metadata 兼容问题。源码复制到业务工程后可以编译，通过的是“由业务工程重新编译源码”这条路径；直接依赖 AAR 时，必须以发布产物的 Kotlin 编译参数为准。
 
 ## Documentation
 
@@ -376,9 +392,9 @@ dependencies {
 
 ## 版本信息
 
-- compileSdk: 36
+- compileSdk: 34
 - minSdk: 24
-- targetSdk: 36
+- targetSdk: 34
 - Kotlin: 2.3.10
 - AGP: 9.1.0
 

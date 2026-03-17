@@ -55,6 +55,14 @@ object DeviceHelper {
     @SuppressLint("ConstantLocale")
     private val BRAND = Build.BRAND.lowercase(Locale.getDefault())
 
+    /**
+     * 判断是否为平板设备的内部实现
+     *
+     * 通过检查屏幕布局配置中的尺寸位来判断
+     *
+     * @param context Context 实例
+     * @return true 表示是平板设备，false 表示不是
+     */
     private fun _isTablet(context: Context): Boolean {
         return context.resources
             .configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK >=
@@ -63,6 +71,11 @@ object DeviceHelper {
 
     /**
      * 判断是否为平板设备
+     *
+     * 使用缓存机制提高性能
+     *
+     * @param context Context 实例
+     * @return true 表示是平板设备，false 表示不是
      */
     fun isTablet(context: Context): Boolean {
         if (sIsTabletChecked) {
@@ -74,25 +87,59 @@ object DeviceHelper {
     }
 
     /**
-     * 判断是否是flyme系统
+     * 判断是否是 Flyme 系统
+     *
+     * @return true 表示是魅族 Flyme 系统，false 表示不是
      */
     val isFlyme: Boolean = !TextUtils.isEmpty(sFlymeVersionName) && sFlymeVersionName!!.contains(FLYME)
 
     /**
-     * 判断是否是MIUI系统
+     * 判断是否是 MIUI 系统
+     *
+     * @return true 表示是小米 MIUI 系统，false 表示不是
      */
     val isMIUI: Boolean = !TextUtils.isEmpty(sMiuiVersionName)
 
+    /**
+     * 判断是否是 MIUI V5 版本
+     *
+     * @return true 表示是 MIUI V5，false 表示不是
+     */
     val isMIUIV5: Boolean = "v5" == sMiuiVersionName
 
+    /**
+     * 判断是否是 MIUI V6 版本
+     *
+     * @return true 表示是 MIUI V6，false 表示不是
+     */
     val isMIUIV6: Boolean = "v6" == sMiuiVersionName
 
+    /**
+     * 判断是否是 MIUI V7 版本
+     *
+     * @return true 表示是 MIUI V7，false 表示不是
+     */
     val isMIUIV7: Boolean = "v7" == sMiuiVersionName
 
+    /**
+     * 判断是否是 MIUI V8 版本
+     *
+     * @return true 表示是 MIUI V8，false 表示不是
+     */
     val isMIUIV8: Boolean = "v8" == sMiuiVersionName
 
+    /**
+     * 判断是否是 MIUI V9 版本
+     *
+     * @return true 表示是 MIUI V9，false 表示不是
+     */
     val isMIUIV9: Boolean = "v9" == sMiuiVersionName
 
+    /**
+     * 判断是否是低于 V8 版本的 Flyme 系统
+     *
+     * @return true 表示是 Flyme 且版本低于 8，false 表示不是
+     */
     val isFlymeLowerThan8: Boolean
         get() {
             var isLower = false
@@ -114,6 +161,11 @@ object DeviceHelper {
             return isMeizu && isLower
         }
 
+    /**
+     * 判断是否是高于 5.2.4 版本的 Flyme 系统
+     *
+     * @return true 表示是 Flyme 且版本高于 5.2.4，false 表示不是
+     */
     val isFlymeVersionHigher5_2_4: Boolean
         get() {
             var isHigher = true
@@ -146,38 +198,83 @@ object DeviceHelper {
             return isMeizu && isHigher
         }
 
+    /**
+     * 判断是否为魅族设备
+     *
+     * @return true 表示是魅族设备，false 表示不是
+     */
     val isMeizu: Boolean = isPhone(MEIZUBOARD) || isFlyme
 
     /**
-     * 判断是否为小米
-     * https://dev.mi.com/doc/?p=254
+     * 判断是否为小米设备
+     *
+     * 参考文档: https://dev.mi.com/doc/?p=254
+     *
+     * @return true 表示是小米设备，false 表示不是
      */
     @SuppressLint("ConstantLocale")
     val isXiaomi: Boolean = Build.MANUFACTURER.lowercase(Locale.getDefault()) == "xiaomi"
 
+    /**
+     * 判断是否为 vivo 设备
+     *
+     * @return true 表示是 vivo 设备，false 表示不是
+     */
     val isVivo: Boolean = BRAND.contains("vivo") || BRAND.contains("bbk")
 
+    /**
+     * 判断是否为 OPPO 设备
+     *
+     * @return true 表示是 OPPO 设备，false 表示不是
+     */
     val isOppo: Boolean = BRAND.contains("oppo")
 
+    /**
+     * 判断是否为华为/荣耀设备
+     *
+     * @return true 表示是华为或荣耀设备，false 表示不是
+     */
     val isHuawei: Boolean = BRAND.contains("huawei") || BRAND.contains("honor")
 
+    /**
+     * 判断是否为 Essential Phone
+     *
+     * @return true 表示是 Essential Phone，false 表示不是
+     */
     val isEssentialPhone: Boolean = BRAND.contains("essential")
 
     /**
-     * 判断是否为 ZUK Z1 和 ZTK C2016。
-     * 两台设备的系统虽然为 android 6.0，但不支持状态栏icon颜色改变，因此经常需要对它们进行额外判断。
+     * 判断是否为 ZUK Z1 设备
+     *
+     * ZUK Z1 虽然系统为 Android 6.0，但不支持状态栏图标颜色改变
+     * 因此经常需要对它们进行额外判断
+     *
+     * @return true 表示是 ZUK Z1，false 表示不是
      */
     fun isZUKZ1(): Boolean {
         val board = Build.MODEL
         return board != null && board.lowercase(Locale.getDefault()).contains(ZUKZ1)
     }
 
+    /**
+     * 判断是否为 ZTE C2016 设备
+     *
+     * ZTE C2016 虽然系统为 Android 6.0，但不支持状态栏图标颜色改变
+     *
+     * @return true 表示是 ZTE C2016，false 表示不是
+     */
     val isZTKC2016: Boolean
         get() {
             val board = Build.MODEL
             return board != null && board.lowercase(Locale.getDefault()).contains(ZTEC2016)
         }
 
+    /**
+     * 判断设备主板是否在指定列表中
+     *
+     * @param boards 主板名称数组
+     * @return true 表示主板名称在列表中，false 表示不在
+     */
     private fun isPhone(boards: Array<String>): Boolean {
         val board = Build.BOARD ?: return false
         for (board1 in boards) {
@@ -189,7 +286,14 @@ object DeviceHelper {
     }
 
     /**
-     * 判断悬浮窗权限（目前主要用户魅族与小米的检测）。
+     * 判断是否有悬浮窗权限
+     *
+     * 目前主要用于魅族与小米的检测
+     * 对于 API 19 及以上使用 AppOpsManager 检查
+     * 对于 API 19 以下通过检查应用标志位判断
+     *
+     * @param context Context 实例
+     * @return true 表示有悬浮窗权限，false 表示没有
      */
     fun isFloatWindowOpAllowed(context: Context): Boolean {
         val version = Build.VERSION.SDK_INT
@@ -205,6 +309,15 @@ object DeviceHelper {
         }
     }
 
+    /**
+     * 检查 AppOps 操作是否允许
+     *
+     * 通过反射调用 AppOpsManager.checkOp 方法
+     *
+     * @param context Context 实例
+     * @param op 操作代码，24 表示悬浮窗操作
+     * @return true 表示操作被允许，false 表示不允许
+     */
     @TargetApi(19)
     private fun checkOp(context: Context, op: Int): Boolean {
         val version = Build.VERSION.SDK_INT
@@ -229,6 +342,16 @@ object DeviceHelper {
         return false
     }
 
+    /**
+     * 获取系统属性的小写名称
+     *
+     * 从 Properties 或通过反射获取系统属性
+     *
+     * @param p Properties 对象
+     * @param get 反射方法对象
+     * @param key 属性键名
+     * @return 属性值的小写字符串，获取失败返回 null
+     */
     private fun getLowerCaseName(
         p: Properties,
         get: Method,

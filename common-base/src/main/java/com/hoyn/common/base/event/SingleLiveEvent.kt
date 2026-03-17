@@ -4,7 +4,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.Observer
-import java.util.concurrent.atomic.AtomicLong
 import kotlin.jvm.JvmName
 
 /**
@@ -17,24 +16,10 @@ import kotlin.jvm.JvmName
  */
 class SingleLiveEvent<T>(
     private val emptyValueProvider: (() -> T)? = null
-) : BaseLiveEvent<SingleLiveEvent.EventPayload<T>>(
-    tag = nextTag(),
-    eventClass = payloadClass()
-) {
+) : BaseLiveEvent<SingleLiveEvent.EventPayload<T>>() {
 
     private val observerBindings = LinkedHashMap<Observer<T>, ObserverBinding<T>>()
     private val lock = Any()
-
-    companion object {
-        private val nextId = AtomicLong(0L)
-
-        @Suppress("UNCHECKED_CAST")
-        private fun <T> payloadClass(): Class<EventPayload<T>> {
-            return EventPayload::class.java as Class<EventPayload<T>>
-        }
-
-        private fun nextTag(): String = "single_live_event_${nextId.incrementAndGet()}"
-    }
 
     /**
      * 发送事件
@@ -104,11 +89,17 @@ class SingleLiveEvent<T>(
         return observer
     }
 
+    /**
+     * 根据值回调创建对外暴露的观察者实例。
+     */
     @JvmName("createValueObserver")
     fun createObserver(callback: (T) -> Unit): Observer<T> {
         return Observer { value -> callback(value) }
     }
 
+    /**
+     * 根据对外观察者移除内部适配观察者，并清理绑定关系。
+     */
     @JvmName("removeValueObserver")
     fun removeObserver(observer: Observer<T>) {
         runOnMainThreadAndWait {
@@ -120,6 +111,9 @@ class SingleLiveEvent<T>(
         }
     }
 
+    /**
+     * 保存对外观察者与内部适配观察者之间的绑定关系。
+     */
     private fun storeBinding(
         observer: Observer<T>,
         adapter: Observer<EventPayload<T>>,
@@ -152,22 +146,34 @@ class SingleLiveEvent<T>(
         }
     }
 
+    /**
+     * 在宿主销毁时清除对外观察者的绑定缓存。
+     */
     private fun clearBinding(observer: Observer<T>) {
         synchronized(lock) {
             observerBindings.remove(observer)
         }
     }
 
+    /**
+     * 移除为绑定关系附加的生命周期清理监听。
+     */
     private fun removeCleanupObserver(binding: ObserverBinding<T>) {
         val lifecycleOwner = binding.lifecycleOwner ?: return
         val cleanupObserver = binding.cleanupObserver ?: return
         lifecycleOwner.lifecycle.removeObserver(cleanupObserver)
     }
 
+    /**
+     * 一次性事件的值包装体，用于复用 BaseLiveEvent 的泛型分发能力。
+     */
     data class EventPayload<T>(
         val value: T
     )
 
+    /**
+     * 对外观察者与内部适配观察者之间的绑定记录。
+     */
     private data class ObserverBinding<T>(
         val adapter: Observer<EventPayload<T>>,
         val lifecycleOwner: LifecycleOwner?,

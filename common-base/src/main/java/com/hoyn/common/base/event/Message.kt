@@ -1,4 +1,4 @@
-package com.hoyn.common.core
+package com.hoyn.common.base.event
 
 /**
  * 通用消息事件载体

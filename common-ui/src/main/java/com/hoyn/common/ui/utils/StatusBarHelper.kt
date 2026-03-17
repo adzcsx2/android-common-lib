@@ -33,7 +33,9 @@ import java.lang.reflect.Field
 
 /**
  * 状态栏工具类
+ *
  * 支持沉浸式状态栏、状态栏字体颜色设置
+ * 兼容 MIUI、Flyme 和 Android 6.0+ 原生方案
  */
 object StatusBarHelper {
     private const val STATUS_BAR_TYPE_DEFAULT = 0
@@ -50,14 +52,35 @@ object StatusBarHelper {
     private var mStatusBarType = STATUS_BAR_TYPE_DEFAULT
     private var sTransparentValue: Int? = null
 
+    /**
+     * 设置 Activity 为半透明状态栏模式
+     *
+     * 使用默认的半透明颜色
+     *
+     * @param activity 要设置的 Activity
+     */
     fun translucent(activity: Activity) {
         translucent(activity.window)
     }
 
+    /**
+     * 设置 Window 为半透明状态栏模式
+     *
+     * 使用默认的半透明颜色
+     *
+     * @param window 要设置的 Window
+     */
     fun translucent(window: Window) {
         translucent(window, 0x40000000)
     }
 
+    /**
+     * 判断设备是否支持半透明状态栏
+     *
+     * Essential Phone 在 API 26 之前不支持
+     *
+     * @return true 表示支持，false 表示不支持
+     */
     private fun supportTranslucent(): Boolean {
         return !(DeviceHelper.isEssentialPhone && Build.VERSION.SDK_INT < 26)
     }
@@ -70,6 +93,14 @@ object StatusBarHelper {
         translucent(activity.window, colorOn5x)
     }
 
+    /**
+     * 设置沉浸式状态栏
+     *
+     * 支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android
+     *
+     * @param window 要设置的 Window
+     * @param colorOn5x Android 5.0+ 使用的颜色值
+     */
     @TargetApi(19)
     fun translucent(window: Window, @ColorInt colorOn5x: Int) {
         if (!supportTranslucent()) return
@@ -91,6 +122,13 @@ object StatusBarHelper {
         }
     }
 
+    /**
+     * 处理刘海屏的显示模式
+     *
+     * 设置内容延伸到刘海区域
+     *
+     * @param window Window 实例
+     */
     @TargetApi(28)
     private fun handleDisplayCutoutMode(window: Window) {
         val decorView = window.decorView
@@ -107,6 +145,14 @@ object StatusBarHelper {
         }
     }
 
+    /**
+     * 实际处理刘海屏的显示模式
+     *
+     * 如果存在 DisplayCutout，则设置布局延伸到刘海区域
+     *
+     * @param window Window 实例
+     * @param decorView DecorView 实例
+     */
     @TargetApi(28)
     private fun realHandleDisplayCutoutMode(window: Window, decorView: View) {
         if (decorView.rootWindowInsets?.displayCutout != null) {
@@ -117,7 +163,15 @@ object StatusBarHelper {
     }
 
     /**
-     * 设置状态栏黑色字体图标
+     * 设置状态栏为浅色模式（黑色字体图标）
+     *
+     * 自动检测设备类型并选择合适的实现方案：
+     * - MIUI V5-V8: 使用 MIUI 方案
+     * - Flyme: 使用 Flyme 方案
+     * - Android 6.0+: 使用原生方案
+     *
+     * @param activity Activity 实例
+     * @return true 表示设置成功，false 表示失败
      */
     fun setStatusBarLightMode(activity: Activity?): Boolean {
         if (activity == null) return false
@@ -141,6 +195,13 @@ object StatusBarHelper {
         return false
     }
 
+    /**
+     * 根据指定的状态栏类型设置浅色模式
+     *
+     * @param activity Activity 实例
+     * @param type 状态栏类型（MIUI/Flyme/Android6）
+     * @return true 表示设置成功，false 表示失败
+     */
     private fun setStatusBarLightMode(activity: Activity, @StatusBarType type: Int): Boolean {
         return when (type) {
             STATUS_BAR_TYPE_MI -> setMISetStatusBarLightMode(activity.window, true)
@@ -151,7 +212,12 @@ object StatusBarHelper {
     }
 
     /**
-     * 设置状态栏白色字体图标
+     * 设置状态栏为深色模式（白色字体图标）
+     *
+     * 根据之前检测的状态栏类型选择相应的方案
+     *
+     * @param activity Activity 实例
+     * @return true 表示设置成功，false 表示失败
      */
     fun setStatusBarDarkMode(activity: Activity?): Boolean {
         if (activity == null) return false
@@ -165,6 +231,15 @@ object StatusBarHelper {
         }
     }
 
+    /**
+     * 改变状态栏模式时保留原有的 SystemUiFlag
+     *
+     * 防止设置状态栏模式时影响其他全屏等标志
+     *
+     * @param window Window 实例
+     * @param out 新的 systemUiVisibility 值
+     * @return 保留原有 flag 后的值
+     */
     @TargetApi(23)
     private fun changeStatusBarModeRetainFlag(window: Window, out: Int): Int {
         var result = out
@@ -176,6 +251,14 @@ object StatusBarHelper {
         return result
     }
 
+    /**
+     * 保留指定的 SystemUiFlag
+     *
+     * @param window Window 实例
+     * @param out 当前的 systemUiVisibility 值
+     * @param type 要保留的 flag 类型
+     * @return 保留了指定 flag 后的值
+     */
     private fun retainSystemUiFlag(window: Window, out: Int, type: Int): Int {
         var result = out
         val now = window.decorView.systemUiVisibility
@@ -185,6 +268,13 @@ object StatusBarHelper {
         return result
     }
 
+    /**
+     * 使用 Android 6.0+ 原生方案设置状态栏模式
+     *
+     * @param window Window 实例
+     * @param light true 表示浅色模式（黑色图标），false 表示深色模式（白色图标）
+     * @return true 表示设置成功
+     */
     @TargetApi(23)
     private fun setAndroid6SetStatusBarLightMode(window: Window, light: Boolean): Boolean {
         val decorView = window.decorView
@@ -197,6 +287,15 @@ object StatusBarHelper {
         return true
     }
 
+    /**
+     * 使用 MIUI 方案设置状态栏模式
+     *
+     * 通过反射调用 MiuiWindowManager.LayoutParams 的 EXTRA_FLAG_STATUS_BAR_DARK_MODE
+     *
+     * @param window Window 实例
+     * @param light true 表示浅色模式（黑色图标），false 表示深色模式（白色图标）
+     * @return true 表示设置成功，false 表示失败
+     */
     @SuppressLint("PrivateApi")
     fun setMISetStatusBarLightMode(window: Window?, light: Boolean): Boolean {
         var result = false
@@ -220,6 +319,15 @@ object StatusBarHelper {
     private val isMIUICustomStatusBarLightModeImpl: Boolean =
         DeviceHelper.isMIUIV5 || DeviceHelper.isMIUIV6 || DeviceHelper.isMIUIV7 || DeviceHelper.isMIUIV8
 
+    /**
+     * 使用 Flyme 方案设置状态栏模式
+     *
+     * 通过反射设置 WindowManager.LayoutParams 的 MEIZU_FLAG_DARK_STATUS_BAR_ICON
+     *
+     * @param window Window 实例
+     * @param light true 表示浅色模式（黑色图标），false 表示深色模式（白色图标）
+     * @return true 表示设置成功，false 表示失败
+     */
     private fun setFlSetStatusBarLightMode(window: Window?, light: Boolean): Boolean {
         var result = false
         if (window != null) {
@@ -241,6 +349,12 @@ object StatusBarHelper {
         return result
     }
 
+    /**
+     * 判断 Activity 是否为全屏模式
+     *
+     * @param activity Activity 实例
+     * @return true 表示全屏，false 表示非全屏
+     */
     fun isFullScreen(activity: Activity): Boolean {
         return try {
             val attrs = activity.window.attributes
@@ -251,6 +365,14 @@ object StatusBarHelper {
         }
     }
 
+    /**
+     * 获取系统状态栏透明 API 的标志值
+     *
+     * 用于 Samsung TouchWiz 和 Sony 等定制系统的特殊 API
+     *
+     * @param context Context 实例
+     * @return 透明标志值，不支持则返回 null
+     */
     fun getStatusBarAPITransparentValue(context: Context): Int? {
         if (sTransparentValue != null) return sTransparentValue
 
@@ -275,10 +397,22 @@ object StatusBarHelper {
         return sTransparentValue
     }
 
+    /**
+     * 判断是否支持移植 Android 6.0 状态栏方案
+     *
+     * ZUK Z1 和 ZTE C2016 不支持
+     *
+     * @return true 表示支持，false 表示不支持
+     */
     private fun supportTransplantStatusBar6(): Boolean = !(DeviceHelper.isZUKZ1() || DeviceHelper.isZTKC2016)
 
     /**
      * 获取状态栏的高度
+     *
+     * 使用缓存机制，只计算一次
+     *
+     * @param context Context 实例
+     * @return 状态栏高度（px）
      */
     fun getStatusBarHeight(context: Context): Int {
         if (mStatusBarHeight == -1) {
@@ -287,6 +421,13 @@ object StatusBarHelper {
         return mStatusBarHeight
     }
 
+    /**
+     * 初始化状态栏高度
+     *
+     * 通过反射获取系统资源，魅族设备有特殊处理
+     *
+     * @param context Context 实例
+     */
     @SuppressLint("PrivateApi")
     private fun initStatusBarHeight(context: Context) {
         var field: Field? = null
@@ -322,10 +463,24 @@ object StatusBarHelper {
         }
     }
 
+    /**
+     * 设置虚拟屏幕密度
+     *
+     * 用于自定义状态栏高度计算
+     *
+     * @param density 虚拟密度值
+     */
     fun setVirtualDensity(density: Float) {
         sVirtualDensity = density
     }
 
+    /**
+     * 设置虚拟屏幕 DPI
+     *
+     * 用于自定义状态栏高度计算
+     *
+     * @param densityDpi 虚拟 DPI 值
+     */
     fun setVirtualDensityDpi(densityDpi: Float) {
         sVirtualDensityDpi = densityDpi
     }

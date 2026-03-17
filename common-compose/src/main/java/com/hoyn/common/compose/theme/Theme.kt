@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * 亮色配色方案
+ *
+ * 定义 Material3 亮色主题的颜色配置
  */
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF6200EE),
@@ -24,6 +26,8 @@ private val LightColorScheme = lightColorScheme(
 
 /**
  * 暗色配色方案
+ *
+ * 定义 Material3 暗色主题的颜色配置
  */
 private val DarkColorScheme = darkColorScheme(
     primary = Color(0xFFBB86FC),
@@ -42,6 +46,9 @@ private val DarkColorScheme = darkColorScheme(
  *
  * 提供 Material3 主题配置
  * 支持亮色/暗色模式切换
+ *
+ * @param darkTheme 是否使用暗色主题，默认跟随系统
+ * @param content 主题内容
  */
 @Composable
 fun AppTheme(

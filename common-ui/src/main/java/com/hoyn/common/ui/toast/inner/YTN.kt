@@ -43,6 +43,11 @@ class YTN private constructor() {
         }
     }
 
+    /**
+     * 添加 Toast 到队列
+     *
+     * @param toast 要显示的 BaseToast 实例
+     */
     fun add(toast: BaseToast) {
         mQueue.add(toast)
         if (mCurrentToast == null) {
@@ -50,6 +55,11 @@ class YTN private constructor() {
         }
     }
 
+    /**
+     * 调度下一个 Toast 显示
+     *
+     * 从队列中取出下一个 Toast 并显示，设置延迟后继续调度
+     */
     private fun scheduleNext() {
         if (mQueue.isEmpty()) {
             mCurrentToast = null
@@ -69,6 +79,14 @@ class YTN private constructor() {
         }
     }
 
+    /**
+     * 显示 Toast
+     *
+     * 通过 WindowManager 添加或更新 Toast 视图
+     * 发生异常时降级使用系统 Toast
+     *
+     * @param toast 要显示的 BaseToast 实例
+     */
     private fun showToast(toast: BaseToast) {
         try {
             val context = toast.getContext() ?: return
@@ -97,6 +115,11 @@ class YTN private constructor() {
         }
     }
 
+    /**
+     * 取消所有 Toast
+     *
+     * 清空队列并移除当前显示的 Toast 视图
+     */
     fun cancelAll() {
         mHandler.removeCallbacksAndMessages(null)
         mCurrentToast?.let {
@@ -111,10 +134,20 @@ class YTN private constructor() {
         mCurrentToast = null
     }
 
+    /**
+     * 添加 Activity Toast 到管理列表
+     *
+     * @param toast ActivityToast 实例
+     */
     fun addActivityToast(toast: ActivityToast) {
         mActivityToasts.add(WeakReference(toast))
     }
 
+    /**
+     * 取消指定 Activity 的所有 Toast
+     *
+     * @param mActivity 要取消 Toast 的 Activity
+     */
     fun cancelActivityToast(mActivity: Activity) {
         val iterator = mActivityToasts.iterator()
         while (iterator.hasNext()) {

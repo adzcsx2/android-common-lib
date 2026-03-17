@@ -2,6 +2,8 @@ package com.hoyn.common.network.exception
 
 /**
  * 错误码枚举
+ *
+ * 定义网络请求中可能出现的各种错误类型
  */
 enum class ERROR(private val code: String) {
     /**
@@ -54,6 +56,17 @@ enum class ERROR(private val code: String) {
      */
     UNAUTHORIZED("000009");
 
+    /**
+     * 获取错误码
+     *
+     * @return 错误码字符串
+     */
     fun getKey(): String = code
+
+    /**
+     * 获取错误名称
+     *
+     * @return 错误枚举的名称
+     */
     fun getValue(): String = name
 }

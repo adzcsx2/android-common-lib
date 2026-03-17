@@ -28,6 +28,11 @@ class SystemTN private constructor() {
         }
     }
 
+    /**
+     * 添加 Toast 到队列
+     *
+     * @param toast 要显示的 SystemToast 实例
+     */
     fun add(toast: SystemToast) {
         mQueue.add(toast)
         if (mCurrentToast == null) {
@@ -35,6 +40,11 @@ class SystemTN private constructor() {
         }
     }
 
+    /**
+     * 调度下一个 Toast 显示
+     *
+     * 从队列中取出下一个 Toast 并显示，设置延迟后继续调度
+     */
     private fun scheduleNext() {
         if (mQueue.isEmpty()) {
             mCurrentToast = null
@@ -54,6 +64,11 @@ class SystemTN private constructor() {
         }
     }
 
+    /**
+     * 取消所有 Toast
+     *
+     * 清空队列并取消当前显示的 Toast
+     */
     fun cancelAll() {
         mHandler.removeCallbacksAndMessages(null)
         mCurrentToast?.cancel()

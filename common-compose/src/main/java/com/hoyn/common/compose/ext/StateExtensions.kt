@@ -8,10 +8,16 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
  * 观察 UIState 的扩展函数
+ *
+ * 提供 UIState 与 Compose 的集成支持
  */
 
 /**
  * 将 StateFlow<UIState<T>> 转换为 Compose State（带生命周期感知）
+ *
+ * 自动处理生命周期，在视图停止时停止收集
+ *
+ * @return 当前的 UIState 值
  */
 @Composable
 fun <T> StateFlow<UIState<T>>.collectAsUIState(): UIState<T> {

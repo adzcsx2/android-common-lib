@@ -12,7 +12,9 @@ import com.hoyn.common.utils.PxUtils.dp
 /**
  * 加载网络图片。
  *
- * [placeholder] 和 [error] 为可选占位图与错误图资源。
+ * @param url 图片 URL 地址
+ * @param placeholder 可选占位图资源
+ * @param error 可选错误图资源
  */
 fun ImageView.loadImage(
     url: String?,
@@ -29,7 +31,9 @@ fun ImageView.loadImage(
 /**
  * 加载本地资源图片。
  *
- * [placeholder] 和 [error] 为可选占位图与错误图资源。
+ * @param resourceId 本地资源 ID
+ * @param placeholder 可选占位图资源
+ * @param error 可选错误图资源
  */
 fun ImageView.loadImage(
     resourceId: Int,
@@ -46,7 +50,9 @@ fun ImageView.loadImage(
 /**
  * 加载圆形网络图片。
  *
- * [placeholder] 和 [error] 为可选占位图与错误图资源。
+ * @param url 图片 URL 地址
+ * @param placeholder 可选占位图资源
+ * @param error 可选错误图资源
  */
 fun ImageView.loadCircleImage(
     url: String?,
@@ -63,7 +69,9 @@ fun ImageView.loadCircleImage(
 /**
  * 加载圆形本地资源图片。
  *
- * [placeholder] 和 [error] 为可选占位图与错误图资源。
+ * @param resourceId 本地资源 ID
+ * @param placeholder 可选占位图资源
+ * @param error 可选错误图资源
  */
 fun ImageView.loadCircleImage(
     resourceId: Int,
@@ -80,7 +88,10 @@ fun ImageView.loadCircleImage(
 /**
  * 加载圆角网络图片。
  *
- * [radiusPx] 为像素值，通常直接传入 `10.dp`。
+ * @param url 图片 URL 地址
+ * @param radiusPx 圆角半径（像素值）
+ * @param placeholder 可选占位图资源
+ * @param error 可选错误图资源
  */
 fun ImageView.loadRoundedImage(
     url: String?,
@@ -98,7 +109,10 @@ fun ImageView.loadRoundedImage(
 /**
  * 加载圆角本地资源图片。
  *
- * [radiusPx] 为像素值，通常直接传入 `10.dp`。
+ * @param resourceId 本地资源 ID
+ * @param radiusPx 圆角半径（像素值）
+ * @param placeholder 可选占位图资源
+ * @param error 可选错误图资源
  */
 fun ImageView.loadRoundedImage(
     resourceId: Int,
@@ -113,6 +127,12 @@ fun ImageView.loadRoundedImage(
     }
 }
 
+/**
+ * 应用通用的 Drawable 配置
+ *
+ * @param placeholder 占位图资源 ID
+ * @param error 错误图资源 ID
+ */
 private fun RequestOptions.applyCommonDrawableOptions(
     @DrawableRes placeholder: Int,
     @DrawableRes error: Int

@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import com.hoyn.common.base.BaseViewModel
 import com.hoyn.common.base.event.GlobalLiveEvent
-import com.hoyn.common.core.Message
+import com.hoyn.common.base.event.Message
 import com.hoyn.common.core.ThrowableBean
 
 /**

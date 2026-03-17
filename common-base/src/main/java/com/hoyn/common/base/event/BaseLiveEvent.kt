@@ -14,10 +14,7 @@ import java.util.concurrent.atomic.AtomicReference
  *
  * 封装应用内 LiveEvent 的通用操作，支持生命周期自动解绑、手动解绑、粘性消息和多线程安全派发。
  */
-abstract class BaseLiveEvent<T : Any>(
-    private val tag: String,
-    private val eventClass: Class<T>
-) {
+abstract class BaseLiveEvent<T : Any> {
     private val mainHandler = Handler(Looper.getMainLooper())
     private val lock = Any()
     private val observerStates = LinkedHashMap<Observer<T>, ObserverState<T>>()
@@ -28,16 +25,25 @@ abstract class BaseLiveEvent<T : Any>(
     @Volatile
     private var nextVersion: Long = 0L
 
+    /**
+     * 立即在主线程分发事件，并等待分发流程完成。
+     */
     protected fun post(event: T) {
         runOnMainThreadAndWait {
             dispatch(event)
         }
     }
 
+    /**
+     * 在指定延迟后分发事件。
+     */
     protected fun postDelay(event: T, delay: Long) {
         mainHandler.postDelayed({ dispatch(event) }, delay)
     }
 
+    /**
+     * 当发送方仍处于激活状态时，在指定延迟后分发事件。
+     */
     protected fun postDelay(sender: LifecycleOwner, event: T, delay: Long) {
         mainHandler.postDelayed({
             if (sender.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
@@ -46,10 +52,16 @@ abstract class BaseLiveEvent<T : Any>(
         }, delay)
     }
 
+    /**
+     * 按调用顺序在主线程分发事件。
+     */
     protected fun postOrderly(event: T) {
         runOnMainThreadAndWait { dispatch(event) }
     }
 
+    /**
+     * 注册普通观察者，宿主销毁时自动解绑。
+     */
     protected fun observe(
         lifecycleOwner: LifecycleOwner,
         callback: (event: T) -> Unit
@@ -64,6 +76,9 @@ abstract class BaseLiveEvent<T : Any>(
         return observer
     }
 
+    /**
+     * 注册仅在 STARTED 及以上状态接收事件的观察者。
+     */
     protected fun observeWithLifecycle(
         lifecycleOwner: LifecycleOwner,
         callback: (event: T) -> Unit
@@ -78,10 +93,16 @@ abstract class BaseLiveEvent<T : Any>(
         return observer
     }
 
+    /**
+     * 根据回调创建 Lifecycle Observer 包装。
+     */
     protected fun createObserver(callback: (event: T) -> Unit): Observer<T> {
         return Observer { event -> callback.invoke(event) }
     }
 
+    /**
+     * 注册不受生命周期管理的普通观察者。
+     */
     protected fun observeForever(observer: Observer<T>) {
         registerObserver(
             observer = observer,
@@ -91,12 +112,18 @@ abstract class BaseLiveEvent<T : Any>(
         )
     }
 
+    /**
+     * 手动移除已注册的观察者。
+     */
     protected fun removeObserver(observer: Observer<T>) {
         runOnMainThreadAndWait {
             removeObserverInternal(observer)
         }
     }
 
+    /**
+     * 注册粘性观察者，必要时会立即收到最近一次事件。
+     */
     protected fun observeSticky(
         lifecycleOwner: LifecycleOwner,
         callback: (event: T) -> Unit
@@ -111,6 +138,9 @@ abstract class BaseLiveEvent<T : Any>(
         return observer
     }
 
+    /**
+     * 注册仅在 STARTED 及以上状态接收粘性事件的观察者。
+     */
     protected fun observeStickyWithLifecycle(
         lifecycleOwner: LifecycleOwner,
         callback: (event: T) -> Unit
@@ -125,6 +155,9 @@ abstract class BaseLiveEvent<T : Any>(
         return observer
     }
 
+    /**
+     * 注册不受生命周期管理的粘性观察者。
+     */
     protected fun observeStickyForever(observer: Observer<T>) {
         registerObserver(
             observer = observer,
@@ -134,18 +167,9 @@ abstract class BaseLiveEvent<T : Any>(
         )
     }
 
-    protected fun postAcrossProcess(event: T) {
-        post(event)
-    }
-
-    protected fun postAcrossApp(event: T) {
-        post(event)
-    }
-
-    protected fun broadcast(event: T, foreground: Boolean = false, onlyInApp: Boolean = false) {
-        post(event)
-    }
-
+    /**
+     * 统一完成观察者注册，并根据配置补发粘性事件。
+     */
     private fun registerObserver(
         observer: Observer<T>,
         lifecycleOwner: LifecycleOwner?,
@@ -189,6 +213,9 @@ abstract class BaseLiveEvent<T : Any>(
         }
     }
 
+    /**
+     * 生成带版本号的事件包装并分发给当前所有观察者。
+     */
     private fun dispatch(event: T) {
         val envelope = synchronized(lock) {
             EventEnvelope(value = event, version = nextVersion++).also { stickyEvent = it }
@@ -203,6 +230,9 @@ abstract class BaseLiveEvent<T : Any>(
         }
     }
 
+    /**
+     * 当存在最近一次事件时，向指定观察者补发粘性事件。
+     */
     private fun dispatchStickyIfNeeded(observer: Observer<T>) {
         val state = synchronized(lock) {
             observerStates[observer]
@@ -212,6 +242,9 @@ abstract class BaseLiveEvent<T : Any>(
         dispatchToObserver(state, envelope)
     }
 
+    /**
+     * 在通过版本和生命周期校验后，将事件投递给具体观察者。
+     */
     private fun dispatchToObserver(state: ObserverState<T>, envelope: EventEnvelope<T>) {
         if (!shouldDispatch(state, envelope.version)) {
             return
@@ -224,6 +257,9 @@ abstract class BaseLiveEvent<T : Any>(
         }
     }
 
+    /**
+     * 判断当前事件版本是否应投递给指定观察者，并更新投递进度。
+     */
     private fun shouldDispatch(state: ObserverState<T>, version: Long): Boolean {
         if (version <= state.lastDeliveredVersion) {
             return false
@@ -245,6 +281,9 @@ abstract class BaseLiveEvent<T : Any>(
         return true
     }
 
+    /**
+     * 移除观察者并清理其生命周期监听。
+     */
     private fun removeObserverInternal(observer: Observer<T>) {
         val removed = synchronized(lock) {
             observerStates.remove(observer)
@@ -253,6 +292,9 @@ abstract class BaseLiveEvent<T : Any>(
         removed.lifecycleOwner?.lifecycle?.removeObserver(removed.lifecycleObserver ?: return)
     }
 
+    /**
+     * 将任务切换到主线程异步执行。
+     */
     protected fun runOnMainThread(action: () -> Unit) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             action()
@@ -261,6 +303,9 @@ abstract class BaseLiveEvent<T : Any>(
         }
     }
 
+    /**
+     * 将任务切换到主线程执行，并等待执行完成后再返回。
+     */
     protected fun runOnMainThreadAndWait(action: () -> Unit) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             action()
@@ -295,11 +340,17 @@ abstract class BaseLiveEvent<T : Any>(
         }
     }
 
+    /**
+     * 事件包装体，记录实际值和单调递增版本号。
+     */
     private data class EventEnvelope<T>(
         val value: T,
         val version: Long
     )
 
+    /**
+     * 观察者注册状态，包含生命周期和投递进度信息。
+     */
     private data class ObserverState<T>(
         val observer: Observer<T>,
         val lifecycleOwner: LifecycleOwner?,

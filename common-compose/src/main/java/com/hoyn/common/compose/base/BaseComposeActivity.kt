@@ -23,6 +23,13 @@ abstract class BaseComposeActivity : ComponentActivity() {
      */
     val TAG: String get() = javaClass.simpleName
 
+    /**
+     * 附加基础 Context
+     *
+     * 统一应用语言设置
+     *
+     * @param newBase 新的 Context
+     */
     override fun attachBaseContext(newBase: Context) {
         // 统一应用语言设置
         val context = LanguageHelper.applyLanguage(newBase)
@@ -41,6 +48,8 @@ abstract class BaseComposeActivity : ComponentActivity() {
 
     /**
      * Compose 内容
+     *
+     * 子类实现此方法以提供 Compose UI 内容
      */
     @Composable
     protected abstract fun Content()

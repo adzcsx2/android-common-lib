@@ -22,6 +22,8 @@ import kotlinx.coroutines.withContext
 
 /**
  * 屏幕状态枚举
+ *
+ * 表示设备可能处于的不同屏幕状态
  */
 enum class ScreenState {
     /** 普通直屏设备 */
@@ -42,6 +44,8 @@ enum class ScreenState {
 
 /**
  * 折叠方向枚举
+ *
+ * 表示折叠屏设备的铰链方向
  */
 enum class FoldOrientation {
     /** 水平折叠（横向铰链） */
@@ -56,6 +60,8 @@ enum class FoldOrientation {
 
 /**
  * 折叠屏设备类型枚举
+ *
+ * 表示不同类型的折叠屏设备
  */
 enum class FoldingDeviceType {
     /** 书本式大折叠屏（纵向铰链，如 Galaxy Fold/Z Fold 系列）- 展开后类似平板 */
@@ -70,6 +76,13 @@ enum class FoldingDeviceType {
 
 /**
  * 屏幕信息数据类
+ *
+ * 封装屏幕相关的所有信息，包括状态、方向、设备类型等
+ *
+ * @property state 当前屏幕状态
+ * @property orientation 折叠方向
+ * @property isFoldingDevice 是否为折叠屏设备
+ * @property deviceType 折叠屏设备类型
  */
 data class ScreenInfo(
     val state: ScreenState,
@@ -80,11 +93,13 @@ data class ScreenInfo(
 
 /**
  * 屏幕状态变化监听器接口
+ *
  * 用于在 Activity 不重建时接收屏幕状态变化通知
  */
 interface ScreenStateListener {
     /**
      * 屏幕状态变化时回调
+     *
      * @param screenInfo 最新的屏幕信息
      */
     fun onScreenStateChanged(screenInfo: ScreenInfo)
@@ -135,7 +150,10 @@ object ScreenUtils {
 
     /**
      * 获取当前屏幕状态
+     *
      * 同步返回基于屏幕尺寸的状态，同时异步获取更精确的折叠状态
+     * 首次调用时会检测设备硬件能力（如铰链角度传感器）
+     *
      * @param activity Activity上下文
      * @return 屏幕信息（包含状态、方向等）
      */
@@ -169,6 +187,7 @@ object ScreenUtils {
 
     /**
      * 获取当前屏幕状态枚举
+     *
      * @param activity Activity上下文
      * @return 屏幕状态枚举
      */
@@ -179,8 +198,9 @@ object ScreenUtils {
 
     /**
      * 判断是否为折叠屏设备
+     *
      * @param activity Activity上下文
-     * @return true表示是折叠屏设备
+     * @return true表示是折叠屏设备，false表示不是
      */
     @JvmStatic
     fun isFoldingDevice(activity: Activity): Boolean {
@@ -189,9 +209,11 @@ object ScreenUtils {
 
     /**
      * 判断是否为书本式大折叠屏（纵向铰链，如 Galaxy Fold/Z Fold 系列）
+     *
      * 特点：展开后类似平板，适合左右分屏、阅读等场景
+     *
      * @param activity Activity上下文
-     * @return true表示是书本式大折叠屏设备
+     * @return true表示是书本式大折叠屏设备，false表示不是
      */
     @JvmStatic
     fun isBookFoldDevice(activity: Activity): Boolean {
@@ -200,9 +222,11 @@ object ScreenUtils {
 
     /**
      * 判断是否为翻盖式小折叠屏（横向铰链，如 Galaxy Z Flip 系列）
+     *
      * 特点：展开后类似普通手机，适合自拍、悬停拍摄等场景
+     *
      * @param activity Activity上下文
-     * @return true表示是翻盖式小折叠屏设备
+     * @return true表示是翻盖式小折叠屏设备，false表示不是
      */
     @JvmStatic
     fun isFlipFoldDevice(activity: Activity): Boolean {
@@ -211,7 +235,9 @@ object ScreenUtils {
 
     /**
      * 判断设备是否处于悬浮暂停状态（折叠屏半折叠状态）
+     *
      * 同步返回缓存值，同时异步更新最新状态
+     *
      * @param activity Activity上下文
      * @return true表示处于悬浮暂停状态，false表示正常状态
      */
@@ -222,7 +248,10 @@ object ScreenUtils {
     }
 
     /**
-     * 判断是不是book设备打开状态
+     * 判断是否为书本式折叠屏的展开状态
+     *
+     * @param activity Activity上下文
+     * @return true表示书本式折叠屏已展开，false表示不是或不是书本式折叠屏
      */
     fun isBookOpen(activity: Activity): Boolean {
         return isBookFoldDevice(activity) && getScreenInfo(activity).state == ScreenState.FOLDING_FLAT
@@ -230,7 +259,10 @@ object ScreenUtils {
 
     /**
      * 设置屏幕状态监听器
+     *
      * 监听器会在 Activity 生命周期结束时自动注销
+     * Activity 必须实现 LifecycleOwner 接口
+     *
      * @param activity Activity上下文（必须实现 LifecycleOwner）
      * @param listener 屏幕状态变化监听器
      */
@@ -283,6 +315,9 @@ object ScreenUtils {
 
     /**
      * 移除屏幕状态监听器
+     *
+     * 取消监听 Job 并移除生命周期观察者
+     *
      * @param activity Activity上下文
      */
     @JvmStatic
@@ -307,8 +342,11 @@ object ScreenUtils {
 
     /**
      * 检测设备是否有铰链角度传感器（折叠屏特有）
+     *
+     * 通过 PackageManager 检测设备的硬件特性
+     *
      * @param context Context上下文
-     * @return true表示有铰链传感器（是折叠屏设备）
+     * @return true表示有铰链传感器（是折叠屏设备），false表示没有
      */
     private fun checkHingeAngleSensor(context: Context): Boolean {
         return try {
@@ -331,7 +369,10 @@ object ScreenUtils {
 
     /**
      * 通过屏幕尺寸和密度判断设备状态
+     *
      * 用于首次启动或无法获取折叠信息时的降级方案
+     * 根据最小宽度（sw）推断设备类型和状态
+     *
      * @param activity Activity上下文
      * @return 屏幕信息
      */
@@ -403,8 +444,10 @@ object ScreenUtils {
 
     /**
      * 基于屏幕尺寸特征推断折叠屏设备类型
+     *
      * BOOK_FOLD: 展开后宽度较大（通常 sw >= 600dp），折叠后为普通手机尺寸
      * FLIP_FOLD: 展开后为普通手机尺寸，折叠后更窄
+     *
      * @param activity Activity上下文
      * @return 推断的设备类型
      */
@@ -459,6 +502,9 @@ object ScreenUtils {
 
     /**
      * 获取屏幕尺寸（dp）
+     *
+     * 根据不同 API 版本使用相应的方法获取屏幕尺寸
+     *
      * @param activity Activity上下文
      * @return Pair<宽度dp, 高度dp>
      */
@@ -494,8 +540,11 @@ object ScreenUtils {
 
     /**
      * 异步更新屏幕状态信息
+     *
      * 使用协程并带节流控制，避免频繁启动
-     * @param activity Activity上下文
+     * 通过 WindowInfoTracker 获取更精确的折叠屏状态
+     *
+     * @param activity Activity上下文，必须实现 LifecycleOwner
      */
     private fun asyncUpdateScreenInfo(activity: Activity) {
         if (activity !is LifecycleOwner) {
@@ -529,6 +578,9 @@ object ScreenUtils {
 
     /**
      * 解析屏幕详细信息
+     *
+     * 从 WindowLayoutInfo 中解析折叠屏相关的状态信息
+     *
      * @param activity Activity上下文
      * @param layoutInfo 窗口布局信息
      * @return 屏幕信息
@@ -667,6 +719,9 @@ object ScreenUtils {
 
     /**
      * 获取当前屏幕的最小宽度（dp）
+     *
+     * 用于判断屏幕尺寸类型，是确定折叠屏状态的重要指标
+     *
      * @param activity Activity上下文
      * @return 最小宽度（dp）
      */

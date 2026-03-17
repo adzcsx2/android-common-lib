@@ -16,6 +16,12 @@ import androidx.fragment.app.Fragment
  */
 abstract class BaseComposeFragment : Fragment() {
 
+    /**
+     * ComposeView 实例
+     *
+     * 使用 DisposeOnViewTreeLifecycleDestroyed 策略
+     * 确保在视图销毁时正确释放 Compose 资源
+     */
     protected val composeView: ComposeView by lazy {
         ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)

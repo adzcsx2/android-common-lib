@@ -24,7 +24,9 @@ import com.hoyn.common.lib.ui.liveevent.LiveEventDemoActivity
  */
 class MainActivity : BaseActivity<ActivityMainBinding, NoViewModel>() {
 
-    // Demo 列表 - 使用字符串资源
+    /**
+     * Demo 列表 - 使用字符串资源
+     */
     private val demoList by lazy {
         listOf(
             DemoItem(
@@ -80,14 +82,29 @@ class MainActivity : BaseActivity<ActivityMainBinding, NoViewModel>() {
         )
     }
 
+    /**
+     * 初始化视图
+     *
+     * @param savedInstanceState 保存的实例状态
+     */
     override fun initView(savedInstanceState: Bundle?) {
         setupRecyclerView()
     }
 
+    /**
+     * 初始化数据
+     *
+     * 数据已在 demoList 中定义，此方法无需操作
+     */
     override fun initData() {
         // 数据在 demoList 中已定义
     }
 
+    /**
+     * 设置 RecyclerView
+     *
+     * 配置适配器和数据
+     */
     private fun setupRecyclerView() {
         binding.rvDemo.adapter = DemoAdapter(demoList)
     }

@@ -23,6 +23,10 @@ import kotlinx.coroutines.launch
  * - 管理 UI 状态
  * - 调用 Repository 获取数据
  * - 处理业务逻辑
+ *
+ * @param application Application 实例
+ * @param repository 帖子数据仓库
+ * @param ioDispatcher IO 调度器
  */
 class ComposeDemoViewModel(
     application: Application,
@@ -46,6 +50,9 @@ class ComposeDemoViewModel(
      * 加载帖子列表
      *
      * 使用网络优先策略
+     * - 优先从网络获取数据
+     * - 网络失败时从本地缓存加载
+     * - 更新 UI 状态和缓存标识
      */
     fun loadPosts() {
         _uiState.value = UIState.Loading
@@ -68,6 +75,10 @@ class ComposeDemoViewModel(
 
     /**
      * 显示测试 Toast
+     *
+     * 用于演示从 Compose 调用 Toast
+     *
+     * @param context Context 实例
      */
     fun showTestToast(context: Context) {
         ToastUtils.show(context, "来自 Compose 的 Toast!")

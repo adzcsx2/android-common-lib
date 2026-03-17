@@ -19,11 +19,19 @@ import com.hoyn.common.utils.MMKVUtils
  */
 class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding, NoViewModel>() {
 
+    /**
+     * 初始化视图
+     *
+     * @param savedInstanceState 保存的实例状态
+     */
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()
         loadSavedValue()
     }
 
+    /**
+     * 设置视图和点击事件
+     */
     private fun setupViews() {
         binding.btnBack.onClick { finish() }
 
@@ -59,6 +67,9 @@ class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding, NoViewModel>() {
         }
     }
 
+    /**
+     * 加载已保存的值
+     */
     private fun loadSavedValue() {
         val value = MMKVUtils.getString("demo_string", "")
         if (value.isNotBlank()) {

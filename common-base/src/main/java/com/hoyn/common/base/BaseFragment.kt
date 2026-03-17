@@ -20,9 +20,10 @@ import kotlinx.coroutines.cancel
  * BaseFragment
  *
  * 提供通用的 Fragment 基类功能
- * 支持协程、ViewBinding、ViewModel
+ * 支持协程、ViewBinding、ViewModel、懒加载
  *
  * @param VB ViewBinding 类型
+ * @param VM ViewModel 类型
  */
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
     Fragment(),
@@ -106,6 +107,11 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
     protected open fun initData() {}
     /**
      * 返回键处理
+     *
+     * 注册返回键回调，可控制是否拦截返回事件
+     *
+     * @param enabled 是否拦截返回键，true 表示拦截
+     * @param onBackPressed 返回键按下时的回调
      */
     open fun onBack(enabled: Boolean, onBackPressed: () -> Unit) {
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -142,6 +148,11 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
         super.onDestroyView()
     }
 
+    /**
+     * 处理返回键事件
+     *
+     * 委托给 Activity 处理返回键
+     */
     open fun onBackPressed() {
         mActivity.onBackPressedDispatcher.onBackPressed()
     }

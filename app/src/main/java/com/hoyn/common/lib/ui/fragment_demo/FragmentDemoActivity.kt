@@ -9,12 +9,25 @@ import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityFragmentDemoBinding
 import com.hoyn.common.ui.ext.onClick
 
+/**
+ * Fragment 示例页面
+ *
+ * 展示 Fragment 的使用
+ */
 class FragmentDemoActivity : BaseActivity<ActivityFragmentDemoBinding, NoViewModel>() {
 
     companion object {
         private const val EXTRA_INITIAL_SESSION_ID = "extra_initial_session_id"
         private const val EXTRA_INITIAL_COUNT = "extra_initial_count"
 
+        /**
+         * 创建启动 FragmentDemoActivity 的 Intent
+         *
+         * @param context Context 实例
+         * @param initialSessionId 初始会话 ID
+         * @param initialCount 初始计数
+         * @return 启动 Activity 的 Intent
+         */
         fun createIntent(
             context: Context,
             initialSessionId: String? = null,
@@ -29,6 +42,11 @@ class FragmentDemoActivity : BaseActivity<ActivityFragmentDemoBinding, NoViewMod
         }
     }
 
+    /**
+     * 初始化视图
+     *
+     * @param savedInstanceState 保存的实例状态
+     */
     override fun initView(savedInstanceState: Bundle?) {
         binding.btnBack.onClick { finish() }
 

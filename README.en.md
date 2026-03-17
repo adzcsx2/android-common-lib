@@ -1,36 +1,111 @@
-# android-common-lib
+# Android Common Library
 
-#### Description
-android公共库
+Modular Android shared libraries for common utilities, networking, image loading, UI helpers, and base architecture components.
 
-#### Software Architecture
-Software architecture description
+## Language
 
-#### Installation
+- [Chinese README](./README.md)
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## Development Environment
 
-#### Instructions
+| Item | Version |
+|------|---------|
+| Android Studio | Panda 2 \| 2025.3.2 |
+| Android Studio Runtime | JetBrains Runtime 21.0.9 |
+| Kotlin | 2.3.10 |
+| Kotlin JVM target | 11 |
+| compileSdk | 34 |
+| minSdk | 24 |
+| targetSdk | 34 |
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+> Published artifact compatibility
+>
+> When consuming published JitPack artifacts directly, downstream projects must satisfy these baseline requirements:
+>
+> - Kotlin Gradle Plugin must be aligned to `2.3.10`
+> - Kotlin/JVM compilation target must be `11`
+> - `compileSdk` must be `>= 34`
+> - `minSdk` is `24`
+>
+> Copying the source files into an app can compile because the code is rebuilt by the consumer project. Depending on the published AAR is different: the consumer compiler must be compatible with the Kotlin metadata and JVM bytecode target used when this library was published.
 
-#### Contribution
+## Documentation
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+- [Chinese documentation entry](./README.md)
+- [Architecture Documentation](./docs/ARCHITECTURE.md)
+- [App Architecture Guide](./docs/APP_ARCHITECTURE.md)
+- [Changelog](./docs/CHANGELOG.md)
 
+## Project Structure
 
-#### Gitee Feature
+```text
+common-lib/
+├── build.gradle.kts
+├── settings.gradle.kts
+├── gradle/libs.versions.toml
+├── scripts/publish.gradle.kts
+├── common-core/
+├── common-base/
+├── common-compose/
+├── common-utils/
+├── common-network/
+├── common-image/
+├── common-ui/
+└── app/
+```
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+## Modules
+
+| Module | Description | Depends On |
+|--------|-------------|------------|
+| common-core | Core abstractions such as `UIState`, `IBaseResponse`, `Message`, and `ThrowableBean` | Lifecycle, Coroutines |
+| common-base | Base architecture components such as `BaseActivity`, `BaseFragment`, `BaseViewModel`, and event APIs | common-core, common-utils |
+| common-compose | Compose foundation and shared UI architecture | common-core, common-base |
+| common-utils | Context extensions, coroutine helpers, logger, MMKV helpers | common-core |
+| common-network | Retrofit + OkHttp wrapper | common-core, common-utils |
+| common-image | Glide-based image loading wrapper | common-core, common-utils |
+| common-ui | Toast, status bar, permission, and view helpers | common-base |
+
+## Installation Via JitPack
+
+### 1. Add the repository in `settings.gradle.kts`
+
+```kotlin
+dependencyResolutionManagement {
+	repositories {
+		google()
+		mavenCentral()
+		maven { url = uri("https://jitpack.io") }
+	}
+}
+```
+
+### 2. Add dependencies in your module
+
+```kotlin
+dependencies {
+	implementation("com.github.adzcsx2.android-common-lib:common-core:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-utils:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-compose:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-network:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-image:1.0.8")
+	implementation("com.github.adzcsx2.android-common-lib:common-ui:1.0.8")
+}
+```
+
+To import all modules at once:
+
+```kotlin
+dependencies {
+	implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.8")
+}
+```
+
+## Version Information
+
+- compileSdk: 34
+- minSdk: 24
+- targetSdk: 34
+- Kotlin: 2.3.10
+- AGP: 9.1.0

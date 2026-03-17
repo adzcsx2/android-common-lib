@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.IBinder
 import androidx.lifecycle.Observer
 import com.hoyn.common.base.event.GlobalLiveEvent
-import com.hoyn.common.core.Message
+import com.hoyn.common.base.event.Message
 
 class LiveEventDemoService : Service() {
 

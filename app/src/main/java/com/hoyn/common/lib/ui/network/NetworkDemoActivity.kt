@@ -29,15 +29,28 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
 
     private val adapter = PostAdapter()
 
+    /**
+     * 初始化视图
+     *
+     * @param savedInstanceState 保存的实例状态
+     */
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()
         observeData()
     }
 
+    /**
+     * 初始化数据
+     *
+     * ViewModel 初始化时已自动加载数据
+     */
     override fun initData() {
         // ViewModel 初始化时已自动加载数据
     }
 
+    /**
+     * 设置视图和点击事件
+     */
     private fun setupViews() {
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
         binding.rvPosts.adapter = adapter
@@ -51,6 +64,9 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
         }
     }
 
+    /**
+     * 观察数据变化
+     */
     private fun observeData() {
         // 观察 UI 状态
         lifecycleScope.launch {
@@ -71,6 +87,11 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
         }
     }
 
+    /**
+     * 渲染 UI 状态
+     *
+     * @param state UI 状态
+     */
     private fun renderState(state: UIState<List<com.hoyn.common.lib.data.model.Post>>) {
         when (state) {
             is UIState.Loading -> {

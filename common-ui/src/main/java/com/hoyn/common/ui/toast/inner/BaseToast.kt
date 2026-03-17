@@ -50,6 +50,11 @@ open class BaseToast(var mContext: Context) : IToast, Cloneable {
         this.contentView = layoutInflater.inflate(R.layout.layout_toast, null)
     }
 
+    /**
+     * 获取 WindowManager 布局参数
+     *
+     * @return WindowManager.LayoutParams 对象
+     */
     open fun getWMParams(): WindowManager.LayoutParams {
         val lp = WindowManager.LayoutParams()
         lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
@@ -68,39 +73,95 @@ open class BaseToast(var mContext: Context) : IToast, Cloneable {
         return lp
     }
 
+    /**
+     * 获取 WindowManager 实例
+     *
+     * @return WindowManager 实例
+     */
     open fun getWMManager(): WindowManager? {
         return mContext.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
 
+    /**
+     * 显示 Toast
+     *
+     * 将 Toast 添加到显示队列
+     */
     override fun show() {
         YTN.instance().add(this)
     }
 
+    /**
+     * 取消 Toast
+     *
+     * 清空 Toast 显示队列
+     */
     override fun cancel() {
         YTN.instance().cancelAll()
     }
 
+    /**
+     * 获取 Context
+     *
+     * @return Context 实例
+     */
     fun getContext(): Context? = this.mContext
 
+    /**
+     * 设置 Toast 的视图
+     *
+     * @param mView 要设置的视图
+     * @return 当前 BaseToast 实例，支持链式调用
+     */
     override fun setView(mView: View): BaseToast {
         this.contentView = mView
         return this
     }
 
+    /**
+     * 获取 Toast 的视图
+     *
+     * @return Toast 的视图对象
+     */
     override fun getView(): View = this.contentView
 
+    /**
+     * 设置 Toast 显示时长
+     *
+     * @param duration 显示时长
+     * @return 当前 BaseToast 实例，支持链式调用
+     */
     override fun setDuration(@ToastDuration duration: Int): BaseToast {
         this.duration = duration
         return this
     }
 
+    /**
+     * 获取 Toast 显示时长
+     *
+     * @return 显示时长（毫秒）
+     */
     fun getDuration(): Int = this.duration
 
+    /**
+     * 设置 Toast 显示动画
+     *
+     * @param animation 动画资源 ID
+     * @return 当前 BaseToast 实例，支持链式调用
+     */
     override fun setAnimation(animation: Int): BaseToast {
         this.animation = animation
         return this
     }
 
+    /**
+     * 设置 Toast 显示位置（带偏移）
+     *
+     * @param gravity 显示位置，使用 Gravity 常量
+     * @param xOffset X 轴偏移量
+     * @param yOffset Y 轴偏移量
+     * @return 当前 BaseToast 实例，支持链式调用
+     */
     override fun setGravity(gravity: Int, xOffset: Int, yOffset: Int): BaseToast {
         this.gravity = gravity
         this.xOffset = xOffset
@@ -108,34 +169,92 @@ open class BaseToast(var mContext: Context) : IToast, Cloneable {
         return this
     }
 
+    /**
+     * 设置 Toast 显示位置（默认偏移）
+     *
+     * @param gravity 显示位置，使用 Gravity 常量
+     * @return 当前 BaseToast 实例，支持链式调用
+     */
     override fun setGravity(gravity: Int): BaseToast = setGravity(gravity, 0, 0)
 
+    /**
+     * 获取 Toast 显示位置
+     *
+     * @return 显示位置，使用 Gravity 常量
+     */
     fun getGravity(): Int = this.gravity
 
+    /**
+     * 获取 X 轴偏移量
+     *
+     * @return X 轴偏移量（像素）
+     */
     fun getXOffset(): Int = this.xOffset
 
+    /**
+     * 获取 Y 轴偏移量
+     *
+     * @return Y 轴偏移量（像素）
+     */
     fun getYOffset(): Int = this.yOffset
 
+    /**
+     * 获取 Toast 优先级
+     *
+     * @return 优先级值
+     */
     fun getPriority(): Int = this.priority
 
+    /**
+     * 设置 Toast 优先级
+     *
+     * @param mPriority 优先级值
+     * @return 当前 BaseToast 实例，支持链式调用
+     */
     override fun setPriority(mPriority: Int): BaseToast {
         this.priority = mPriority
         return this
     }
 
+    /**
+     * 获取 Toast 时间戳
+     *
+     * @return 时间戳
+     */
     fun getTimestamp(): Long = this.timestamp
 
+    /**
+     * 设置 Toast 时间戳
+     *
+     * @param mTimestamp 时间戳
+     * @return 当前 BaseToast 实例，支持链式调用
+     */
     fun setTimestamp(mTimestamp: Long): BaseToast {
         this.timestamp = mTimestamp
         return this
     }
 
+    /**
+     * 判断 Toast 是否正在显示
+     *
+     * @return true 表示正在显示，false 表示未显示
+     */
     fun isShowing(): Boolean = this.isShowing && contentView.isShown
 
+    /**
+     * 设置 Toast 显示状态
+     *
+     * @param isShowing true 表示正在显示，false 表示未显示
+     */
     fun setShowing(isShowing: Boolean) {
         this.isShowing = isShowing
     }
 
+    /**
+     * 克隆当前 Toast
+     *
+     * @return 克隆后的 BaseToast 实例
+     */
     public override fun clone(): BaseToast {
         var mToast: BaseToast? = null
         try {
@@ -159,10 +278,18 @@ open class BaseToast(var mContext: Context) : IToast, Cloneable {
     companion object {
         var Count4BadTokenException: Long = 0
 
+        /**
+         * 取消所有 Toast
+         */
         fun cancelAll() {
             YTN.instance().cancelAll()
         }
 
+        /**
+         * 取消指定 Activity 的所有 Toast
+         *
+         * @param mActivity 要取消 Toast 的 Activity
+         */
         fun cancelActivityToast(mActivity: Activity) {
             YTN.instance().cancelActivityToast(mActivity)
         }

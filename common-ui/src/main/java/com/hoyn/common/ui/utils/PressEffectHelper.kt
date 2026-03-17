@@ -12,6 +12,8 @@ import kotlinx.coroutines.*
 /**
  * 按压效果工具类
  *
+ * 提供按下时改变透明度或背景色的效果，支持长按检测
+ *
  * @author yzy
  * @date 2019/7/2
  */
@@ -27,6 +29,12 @@ class PressEffectHelper private constructor() {
 
         /**
          * 按下改变透明度的效果
+         *
+         * 为 View 设置触摸监听器，按下时降低透明度，抬起时恢复
+         * 支持长按事件触发
+         *
+         * @param view 要设置效果的 View
+         * @param pressAlpha 按下时的透明度，默认为 0.8f
          */
         fun alphaEffect(view: View, pressAlpha: Float = 0.8f) {
             view.setOnTouchListener { v, event ->
@@ -92,6 +100,16 @@ class PressEffectHelper private constructor() {
 
         /**
          * 按下改变背景色的效果
+         *
+         * 为 View 设置触摸监听器，按下时改变背景色，抬起时恢复
+         * 支持圆角背景和长按事件触发
+         *
+         * @param view 要设置效果的 View
+         * @param bgColor 按下时的背景色，默认为浅灰色
+         * @param topLeftRadiusDp 左上角圆角半径（dp）
+         * @param topRightRadiusDp 右上角圆角半径（dp）
+         * @param bottomRightRadiusDp 右下角圆角半径（dp）
+         * @param bottomLeftRadiusDp 左下角圆角半径（dp）
          */
         fun bgColorEffect(
             view: View,
@@ -181,6 +199,11 @@ class PressEffectHelper private constructor() {
             }
         }
 
+        /**
+         * 启动长按检测定时器
+         *
+         * @param view 要检测长按的 View
+         */
         private fun longClick(view: View) {
             cancelLongClick()
             longPressDisposable = MainScope()
@@ -191,6 +214,9 @@ class PressEffectHelper private constructor() {
             }
         }
 
+        /**
+         * 取消长按检测定时器
+         */
         private fun cancelLongClick() {
             longPressDisposable?.cancel()
             longPressDisposable = null

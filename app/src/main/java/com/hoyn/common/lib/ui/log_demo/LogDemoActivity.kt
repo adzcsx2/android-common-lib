@@ -19,10 +19,18 @@ import com.hoyn.common.utils.Logger
  */
 class LogDemoActivity : BaseActivity<ActivityLogDemoBinding, NoViewModel>() {
 
+    /**
+     * 初始化视图
+     *
+     * @param savedInstanceState 保存的实例状态
+     */
     override fun initView(savedInstanceState: Bundle?) {
         setupViews()
     }
 
+    /**
+     * 设置视图和点击事件
+     */
     private fun setupViews() {
         binding.btnBack.onClick { finish() }
 
@@ -42,6 +50,11 @@ class LogDemoActivity : BaseActivity<ActivityLogDemoBinding, NoViewModel>() {
         }
     }
 
+    /**
+     * 显示 Toast 提示
+     *
+     * @param message 消息内容
+     */
     private fun showToast(message: String) {
         ToastUtils.show(this, message)
     }

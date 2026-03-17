@@ -6,13 +6,32 @@ import com.hoyn.common.utils.Logger
 import com.hoyn.common.utils.MMKVUtils
 import com.hoyn.common.utils.ThemeManager
 
+/**
+ * MainApplication
+ *
+ * 应用程序入口类
+ * 负责初始化各种工具和组件
+ */
 class MainApplication : Application() {
 
     companion object {
+        /**
+         * Application 实例
+         */
         lateinit var instance: MainApplication
             private set
     }
 
+    /**
+     * Application 创建时的回调
+     *
+     * 初始化日志、MMKV、主题等组件
+     */
+    /**
+     * Application 创建时的回调
+     *
+     * 初始化日志、MMKV、主题等组件
+     */
     override fun onCreate() {
         super.onCreate()
         instance = this

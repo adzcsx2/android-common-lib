@@ -6,7 +6,7 @@ import androidx.lifecycle.Observer
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.base.event.GlobalLiveEvent
-import com.hoyn.common.core.Message
+import com.hoyn.common.base.event.Message
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityLiveEventDemoBinding
 import java.text.SimpleDateFormat
@@ -26,10 +26,18 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
     private var componentObserver: Observer<Message>? = null
     private var serviceStarted = false
 
+    /**
+     * 初始化视图
+     *
+     * @param savedInstanceState 保存的实例状态
+     */
     override fun initView(savedInstanceState: Bundle?) {
         setupClickListeners()
     }
 
+    /**
+     * 初始化数据
+     */
     override fun initData() {
         componentObserver = GlobalLiveEvent.observeMessage(this) { msg ->
             when (msg.code) {
@@ -40,6 +48,9 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
         log("初始化完成，可以开始测试")
     }
 
+    /**
+     * 设置点击事件监听器
+     */
     private fun setupClickListeners() {
         binding.btnSendNormal.setOnClickListener {
             val code = (100..999).random()
@@ -142,6 +153,9 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
         }
     }
 
+    /**
+     * 清理资源
+     */
     override fun onCleanUp() {
         if (serviceStarted) {
             stopService(Intent(this, LiveEventDemoService::class.java))
@@ -158,6 +172,11 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
         super.onCleanUp()
     }
 
+    /**
+     * 输出日志
+     *
+     * @param message 日志消息
+     */
     private fun log(message: String) {
         val timestamp = timeFormat.format(Date())
         val logLine = "[$timestamp] $message\n"

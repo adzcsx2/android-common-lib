@@ -18,6 +18,9 @@ import kotlinx.coroutines.cancel
  *
  * 提供通用的 Activity 基类功能
  * 支持协程、ViewBinding、触摸事件分发、多语言、Activity 栈管理
+ *
+ * @param VB ViewBinding 类型
+ * @param VM ViewModel 类型
  */
 abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
     AppCompatActivity(),
@@ -48,6 +51,11 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
      */
     private var startNavigation: Boolean = false
 
+    /**
+     * 获取是否正在进行页面导航
+     *
+     * @return true 表示正在进行导航，false 表示没有
+     */
     fun getIsNavigate(): Boolean = startNavigation
 
     override fun attachBaseContext(newBase: Context) {
@@ -166,8 +174,15 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
 
     /**
      * 触摸事件监听接口
+     *
+     * 用于 Fragment 向 Activity 注册触摸事件监听
      */
     interface OnTouchListener {
+        /**
+         * 触摸事件回调
+         *
+         * @param ev 触摸事件
+         */
         fun onTouchEvent(ev: MotionEvent)
     }
 }

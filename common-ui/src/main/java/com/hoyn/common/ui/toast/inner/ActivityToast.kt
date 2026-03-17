@@ -20,6 +20,11 @@ class ActivityToast(private val mActivity: Activity) : BaseToast(mActivity) {
     private var mWindowManager: WindowManager? = null
     private var isAdded: Boolean = false
 
+    /**
+     * 获取 WindowManager 布局参数
+     *
+     * @return WindowManager.LayoutParams 对象
+     */
     override fun getWMParams(): WindowManager.LayoutParams {
         if (mParams == null) {
             mParams = WindowManager.LayoutParams()
@@ -34,6 +39,11 @@ class ActivityToast(private val mActivity: Activity) : BaseToast(mActivity) {
         return mParams!!
     }
 
+    /**
+     * 获取 WindowManager 实例
+     *
+     * @return Activity 的 WindowManager 实例
+     */
     override fun getWMManager(): WindowManager? {
         if (mWindowManager == null) {
             mWindowManager = mActivity.windowManager
@@ -41,6 +51,11 @@ class ActivityToast(private val mActivity: Activity) : BaseToast(mActivity) {
         return mWindowManager
     }
 
+    /**
+     * 显示 Toast
+     *
+     * 将 Toast 视图添加到 Activity 的 WindowManager 中
+     */
     override fun show() {
         if (isAdded) return
         try {
@@ -52,6 +67,11 @@ class ActivityToast(private val mActivity: Activity) : BaseToast(mActivity) {
         }
     }
 
+    /**
+     * 取消 Toast
+     *
+     * 从 Activity 的 WindowManager 中移除 Toast 视图
+     */
     override fun cancel() {
         if (!isAdded) return
         try {
@@ -62,5 +82,10 @@ class ActivityToast(private val mActivity: Activity) : BaseToast(mActivity) {
         }
     }
 
+    /**
+     * 获取关联的 Activity
+     *
+     * @return Activity 实例
+     */
     fun getActivity(): Activity = mActivity
 }

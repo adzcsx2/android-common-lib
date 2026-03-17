@@ -12,11 +12,21 @@ import javax.net.ssl.SSLException
 
 /**
  * 网络异常处理工具类
+ *
+ * 将各种网络异常转换为统一的 ResponseThrowable
  */
 object ExceptionHandle {
 
     /**
      * 处理网络异常
+     *
+     * 将不同类型的 Throwable 转换为对应的 ResponseThrowable
+     * 支持的异常类型包括：HttpException、SocketTimeoutException、
+     * ConnectException、UnknownHostException、SSLException、
+     * JsonParseException、MalformedJsonException、JSONException、ParseException
+     *
+     * @param e 原始异常
+     * @return 转换后的 ResponseThrowable
      */
     fun handleException(e: Throwable): ResponseThrowable {
         return when (e) {
