@@ -87,14 +87,14 @@ This ensures:
 - BaseViewModel with coroutine management and network request helpers
 - ViewModelFactory for custom ViewModel creation
 - SingleLiveEvent for one-time UI events
-- GlobalEventBus for cross-component communication
+- GlobalLiveEvent for cross-component communication
 - ViewModel extensions for observing UI events
 
 **Design Decisions**:
 - Single place for all architecture foundation classes
 - Not a dumping ground for generic UI tools
 - ViewBinding for compile-time safety
-- SharedFlow-based event system (replaces LiveData/LiveEventBus)
+- BaseLiveEvent-based event system with lifecycle-aware and manual observer modes
 
 ### common-utils
 
@@ -237,7 +237,7 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 
 ### 3. Event System
 
-Using SharedFlow-based events:
+Using BaseLiveEvent-backed events:
 
 ```kotlin
 // In ViewModel
@@ -263,7 +263,7 @@ For cross-component communication:
 
 ```kotlin
 // Send global event
-GlobalEventBus.sendMessage(Message(code = 1001, msg = "Login expired"))
+GlobalLiveEvent.sendMessage(Message(code = 1001, msg = "Login expired"))
 
 // Observe global events
 observeGlobalMessage { message ->

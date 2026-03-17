@@ -48,7 +48,7 @@ class NetworkDemoViewModel(
      * 2. 网络失败时从本地缓存加载
      */
     fun loadPosts() {
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             _uiState.value = UIState.Loading
             _isFromCache.value = false
 

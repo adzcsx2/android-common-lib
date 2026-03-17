@@ -181,14 +181,14 @@ git push origin 1.0.1
 
 推送 Tag 后，JitPack 会自动检测并构建新版本：
 
-- 访问 https://jitpack.io/#com.gitee.Hoyn/android-common-lib
+- 访问 https://jitpack.io/#com.github.adzcsx2/android-common-lib
 - 查看构建状态（首次可能需要几分钟）
 
 ### 步骤 4: 使用新版本
 
 ```kotlin
 dependencies {
-    implementation("com.gitee.Hoyn:android-common-lib:1.0.1")
+    implementation("com.github.adzcsx2:android-common-lib:1.0.1")
 }
 ```
 
@@ -324,7 +324,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.gitee.Hoyn:common-core:1.0.0")
+    implementation("com.github.adzcsx2:common-core:1.0.1")
 }
 ```
 

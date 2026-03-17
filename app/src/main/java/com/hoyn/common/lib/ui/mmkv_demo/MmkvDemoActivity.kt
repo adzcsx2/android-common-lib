@@ -1,7 +1,5 @@
 package com.hoyn.common.lib.ui.mmkv_demo
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.databinding.ActivityMmkvDemoBinding
@@ -14,14 +12,11 @@ import com.hoyn.common.utils.MMKVUtils
  *
  * 使用 BaseActivity 作为基类
  * 语言设置由 BaseActivity 统一处理
+ *
+ * TAG 由 BaseActivity 自动提供
+ * 启动方式：context.startActivity<MmkvDemoActivity>()
  */
 class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding>() {
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, MmkvDemoActivity::class.java))
-        }
-    }
 
     override fun createBinding(): ActivityMmkvDemoBinding {
         return ActivityMmkvDemoBinding.inflate(layoutInflater)

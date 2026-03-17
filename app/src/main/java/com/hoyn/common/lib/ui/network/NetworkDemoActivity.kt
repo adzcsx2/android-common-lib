@@ -1,7 +1,5 @@
 package com.hoyn.common.lib.ui.network
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -23,14 +21,11 @@ import kotlinx.coroutines.launch
  * - Activity -> ViewModel -> Repository -> Api/Database -> UIState
  * - 网络优先策略，离线缓存支持
  * - 语言设置由 BaseActivity 统一处理
+ *
+ * TAG 由 BaseActivity 自动提供
+ * 启动方式：context.startActivity<NetworkDemoActivity>()
  */
 class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding>() {
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, NetworkDemoActivity::class.java))
-        }
-    }
 
     private val viewModel: NetworkDemoViewModel by lazy {
         androidx.lifecycle.ViewModelProvider(this)[NetworkDemoViewModel::class.java]

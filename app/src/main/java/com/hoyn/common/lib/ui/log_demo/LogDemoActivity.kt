@@ -1,7 +1,5 @@
 package com.hoyn.common.lib.ui.log_demo
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.databinding.ActivityLogDemoBinding
@@ -14,14 +12,11 @@ import com.hoyn.common.utils.Logger
  *
  * 使用 BaseActivity 作为基类
  * 语言设置由 BaseActivity 统一处理
+ *
+ * TAG 由 BaseActivity 自动提供
+ * 启动方式：context.startActivity<LogDemoActivity>()
  */
 class LogDemoActivity : BaseActivity<ActivityLogDemoBinding>() {
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, LogDemoActivity::class.java))
-        }
-    }
 
     override fun createBinding(): ActivityLogDemoBinding {
         return ActivityLogDemoBinding.inflate(layoutInflater)

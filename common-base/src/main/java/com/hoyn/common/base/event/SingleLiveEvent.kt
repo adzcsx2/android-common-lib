@@ -1,52 +1,176 @@
 package com.hoyn.common.base.event
 
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.Observer
+import java.util.concurrent.atomic.AtomicLong
+import kotlin.jvm.JvmName
 
 /**
  * 一次性事件流
  *
- * 替代传统的 SingleLiveEvent，使用 SharedFlow 实现
- * 特点：
- * - replay = 0：新订阅者不会收到之前发送的事件
- * - extraBufferCapacity = 1：允许在没有订阅者时缓存一个事件
- * - onBufferOverflow = DROP_OLDEST：缓冲区满时丢弃最旧的事件
+ * 使用 BaseLiveEvent 实现一次性事件分发。
+ *
+ * 默认不支持粘性事件，新订阅者不会收到订阅前发送的事件。
+ * 对于无参事件，可通过 emptyValueProvider 提供默认值。
  */
-class SingleLiveEvent<T> {
+class SingleLiveEvent<T>(
+    private val emptyValueProvider: (() -> T)? = null
+) : BaseLiveEvent<SingleLiveEvent.EventPayload<T>>(
+    tag = nextTag(),
+    eventClass = payloadClass()
+) {
 
-    private val flow = MutableSharedFlow<T>(
-        replay = 0,
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val observerBindings = LinkedHashMap<Observer<T>, ObserverBinding<T>>()
+    private val lock = Any()
+
+    companion object {
+        private val nextId = AtomicLong(0L)
+
+        @Suppress("UNCHECKED_CAST")
+        private fun <T> payloadClass(): Class<EventPayload<T>> {
+            return EventPayload::class.java as Class<EventPayload<T>>
+        }
+
+        private fun nextTag(): String = "single_live_event_${nextId.incrementAndGet()}"
+    }
 
     /**
      * 发送事件
      */
     fun emit(value: T) {
-        flow.tryEmit(value)
+        post(EventPayload(value))
     }
 
     /**
-     * 发送事件（无参数版本，用于 Unit 或可空类型）
+     * 发送无参事件。
      */
     fun emit() {
-        @Suppress("UNCHECKED_CAST")
-        flow.tryEmit(null as T)
+        val provider = emptyValueProvider
+            ?: throw IllegalStateException("SingleLiveEvent requires emptyValueProvider for parameterless emit()")
+        emit(provider())
     }
 
     /**
      * 发送空事件（用于不需要携带数据的通知）
      */
     fun call() {
-        @Suppress("UNCHECKED_CAST")
-        flow.tryEmit(null as T)
+        emit()
     }
 
     /**
-     * 获取只读的 SharedFlow
+     * 订阅事件，在 LifecycleOwner 销毁时自动解绑。
      */
-    fun asSharedFlow(): SharedFlow<T> = flow.asSharedFlow()
+    @JvmName("observeValue")
+    fun observe(
+        lifecycleOwner: LifecycleOwner,
+        callback: (T) -> Unit
+    ): Observer<T> {
+        val observer = createObserver(callback)
+        val adapter = super.observe(lifecycleOwner) { payload ->
+            observer.onChanged(payload.value)
+        }
+        storeBinding(observer, adapter, lifecycleOwner)
+        return observer
+    }
+
+    /**
+     * 订阅事件，仅在 STARTED 及以上状态接收。
+     */
+    @JvmName("observeValueWithLifecycle")
+    fun observeWithLifecycle(
+        lifecycleOwner: LifecycleOwner,
+        callback: (T) -> Unit
+    ): Observer<T> {
+        val observer = createObserver(callback)
+        val adapter = super.observeWithLifecycle(lifecycleOwner) { payload ->
+            observer.onChanged(payload.value)
+        }
+        storeBinding(observer, adapter, lifecycleOwner)
+        return observer
+    }
+
+    /**
+     * 永久订阅，需要手动解绑。
+     */
+    fun observeForever(callback: (T) -> Unit): Observer<T> {
+        val observer = createObserver(callback)
+        val adapter = Observer<EventPayload<T>> { payload ->
+            observer.onChanged(payload.value)
+        }
+        super.observeForever(adapter)
+        storeBinding(observer, adapter, null)
+        return observer
+    }
+
+    @JvmName("createValueObserver")
+    fun createObserver(callback: (T) -> Unit): Observer<T> {
+        return Observer { value -> callback(value) }
+    }
+
+    @JvmName("removeValueObserver")
+    fun removeObserver(observer: Observer<T>) {
+        runOnMainThreadAndWait {
+            val binding = synchronized(lock) {
+                observerBindings.remove(observer)
+            } ?: return@runOnMainThreadAndWait
+            removeCleanupObserver(binding)
+            super.removeObserver(binding.adapter)
+        }
+    }
+
+    private fun storeBinding(
+        observer: Observer<T>,
+        adapter: Observer<EventPayload<T>>,
+        lifecycleOwner: LifecycleOwner?
+    ) {
+        runOnMainThreadAndWait {
+            val previous = synchronized(lock) {
+                observerBindings.remove(observer)
+            }
+            if (previous != null) {
+                removeCleanupObserver(previous)
+                super.removeObserver(previous.adapter)
+            }
+
+            val cleanupObserver = lifecycleOwner?.let { owner ->
+                LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_DESTROY) {
+                        clearBinding(observer)
+                    }
+                }.also { owner.lifecycle.addObserver(it) }
+            }
+
+            synchronized(lock) {
+                observerBindings[observer] = ObserverBinding(
+                    adapter = adapter,
+                    lifecycleOwner = lifecycleOwner,
+                    cleanupObserver = cleanupObserver
+                )
+            }
+        }
+    }
+
+    private fun clearBinding(observer: Observer<T>) {
+        synchronized(lock) {
+            observerBindings.remove(observer)
+        }
+    }
+
+    private fun removeCleanupObserver(binding: ObserverBinding<T>) {
+        val lifecycleOwner = binding.lifecycleOwner ?: return
+        val cleanupObserver = binding.cleanupObserver ?: return
+        lifecycleOwner.lifecycle.removeObserver(cleanupObserver)
+    }
+
+    data class EventPayload<T>(
+        val value: T
+    )
+
+    private data class ObserverBinding<T>(
+        val adapter: Observer<EventPayload<T>>,
+        val lifecycleOwner: LifecycleOwner?,
+        val cleanupObserver: LifecycleEventObserver?
+    )
 }

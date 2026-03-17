@@ -28,17 +28,18 @@ class LoggingInterceptor : Interceptor {
     private val headers = Headers.Builder()
     var logger: Logger? = null
 
+    private val defaultLogger: Logger = object : Logger {
+        override fun log(level: Int, tag: String, msg: String) {
+            Platform.get().log(msg, level, null)
+        }
+    }
 
     interface Logger {
         fun log(level: Int, tag: String, msg: String)
+    }
 
-        companion object {
-            val DEFAULT: Logger = object : Logger {
-                override fun log(level: Int, tag: String, msg: String) {
-                    Platform.get().log(msg, level, null)
-                }
-            }
-        }
+    internal fun log(level: Int, tag: String, msg: String) {
+        (logger ?: defaultLogger).log(level, tag, msg)
     }
 
     @Throws(IOException::class)

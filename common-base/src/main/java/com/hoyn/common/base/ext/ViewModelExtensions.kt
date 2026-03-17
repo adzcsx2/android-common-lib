@@ -2,13 +2,10 @@ package com.hoyn.common.base.ext
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import com.hoyn.common.base.BaseViewModel
-import com.hoyn.common.base.event.GlobalEventBus
+import com.hoyn.common.base.event.GlobalLiveEvent
 import com.hoyn.common.core.Message
 import com.hoyn.common.core.ThrowableBean
-import kotlinx.coroutines.launch
 
 /**
  * ViewModel 扩展方法
@@ -23,13 +20,7 @@ fun <R> Fragment.observeToast(
     viewModel: BaseViewModel<R>,
     onToast: (String) -> Unit
 ) {
-    owner.lifecycleScope.launch {
-        viewModel.defUI.toastEvent.asSharedFlow()
-            .flowWithLifecycle(owner.lifecycle)
-            .collect { message ->
-                onToast(message)
-            }
-    }
+    viewModel.defUI.toastEvent.observeWithLifecycle(owner, onToast)
 }
 
 /**
@@ -41,19 +32,9 @@ fun <R> Fragment.observeShowDialog(
     onShow: (String?) -> Unit,
     onDismiss: () -> Unit = {}
 ) {
-    owner.lifecycleScope.launch {
-        viewModel.defUI.showDialog.asSharedFlow()
-            .flowWithLifecycle(owner.lifecycle)
-            .collect { message ->
-                onShow(message)
-            }
-    }
-    owner.lifecycleScope.launch {
-        viewModel.defUI.dismissDialog.asSharedFlow()
-            .flowWithLifecycle(owner.lifecycle)
-            .collect {
-                onDismiss()
-            }
+    viewModel.defUI.showDialog.observeWithLifecycle(owner, onShow)
+    viewModel.defUI.dismissDialog.observeWithLifecycle(owner) {
+        onDismiss()
     }
 }
 
@@ -65,13 +46,7 @@ fun <R> Fragment.observeError(
     viewModel: BaseViewModel<R>,
     onError: (ThrowableBean) -> Unit
 ) {
-    owner.lifecycleScope.launch {
-        viewModel.defUI.errorEvent.asSharedFlow()
-            .flowWithLifecycle(owner.lifecycle)
-            .collect { error ->
-                onError(error)
-            }
-    }
+    viewModel.defUI.errorEvent.observeWithLifecycle(owner, onError)
 }
 
 /**
@@ -82,13 +57,7 @@ fun <R> Fragment.observeMessage(
     viewModel: BaseViewModel<R>,
     onMessage: (Message) -> Unit
 ) {
-    owner.lifecycleScope.launch {
-        viewModel.defUI.msgEvent.asSharedFlow()
-            .flowWithLifecycle(owner.lifecycle)
-            .collect { message ->
-                onMessage(message)
-            }
-    }
+    viewModel.defUI.msgEvent.observeWithLifecycle(owner, onMessage)
 }
 
 /**
@@ -98,13 +67,7 @@ fun Fragment.observeGlobalMessage(
     owner: LifecycleOwner,
     onMessage: (Message) -> Unit
 ) {
-    owner.lifecycleScope.launch {
-        GlobalEventBus.observeMessage()
-            .flowWithLifecycle(owner.lifecycle)
-            .collect { message ->
-                onMessage(message)
-            }
-    }
+    GlobalLiveEvent.observeMessage(owner, onMessage)
 }
 
 /**
@@ -114,13 +77,7 @@ fun Fragment.observeGlobalError(
     owner: LifecycleOwner,
     onError: (Throwable) -> Unit
 ) {
-    owner.lifecycleScope.launch {
-        GlobalEventBus.observeError()
-            .flowWithLifecycle(owner.lifecycle)
-            .collect { error ->
-                onError(error)
-            }
-    }
+    GlobalLiveEvent.observeError(owner, onError)
 }
 
 /**
@@ -150,13 +107,7 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeToast(
     viewModel: BaseViewModel<R>,
     onToast: (String) -> Unit
 ) {
-    lifecycleScope.launch {
-        viewModel.defUI.toastEvent.asSharedFlow()
-            .flowWithLifecycle(lifecycle)
-            .collect { message ->
-                onToast(message)
-            }
-    }
+    viewModel.defUI.toastEvent.observeWithLifecycle(this, onToast)
 }
 
 /**
@@ -167,19 +118,9 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeShowDialog(
     onShow: (String?) -> Unit,
     onDismiss: () -> Unit = {}
 ) {
-    lifecycleScope.launch {
-        viewModel.defUI.showDialog.asSharedFlow()
-            .flowWithLifecycle(lifecycle)
-            .collect { message ->
-                onShow(message)
-            }
-    }
-    lifecycleScope.launch {
-        viewModel.defUI.dismissDialog.asSharedFlow()
-            .flowWithLifecycle(lifecycle)
-            .collect {
-                onDismiss()
-            }
+    viewModel.defUI.showDialog.observeWithLifecycle(this, onShow)
+    viewModel.defUI.dismissDialog.observeWithLifecycle(this) {
+        onDismiss()
     }
 }
 
@@ -190,13 +131,7 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeError(
     viewModel: BaseViewModel<R>,
     onError: (ThrowableBean) -> Unit
 ) {
-    lifecycleScope.launch {
-        viewModel.defUI.errorEvent.asSharedFlow()
-            .flowWithLifecycle(lifecycle)
-            .collect { error ->
-                onError(error)
-            }
-    }
+    viewModel.defUI.errorEvent.observeWithLifecycle(this, onError)
 }
 
 /**
@@ -206,13 +141,7 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeMessage(
     viewModel: BaseViewModel<R>,
     onMessage: (Message) -> Unit
 ) {
-    lifecycleScope.launch {
-        viewModel.defUI.msgEvent.asSharedFlow()
-            .flowWithLifecycle(lifecycle)
-            .collect { message ->
-                onMessage(message)
-            }
-    }
+    viewModel.defUI.msgEvent.observeWithLifecycle(this, onMessage)
 }
 
 /**
@@ -221,13 +150,7 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeMessage(
 fun androidx.appcompat.app.AppCompatActivity.observeGlobalMessage(
     onMessage: (Message) -> Unit
 ) {
-    lifecycleScope.launch {
-        GlobalEventBus.observeMessage()
-            .flowWithLifecycle(lifecycle)
-            .collect { message ->
-                onMessage(message)
-            }
-    }
+    GlobalLiveEvent.observeMessage(this, onMessage)
 }
 
 /**
@@ -236,13 +159,7 @@ fun androidx.appcompat.app.AppCompatActivity.observeGlobalMessage(
 fun androidx.appcompat.app.AppCompatActivity.observeGlobalError(
     onError: (Throwable) -> Unit
 ) {
-    lifecycleScope.launch {
-        GlobalEventBus.observeError()
-            .flowWithLifecycle(lifecycle)
-            .collect { error ->
-                onError(error)
-            }
-    }
+    GlobalLiveEvent.observeError(this, onError)
 }
 
 /**

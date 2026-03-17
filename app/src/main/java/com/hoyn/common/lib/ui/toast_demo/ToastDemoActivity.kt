@@ -1,7 +1,5 @@
 package com.hoyn.common.lib.ui.toast_demo
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.databinding.ActivityToastDemoBinding
@@ -16,14 +14,11 @@ import com.hoyn.common.ui.toast.ToastUtil
  * - 使用 Application Context 避免内存泄漏
  * - 新 Toast 会取消前一个 Toast
  * - 语言设置由 BaseActivity 统一处理
+ *
+ * TAG 由 BaseActivity 自动提供
+ * 启动方式：context.startActivity<ToastDemoActivity>()
  */
 class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding>() {
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, ToastDemoActivity::class.java))
-        }
-    }
 
     override fun createBinding(): ActivityToastDemoBinding {
         return ActivityToastDemoBinding.inflate(layoutInflater)

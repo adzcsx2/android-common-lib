@@ -47,4 +47,26 @@
     <string name="language_zh">简体中文</string>
     <string name="language_zh_tw">繁體中文</string>
     <string name="language_system">Follow System</string>
+
+    <!-- LiveEvent Demo -->
+    <string name="liveevent_demo">LiveEvent Demo</string>
+    <string name="liveevent_demo_desc">Test message sending, receiving, sticky events, service, and receiver forwarding</string>
+    <string name="send_message">Send Message</string>
+    <string name="send_normal">Send Normal</string>
+    <string name="send_sticky">Send Sticky</string>
+    <string name="send_delay">Send Delay (2s)</string>
+    <string name="component_demo">Service and Receiver Demo</string>
+    <string name="start_service_listener">Start Service Listener</string>
+    <string name="stop_service_listener">Stop Service Listener</string>
+    <string name="send_to_service">Send EventBus Message To Service</string>
+    <string name="send_broadcast_demo">Send Broadcast Demo</string>
+    <string name="subscribe_message">Subscribe Message</string>
+    <string name="subscribe_normal">Subscribe Normal</string>
+    <string name="subscribe_sticky">Subscribe Sticky</string>
+    <string name="unsubscribe_normal">Unsubscribe Normal</string>
+    <string name="unsubscribe_sticky">Unsubscribe Sticky</string>
+    <string name="manual_subscribe">Manual Subscribe</string>
+    <string name="cancel_manual_subscribe">Cancel Manual Subscribe</string>
+    <string name="log_output">Log Output</string>
+    <string name="clear_log">Clear</string>
 </resources>

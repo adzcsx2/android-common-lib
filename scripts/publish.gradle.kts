@@ -3,7 +3,7 @@
 //
 // 发布方式:
 // 1. 本地发布: ./gradlew publishToMavenLocal
-// 2. JitPack 发布: 推送代码到 Gitee，然后在 https://jitpack.io 输入 com.gitee.Hoyn:android-common-lib:版本号
+// 2. JitPack 发布: 推送代码到 GitHub，然后在 https://jitpack.io 输入 com.github.adzcsx2:android-common-lib:版本号
 
 apply(plugin = "maven-publish")
 
@@ -14,14 +14,14 @@ extensions.configure<PublishingExtension> {
                 from(components.findByName("release"))
             }
 
-            groupId = "com.gitee.Hoyn"
+            groupId = "com.github.adzcsx2"
             artifactId = project.name
             version = project.findProperty("libVersion")?.toString() ?: "1.0.0"
 
             pom {
                 name.set(artifactId)
                 description.set("Android Common Library - $artifactId module")
-                url.set("https://gitee.com/Hoyn/android-common-lib")
+                url.set("https://github.com/adzcsx2/android-common-lib")
 
                 licenses {
                     license {
@@ -32,15 +32,15 @@ extensions.configure<PublishingExtension> {
 
                 developers {
                     developer {
-                        id.set("Hoyn")
-                        name.set("Hoyn")
+                        id.set("adzcsx2")
+                        name.set("adzcsx2")
                     }
                 }
 
                 scm {
-                    connection.set("scm:git:git@gitee.com:Hoyn/android-common-lib.git")
-                    developerConnection.set("scm:git:git@gitee.com:Hoyn/android-common-lib.git")
-                    url.set("https://gitee.com/Hoyn/android-common-lib")
+                    connection.set("scm:git:git@github.com:adzcsx2/android-common-lib.git")
+                    developerConnection.set("scm:git:git@github.com:adzcsx2/android-common-lib.git")
+                    url.set("https://github.com/adzcsx2/android-common-lib")
                 }
             }
         }

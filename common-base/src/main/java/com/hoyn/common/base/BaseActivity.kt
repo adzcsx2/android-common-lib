@@ -18,11 +18,17 @@ import kotlinx.coroutines.cancel
  * BaseActivity
  *
  * 提供通用的 Activity 基类功能
- * 支持协程、ViewBinding、触摸事件分发、多语言
+ * 支持协程、ViewBinding、触摸事件分发、多语言、Activity 栈管理
  */
 abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineScope by MainScope() {
 
     protected lateinit var binding: VB
+
+    /**
+     * 自动生成的 TAG，使用类名
+     * 子类可以直接使用，无需手动定义
+     */
+    val TAG: String get() = javaClass.simpleName
 
     // 保存 MyTouchListener 接口的列表
     private val myTouchListeners = mutableListOf<OnTouchListener>()
@@ -41,6 +47,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineSc
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ActivityStackManager.push(this)
         onCreateBefore()
         super.onCreate(savedInstanceState)
         binding = createBinding()
@@ -128,6 +135,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(), CoroutineSc
     }
 
     override fun onDestroy() {
+        ActivityStackManager.pop(this)
         cancel()
         // 子类可以重写 onCleanUp 来执行清理操作
         onCleanUp()

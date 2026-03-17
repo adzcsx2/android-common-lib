@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.hoyn.common.core.IBaseResponse
 import com.hoyn.common.core.Message
 import com.hoyn.common.core.ThrowableBean
-import com.hoyn.common.base.event.GlobalEventBus
+import com.hoyn.common.base.event.GlobalLiveEvent
 import com.hoyn.common.base.event.SingleLiveEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -239,7 +239,7 @@ abstract class BaseViewModel<R> : ViewModel() {
         val errorBean = handleException(throwable)
 
         // 发送到全局事件总线
-        GlobalEventBus.sendMessage(Message(code = errorBean.code, msg = errorBean.errMsg))
+        GlobalLiveEvent.sendMessage(Message(code = errorBean.code, msg = errorBean.errMsg))
 
         if (toastError) {
             defUI.toastEvent.emit(errorBean.errMsg)
@@ -277,15 +277,15 @@ abstract class BaseViewModel<R> : ViewModel() {
      */
     fun sendMessage(message: Message) {
         defUI.msgEvent.emit(message)
-        GlobalEventBus.sendMessage(message)
+        GlobalLiveEvent.sendMessage(message)
     }
 
     /**
      * UI 事件类
      */
     inner class UIChange {
-        val showDialog by lazy { SingleLiveEvent<String>() }
-        val dismissDialog by lazy { SingleLiveEvent<Unit>() }
+        val showDialog by lazy { SingleLiveEvent<String?>(emptyValueProvider = { null }) }
+        val dismissDialog by lazy { SingleLiveEvent<Unit>(emptyValueProvider = { Unit }) }
         val errorEvent by lazy { SingleLiveEvent<ThrowableBean>() }
         val toastEvent by lazy { SingleLiveEvent<String>() }
         val msgEvent by lazy { SingleLiveEvent<Message>() }

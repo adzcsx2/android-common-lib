@@ -1,7 +1,5 @@
 package com.hoyn.common.lib.ui.compose
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -61,14 +59,11 @@ import com.hoyn.common.lib.data.model.Post
  * - 列表展示
  * - 网络优先策略，离线缓存支持
  * - 语言设置由 BaseComposeActivity 统一处理
+ *
+ * TAG 由 BaseActivity 自动提供
+ * 启动方式：context.startActivity<ComposeDemoActivity>()
  */
 class ComposeDemoActivity : BaseComposeActivity() {
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, ComposeDemoActivity::class.java))
-        }
-    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

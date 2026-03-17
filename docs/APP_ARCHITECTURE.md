@@ -46,9 +46,9 @@ This project provides a modular Android common library with:
 | BaseFragment.kt | Base Fragment with lazy loading, ViewBinding |
 | BaseViewModel.kt | Base ViewModel with network request helpers, event dispatch |
 | ViewModelFactory.kt | Factory for creating ViewModels with parameters |
-| event/SingleLiveEvent.kt | One-time event stream using SharedFlow |
-| event/EventBus.kt | Global event bus for cross-component communication |
-| event/LifecycleObserver.kt | Lifecycle observer DSL |
+| event/SingleLiveEvent.kt | One-time event stream backed by BaseLiveEvent |
+| event/BaseLiveEvent.kt | Lifecycle-aware live event foundation with manual observer support |
+| event/GlobalLiveEvent.kt | Global live event for cross-component communication |
 | ext/ViewModelExtensions.kt | Extension functions for observing ViewModel events |
 
 **Rules:**
@@ -404,7 +404,7 @@ observeAllUIEvents(
 
 ```kotlin
 // Send global event
-GlobalEventBus.sendMessage(Message(code = 1001, msg = "Login expired"))
+GlobalLiveEvent.sendMessage(Message(code = 1001, msg = "Login expired"))
 
 // Observe global events
 observeGlobalMessage { message ->

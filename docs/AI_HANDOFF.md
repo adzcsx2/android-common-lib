@@ -369,7 +369,7 @@ buildFeatures {
    - [ ] 创建 `ThrowableBean` 数据类
    - [ ] 创建 `UIState` sealed class（页面状态）
    - [ ] 创建 `EventFlow` 事件机制（替代 LiveEventBus）
-   - [ ] 创建 `DefaultLifecycleObserver` 实现的 SubscribeLifecycle
+    - [ ] 基于 `BaseLiveEvent` 提供生命周期自动解绑和手动解绑能力
 
 2. **Phase 2: BaseViewModel 实现**
    - [ ] 创建 `BaseViewModel<BR>` 类
@@ -510,7 +510,7 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", ver
 │   │   ├── BaseRepository.kt
 │   │   ├── IBaseResponse.kt
 │   │   ├── ViewModelFactory.kt
-│   │   ├── SubscribeLifecycle.kt
+│   │   ├── BaseLiveEvent.kt
 │   │   ├── Clazz.kt
 │   │   └── ThrowableBean.kt
 │   └── http/
@@ -951,9 +951,9 @@ paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", versi
 |------|------|------|
 | `base/BaseViewModel.kt` | abstract class | ViewModel 基类，提供协程管理、网络请求封装、UI 事件分发 |
 | `base/ViewModelFactory.kt` | class | ViewModel 工厂，支持自定义创建逻辑 |
-| `event/SingleLiveEvent.kt` | class | 一次性事件流，使用 SharedFlow 替代 LiveData |
-| `event/EventBus.kt` | object | 全局事件总线，替代 LiveEventBus |
-| `event/LifecycleObserver.kt` | class | 生命周期观察者，使用 DefaultLifecycleObserver |
+| `event/SingleLiveEvent.kt` | class | 一次性事件流，基于 BaseLiveEvent 实现 |
+| `event/BaseLiveEvent.kt` | abstract class | 生命周期感知 LiveEvent 基类，支持手动解绑 |
+| `event/GlobalLiveEvent.kt` | object | 全局 LiveEvent，替代 LiveEventBus |
 | `ext/ViewModelExtensions.kt` | extension functions | ViewModel 扩展方法，提供 UI 事件观察 |
 
 ### 12.2 修改的模块
@@ -1027,7 +1027,7 @@ class UserActivity : BaseActivity<ActivityUserBinding>() {
 
 ```kotlin
 // 发送消息
-GlobalEventBus.sendMessage(Message(code = 1001, msg = "登录过期"))
+GlobalLiveEvent.sendMessage(Message(code = 1001, msg = "登录过期"))
 
 // 观察消息
 observeGlobalMessage { message ->
@@ -1049,7 +1049,7 @@ observeGlobalMessage { message ->
 | `ApiResponse<T>` | common-network | ✅ 稳定 | 已实现 IBaseResponse |
 | `BaseViewModel<R>` | common-ui | ⚠️ 暂时位置 | 功能稳定，但建议后续迁移到 common-core |
 | `SingleLiveEvent<T>` | common-ui | ✅ 稳定 | 可安全使用 |
-| `GlobalEventBus` | common-ui | ✅ 稳定 | 可安全使用 |
+| `GlobalLiveEvent` | common-ui | ✅ 稳定 | 可安全使用 |
 | `ViewModelFactory` | common-ui | ✅ 稳定 | 可安全使用 |
 
 ### 12.6 绝对不能被 3号窗口改动的接口
@@ -1063,7 +1063,7 @@ observeGlobalMessage { message ->
 | `BaseViewModel<R>` 抽象方法 | 子类需要实现 `repository` 和 `handleException`，修改签名会破坏子类 |
 | `BaseViewModel.UIChange` 内部类结构 | 已用于事件分发，修改会破坏兼容性 |
 | `SingleLiveEvent<T>` 构造参数 | SharedFlow 配置已优化，修改会影响事件语义 |
-| `GlobalEventBus` object 结构 | 全局单例，修改会影响所有观察者 |
+| `GlobalLiveEvent` object 结构 | 全局单例，修改会影响所有观察者 |
 
 ### 12.7 关键设计决策
 

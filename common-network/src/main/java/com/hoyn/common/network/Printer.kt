@@ -2,6 +2,7 @@ package com.hoyn.common.network
 
 import com.blankj.utilcode.util.JsonUtils
 import okhttp3.Request
+import okhttp3.internal.platform.Platform
 import okhttp3.logging.HttpLoggingInterceptor.Level
 import okio.Buffer
 import java.io.IOException
@@ -237,6 +238,6 @@ object Printer {
     }
 
     private fun log(type: Int, tag: String, msg: String) {
-        LoggingInterceptor.Logger.DEFAULT.log(type, tag, msg)
+        Platform.get().log(msg, type, null)
     }
 }

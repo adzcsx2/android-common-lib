@@ -1,7 +1,5 @@
 package com.hoyn.common.lib.ui.statusbar_demo
 
-import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
@@ -15,14 +13,11 @@ import com.hoyn.common.ui.utils.StatusBarHelper
  *
  * 使用 BaseActivity 作为基类
  * 语言设置由 BaseActivity 统一处理
+ *
+ * TAG 由 BaseActivity 自动提供
+ * 启动方式：context.startActivity<StatusBarDemoActivity>()
  */
 class StatusBarDemoActivity : BaseActivity<ActivityStatusBarDemoBinding>() {
-
-    companion object {
-        fun start(context: Context) {
-            context.startActivity(Intent(context, StatusBarDemoActivity::class.java))
-        }
-    }
 
     override fun createBinding(): ActivityStatusBarDemoBinding {
         return ActivityStatusBarDemoBinding.inflate(layoutInflater)
