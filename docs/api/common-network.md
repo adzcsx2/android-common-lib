@@ -282,7 +282,7 @@ val service = RetrofitFactory.createService<ApiService>(
 |---------|-------|
 | Package | `com.hoyn.common.network` |
 | Min SDK | 24 |
-| Compile SDK | 35 |
+| Compile SDK | 34 |
 | Java Version | 11 |
 
 ## Integration

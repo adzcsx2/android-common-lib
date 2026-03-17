@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.hoyn.common.all"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 24

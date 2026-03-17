@@ -126,7 +126,7 @@ withMain {
 |---------|-------|
 | Package | `com.hoyn.common.utils` |
 | Min SDK | 24 |
-| Compile SDK | 35 |
+| Compile SDK | 34 |
 | Java Version | 11 |
 
 ## Integration

@@ -1,19 +1,19 @@
 # Migration Guide
 
-## Version 1.0.7 Migration
+## Version 1.0.8 Migration
 
-Update your dependency version to `1.0.7` to align with the new compileSdk 35 baseline:
+Update your dependency version to `1.0.8` to align with the new compileSdk 34 baseline:
 
 ```gradle
 dependencies {
-   implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.7")
+   implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.8")
 }
 ```
 
 Notes:
-- The project baseline is now `compileSdk 35`.
-- The sample app baseline is now `targetSdk 35`.
-- `androidx.core` has been downgraded to `1.16.0` to keep the dependency stack compatible with compileSdk 35.
+- The project baseline is now `compileSdk 34`.
+- The sample app baseline is now `targetSdk 34`.
+- The dependency stack has been adjusted to a compileSdk 34 compatible set: `androidx.core` 1.13.1, `androidx.activity` 1.8.2, `androidx.lifecycle` 2.8.7, `androidx.navigation` 2.8.9, and Compose BOM `2024.04.01`.
 
 ## Version 1.0.6 Migration
 
@@ -154,6 +154,7 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
+| 1.0.8 | 24 | 34 | 2.3.10 |
 | 1.0.7 | 24 | 35 | 2.3.10 |
 | 1.0.6 | 24 | 36 | 2.3.10 |
 | 1.0.5 | 24 | 36 | 2.3.10 |
