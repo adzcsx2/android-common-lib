@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.0.7] - 2026-03-17
+
+### Changed
+- lowered the project compileSdk baseline from 36 to 35 across app and all library modules
+- lowered the sample app targetSdk from 36 to 35 to match the compileSdk baseline
+- downgraded `androidx.core` from `1.17.0` to `1.16.0` so the project can build with compileSdk 35
+- refreshed API documentation and README dependency snippets to reflect the 35 baseline and new release version
+
 ## [1.0.6] - 2026-03-17
 
 ### Added
@@ -95,9 +103,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 - Kotlin 2.1.0
 - AGP 9.0.0-rc01
-- compileSdk 36
+- compileSdk 35
 - minSdk 24
-- targetSdk 36
+- targetSdk 35
 - AndroidX Core 1.17.0
 - AppCompat 1.7.1
 - Material 1.13.0
@@ -113,6 +121,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.0.7 | 2026-03-17 | compileSdk and targetSdk baseline unified to 35, androidx.core downgraded to 1.16.0 |
 | 1.0.6 | 2026-03-17 | GlideUtils rename, ImageView lifecycle binding, rounded image implementation, image smoke tests |
 | 1.0.5 | 2026-03-17 | Generic base screen injection, SavedStateHandle demo, Activity Result API cleanup |
 | 1.0.4 | 2026-03-17 | Publishing fix, `common-all` aggregate module, docs refresh |
@@ -138,6 +147,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.0.7]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.7
 [1.0.6]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.6
 [1.0.5]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.5
 [1.0.4]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.4

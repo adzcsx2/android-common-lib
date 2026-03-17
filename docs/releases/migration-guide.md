@@ -1,5 +1,20 @@
 # Migration Guide
 
+## Version 1.0.7 Migration
+
+Update your dependency version to `1.0.7` to align with the new compileSdk 35 baseline:
+
+```gradle
+dependencies {
+   implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.7")
+}
+```
+
+Notes:
+- The project baseline is now `compileSdk 35`.
+- The sample app baseline is now `targetSdk 35`.
+- `androidx.core` has been downgraded to `1.16.0` to keep the dependency stack compatible with compileSdk 35.
+
 ## Version 1.0.6 Migration
 
 Update your dependency version to `1.0.6` to get the new `GlideUtils` API and rounded image support in `common-image`:
@@ -139,6 +154,7 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
+| 1.0.7 | 24 | 35 | 2.3.10 |
 | 1.0.6 | 24 | 36 | 2.3.10 |
 | 1.0.5 | 24 | 36 | 2.3.10 |
 | 1.0.4 | 24 | 36 | 2.3.10 |

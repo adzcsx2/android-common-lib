@@ -85,7 +85,7 @@ Helpers for observing ViewModel UI events from Activities and Fragments.
 |---------|-------|
 | Package | `com.hoyn.common.base` |
 | Min SDK | 24 |
-| Compile SDK | 36 |
+| Compile SDK | 35 |
 | Java Version | 11 |
 
 ## Integration

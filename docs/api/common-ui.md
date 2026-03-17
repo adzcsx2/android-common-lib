@@ -398,7 +398,7 @@ class MyActivity : AppCompatActivity() {
 |---------|-------|
 | Package | `com.hoyn.common.ui` |
 | Min SDK | 24 |
-| Compile SDK | 36 |
+| Compile SDK | 35 |
 | Java Version | 11 |
 | ViewBinding | Enabled |
 
