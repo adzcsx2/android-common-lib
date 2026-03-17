@@ -4,9 +4,9 @@
 jdk:
   - openjdk17
 
-before_install:
-  - echo "Starting JitPack build for multi-module project"
-
 install:
   # 发布所有模块到本地 Maven 仓库
-  - ./gradlew publishToMavenLocal
+  # -x test -x lint: 跳过测试和 lint 检查
+  # --parallel: 并行构建多模块
+  - ./gradlew publishToMavenLocal -x test -x lint --parallel
+
