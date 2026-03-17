@@ -1,8 +1,11 @@
 package com.hoyn.common.network
 
 import okhttp3.OkHttpClient
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 
 class OkHttpClientFactoryTest {
 
@@ -11,9 +14,9 @@ class OkHttpClientFactoryTest {
         val client = OkHttpClientFactory.create()
 
         assertNotNull(client)
-        assertEquals(NetworkConfig.connectTimeout, client.connectTimeoutMillis / 1000)
-        assertEquals(NetworkConfig.readTimeout, client.readTimeoutMillis / 1000)
-        assertEquals(NetworkConfig.writeTimeout, client.writeTimeoutMillis / 1000)
+        assertEquals(NetworkConfig.connectTimeout, TimeUnit.MILLISECONDS.toSeconds(client.connectTimeoutMillis.toLong()))
+        assertEquals(NetworkConfig.readTimeout, TimeUnit.MILLISECONDS.toSeconds(client.readTimeoutMillis.toLong()))
+        assertEquals(NetworkConfig.writeTimeout, TimeUnit.MILLISECONDS.toSeconds(client.writeTimeoutMillis.toLong()))
     }
 
     @Test

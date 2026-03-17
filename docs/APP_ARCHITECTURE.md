@@ -239,6 +239,14 @@ class YourApplication : Application() {
 
 ---
 
+## 5.1 State Management Recommendation
+
+- New screens should prefer `UIState` + `Flow/StateFlow` for persistent page state.
+- Existing `LiveData`, `SingleLiveEvent`, and `GlobalLiveEvent` APIs remain supported for compatibility.
+- Do not force all modules or pages to migrate at once; document which state channel a screen uses.
+
+---
+
 ## 6. BaseActivity / BaseFragment Responsibilities
 
 ### BaseActivity

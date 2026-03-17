@@ -14,6 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional image transformations
 - Pagination support
 
+## [1.0.4] - 2026-03-17
+
+### Added
+- `common-all` aggregate module for all-in-one dependency import
+- missing `common-base` and `common-compose` API docs
+
+### Changed
+- fixed JitPack dependency coordinates to `com.github.adzcsx2.android-common-lib:*`
+- fixed Android library publishing to generate consumable `aar` artifacts instead of pom-only publications
+- added lightweight release validation tasks: `qualityCheck` and `libraryPublishDryRun`
+- centralized Android test dependencies in the version catalog
+- refreshed README, getting started guide, and API docs for modular import vs all-in-one import
+- added app lint baseline and cleaned part of the LiveEvent translation debt
+
 ## [1.0.0] - 2024-03-12
 
 ### Added
@@ -73,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.0.4 | 2026-03-17 | Publishing fix, `common-all` aggregate module, docs refresh |
 | 1.0.0 | 2024-03-12 | Initial release with 6 core modules |
 
 ## Contributing
@@ -94,5 +109,6 @@ When contributing to this project, please:
 
 ---
 
-[Unreleased]: https://gitee.com/Hoyn/android-common-lib
-[1.0.0]: https://gitee.com/Hoyn/android-common-lib/releases/tag/1.0.0
+[Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.0.4]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.4
+[1.0.0]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.0

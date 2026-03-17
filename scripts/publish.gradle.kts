@@ -3,7 +3,7 @@
 //
 // 发布方式:
 // 1. 本地发布: ./gradlew publishToMavenLocal
-// 2. JitPack 发布: 推送代码到 GitHub，然后在 https://jitpack.io 输入 com.github.adzcsx2:android-common-lib:版本号
+// 2. JitPack 发布: 推送代码到 GitHub，然后在 https://jitpack.io 输入 com.github.adzcsx2/android-common-lib
 
 apply(plugin = "maven-publish")
 
@@ -14,7 +14,7 @@ extensions.configure<PublishingExtension> {
                 from(components.findByName("release"))
             }
 
-            groupId = "com.github.adzcsx2"
+            groupId = "com.github.adzcsx2.android-common-lib"
             artifactId = project.name
             version = project.findProperty("libVersion")?.toString() ?: "1.0.0"
 

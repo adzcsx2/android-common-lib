@@ -235,6 +235,11 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 }
 ```
 
+**Recommendation**:
+- Prefer `UIState` with `Flow` or `StateFlow` for new page state.
+- Keep `LiveData` and the existing event APIs as compatibility options for existing screens.
+- Do not introduce duplicate state channels without documenting the recommended usage.
+
 ### 3. Event System
 
 Using BaseLiveEvent-backed events:

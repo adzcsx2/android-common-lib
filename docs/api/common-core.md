@@ -57,7 +57,23 @@ dependencies {
 ## Related Modules
 
 - `common-utils` - Extends core with context and coroutine utilities
-- `common-log` - Provides logging functionality
+- `common-base` - Provides base Activity, Fragment, ViewModel, and event helpers
+- `common-compose` - Provides Compose foundation classes and UIState helpers
 - `common-ui` - UI components and base classes
 - `common-network` - Network request handling
 - `common-image` - Image loading capabilities
+
+## JitPack Coordinates
+
+```gradle
+dependencies {
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.0.3")
+}
+```
+    override fun Content() {
+        CommonLibTheme {
+            FeedScreen()
+        }
+    }
+}
+```

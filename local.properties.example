@@ -9,6 +9,5 @@
 # header note.
 sdk.dir=/Users/hoyn/Library/Android/sdk
 
-# Gitee Packages 凭据
-giteeUsername=
-giteeToken=
+# This example intentionally contains only local SDK configuration.
+# Do not store publish tokens in version-controlled examples.

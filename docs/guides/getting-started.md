@@ -26,7 +26,15 @@ In your module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("com.gitee.Hoyn:android-common-lib:1.0.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.4")
+}
+```
+
+Need a single module only?
+
+```kotlin
+dependencies {
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.4")
 }
 ```
 
@@ -69,7 +77,7 @@ Don't forget to register in `AndroidManifest.xml`:
 
 ## Module-by-Module Guide
 
-### 1. Using common-log
+### 1. Using common-utils Logger
 
 The logger provides simple, debug-aware logging:
 
@@ -181,7 +189,7 @@ avatarView.loadCircleImage(user.avatarUrl)
 imageView.loadRoundedImage(url, radius = 16)
 ```
 
-### 5. Using common-ui
+### 5. Using common-base
 
 #### BaseActivity
 
@@ -203,6 +211,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 }
 ```
+
+### 6. State Management Recommendation
+
+For new screens, prefer `UIState` with `Flow/StateFlow`. Keep `LiveData`-based APIs for existing pages that already depend on `BaseViewModel` event streams.
 
 #### BaseFragment
 
@@ -408,7 +420,7 @@ lifecycleScope.launchIO {
 If you encounter dependency conflicts, use exclude:
 
 ```kotlin
-implementation("com.gitee.Hoyn:android-common-lib:1.0.0") {
+implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.4") {
     exclude(group = "com.google.android.material")
 }
 ```
@@ -444,5 +456,5 @@ If network requests fail:
 
 For issues, questions, or contributions:
 
-- GitHub: [Report an issue](https://gitee.com/Hoyn/android-common-lib/issues)
+- GitHub: [Report an issue](https://github.com/adzcsx2/android-common-lib/issues)
 - Documentation: [Full docs](/docs/)

@@ -4,12 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.hoyn.common.image"
+    namespace = "com.hoyn.common.all"
     compileSdk = 36
 
     defaultConfig {
         minSdk = 24
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -37,19 +36,12 @@ android {
 
 dependencies {
     api(project(":common-core"))
+    api(project(":common-base"))
+    api(project(":common-compose"))
     api(project(":common-utils"))
-
-    // Image Loading
-    api(libs.glide)
-
-    // AndroidX Core
-    implementation(libs.androidx.core.ktx)
-
-    // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    api(project(":common-network"))
+    api(project(":common-image"))
+    api(project(":common-ui"))
 }
 
-// 应用发布配置
 apply(from = rootProject.file("scripts/publish.gradle.kts"))

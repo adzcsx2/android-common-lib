@@ -8,6 +8,23 @@ Since this is the initial release, there are no migration steps needed. Simply a
 
 As new versions are released, migration guides will be added here to help you upgrade your code smoothly.
 
+## Version 1.0.4 Migration
+
+If you were using older documentation or unpublished local artifacts, update to the new JitPack coordinates:
+
+```gradle
+dependencies {
+   implementation("com.github.adzcsx2.android-common-lib:common-base:1.0.4")
+   // or
+   implementation("com.github.adzcsx2.android-common-lib:common-all:1.0.4")
+}
+```
+
+Notes:
+- `com.github.adzcsx2.android-common-lib:common-all:1.0.4` is the all-in-one aggregate module.
+- `com.github.adzcsx2.android-common-lib:1.0.4` is not a valid root artifact.
+- If your app previously failed to resolve classes such as `BaseLiveEvent`, refresh dependencies after upgrading.
+
 ### Typical Migration Steps
 
 When a new version is released with breaking changes, follow these general steps:
@@ -15,7 +32,7 @@ When a new version is released with breaking changes, follow these general steps
 1. **Update Dependency**
    ```gradle
    // In build.gradle.kts
-   implementation("com.gitee.Hoyn:android-common-lib:X.X.X")
+   implementation("com.github.adzcsx2.android-common-lib:common-all:X.X.X")
    ```
 
 2. **Review Breaking Changes**
@@ -81,13 +98,14 @@ If you encounter issues during migration:
 
 1. Check the [API Documentation](/docs/api/) for updated signatures
 2. Review the [Architecture Documentation](/docs/ARCHITECTURE.md) for design changes
-3. Open an issue on [GitHub](https://gitee.com/Hoyn/android-common-lib/issues)
+3. Open an issue on [GitHub](https://github.com/adzcsx2/android-common-lib/issues)
 4. Check existing issues for similar problems
 
 ## Version Compatibility
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
+| 1.0.4 | 24 | 36 | 2.3.10 |
 | 1.0.0 | 24 | 36 | 2.1.0 |
 
 ## Deprecation Policy

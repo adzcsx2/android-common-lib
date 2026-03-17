@@ -47,4 +47,26 @@
     <string name="language_zh">简体中文</string>
     <string name="language_zh_tw">繁體中文</string>
     <string name="language_system">跟随系统</string>
+
+    <!-- LiveEvent Demo -->
+    <string name="liveevent_demo">LiveEvent 示例</string>
+    <string name="liveevent_demo_desc">测试消息发送、接收、粘性事件、Service 与 Receiver 转发</string>
+    <string name="send_message">发送消息</string>
+    <string name="send_normal">发送普通消息</string>
+    <string name="send_sticky">发送粘性消息</string>
+    <string name="send_delay">延迟发送（2 秒）</string>
+    <string name="component_demo">Service 与 Receiver 示例</string>
+    <string name="start_service_listener">启动 Service 监听</string>
+    <string name="stop_service_listener">停止 Service 监听</string>
+    <string name="send_to_service">发送 EventBus 消息到 Service</string>
+    <string name="send_broadcast_demo">发送广播示例</string>
+    <string name="subscribe_message">订阅消息</string>
+    <string name="subscribe_normal">订阅普通消息</string>
+    <string name="subscribe_sticky">订阅粘性消息</string>
+    <string name="unsubscribe_normal">取消普通订阅</string>
+    <string name="unsubscribe_sticky">取消粘性订阅</string>
+    <string name="manual_subscribe">手动订阅</string>
+    <string name="cancel_manual_subscribe">取消手动订阅</string>
+    <string name="log_output">日志输出</string>
+    <string name="clear_log">清空</string>
 </resources>
