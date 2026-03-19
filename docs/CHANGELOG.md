@@ -13,6 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.2.0] - 2026-03-19
+
+### Added
+- `claude.md` - AI 开发规范文件，定义项目架构原则和代码规范
+- `docs/checklist/modules.md` - 模块功能清单，帮助开发者优先使用库内已有功能
+- README 新增「AI 辅助开发」章节，说明如何配置 AI 工具
+- README 新增「架构模式详解」章节，详细说明 Clean Architecture 分层
+
+### Changed
+- 更新所有文档中的版本号至 1.2.0
+- 将 MODULES_CHECKLIST.md 移至 `docs/checklist/modules.md`
+- 更新 .gitignore，添加 `.claude/` 目录忽略规则
+
 ## [1.1.0] - 2026-03-19
 
 ### Changed
