@@ -10,9 +10,14 @@ dependencies {
 }
 ```
 
-Notes:
-- No API or baseline changes from `1.2.0`.
-- This release aligns `libVersion` and all dependency snippets to `1.2.1`.
+### Breaking Changes
+
+- **`ToastUtils` removed**: Replace all `ToastUtils.show()` calls with `ToastUtil.show()` / `ToastUtil.showLong()` / `ToastUtil.showCenter()`.
+
+### Recommended
+
+- Replace raw `setOnClickListener` with `ViewExtensions.click { }` for built-in 600ms debounce.
+- Use `StatusBarHelper.setTransparent()` / `setLightMode()` / `setDarkMode()` for status bar control.
 
 ## Version 1.0.9 Migration
 
@@ -182,6 +187,8 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
+| 1.2.1 | 24 | 34 | 2.3.10 |
+| 1.2.0 | 24 | 34 | 2.3.10 |
 | 1.0.9 | 24 | 34 | 2.3.10 |
 | 1.0.8 | 24 | 34 | 2.3.10 |
 | 1.0.7 | 24 | 35 | 2.3.10 |

@@ -15,8 +15,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.1] - 2026-03-30
 
+### Added
+- ViewExtensions: `selectState` binding, `pressEffectBgColor`/`pressEffectAlpha`/`pressEffectDisable`, `isDoubleClick`, `continuousClick`, `holdClick`/`releaseClick`, `setClickNotNull`, and property extensions (`backgroundColor`, `textColor`, `imageResource`, `textResource`, etc.)
+- StatusBarHelper: `setTransparent()`, `setLightMode()`/`setDarkMode()`, `setGradientColor()`, `getHeight()`
+- ViewModelExt: new ViewModel extension functions
+- StateExtensions: `collectAsStateWithLifecycle` and UIState observation for Compose
+- App: DataSource pattern (`PostLocalDataSource`, `PostRemoteDataSource`), Koin DI module (`AppModule`)
+
 ### Changed
-- aligned `libVersion` with `1.2.1`, updating all dependency snippets in README and module checklist
+- Removed deprecated `ToastUtils`, unified to `ToastUtil`
+- Improved system toast handling with ROM-specific fallback (Huawei/Meizu/Xiaomi)
+- Refactored PressEffectHelper long press detection and touch boundary handling
+- Enhanced ViewModelFactory and ViewModelClassResolver
+- Updated all demo screens to use `ViewExtensions.click`
+- Updated `claude.md` with ViewExtensions reuse rules
+- Aligned `libVersion` and all dependency snippets to `1.2.1`
+
+### Deprecated
+- `ToastUtils` (removed) - use `ToastUtil` instead
 
 ## [1.0.9] - 2026-03-17
 
@@ -139,7 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.2.1 | 2026-03-30 | libVersion aligned to 1.2.1, dependency snippets refreshed |
+| 1.2.1 | 2026-03-30 | ViewExtensions enhancements, ToastUtils removed, StatusBarHelper expanded, DataSource pattern, Koin DI |
 | 1.0.9 | 2026-03-17 | documentation and release metadata aligned with the published 1.0.9 tag |
 | 1.0.8 | 2026-03-17 | compileSdk and targetSdk baseline unified to 34, AndroidX and Compose stack downgraded for 34 compatibility |
 | 1.0.7 | 2026-03-17 | compileSdk and targetSdk baseline unified to 35, androidx.core downgraded to 1.16.0 |
