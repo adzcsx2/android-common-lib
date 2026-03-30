@@ -1,20 +1,20 @@
 package com.hoyn.common.lib.ui.compose
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.data.repository.PostRepository
-import com.hoyn.common.ui.toast.ToastUtils
+import com.hoyn.common.ui.toast.ToastUtil
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * Compose Demo ViewModel
@@ -24,15 +24,19 @@ import kotlinx.coroutines.launch
  * - 调用 Repository 获取数据
  * - 处理业务逻辑
  *
+ * 注意：由于继承 AndroidViewModel 而非 BaseViewModel，需要单独声明 KoinComponent
+ *
  * @param application Application 实例
- * @param repository 帖子数据仓库
  * @param ioDispatcher IO 调度器
+ * @param autoLoadOnInit 是否在初始化时自动加载
  */
 class ComposeDemoViewModel(
     application: Application,
-    private val repository: PostRepository = PostRepository.getInstance(application),
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : AndroidViewModel(application) {
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val autoLoadOnInit: Boolean = true
+) : AndroidViewModel(application), KoinComponent {
+
+    private val repository: PostRepository by inject()
 
     // UI 状态流
     private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)
@@ -43,7 +47,9 @@ class ComposeDemoViewModel(
     val isFromCache: StateFlow<Boolean> = _isFromCache.asStateFlow()
 
     init {
-        // 初始化时不自动加载数据， 由外部调用 loadPosts() 触发
+        if (autoLoadOnInit) {
+            loadPosts()
+        }
     }
 
     /**
@@ -77,10 +83,8 @@ class ComposeDemoViewModel(
      * 显示测试 Toast
      *
      * 用于演示从 Compose 调用 Toast
-     *
-     * @param context Context 实例
      */
-    fun showTestToast(context: Context) {
-        ToastUtils.show(context, "来自 Compose 的 Toast!")
+    fun showTestToast() {
+        ToastUtil.show("来自 Compose 的 Toast!")
     }
 }

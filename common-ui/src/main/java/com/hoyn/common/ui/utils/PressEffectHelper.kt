@@ -7,7 +7,6 @@ import android.graphics.drawable.GradientDrawable
 import android.view.MotionEvent
 import android.view.View
 import com.blankj.utilcode.util.SizeUtils
-import kotlinx.coroutines.*
 
 /**
  * 按压效果工具类
@@ -20,12 +19,7 @@ import kotlinx.coroutines.*
 class PressEffectHelper private constructor() {
 
     companion object {
-        private val location = IntArray(2)
-        private var isDown: Boolean = false
-        private var time: Long = 0
         private const val LONG_PRESS_TIME = 600L
-        private var longPressDisposable: CoroutineScope? = null
-        private var isLongClick = false
 
         /**
          * 按下改变透明度的效果
@@ -37,8 +31,30 @@ class PressEffectHelper private constructor() {
          * @param pressAlpha 按下时的透明度，默认为 0.8f
          */
         fun alphaEffect(view: View, pressAlpha: Float = 0.8f) {
+            val location = IntArray(2)
+            var isDown = false
+            var lastTouchTime = 0L
+            var isLongClick = false
+            var longPressRunnable: Runnable? = null
+
+            fun startLongClick() {
+                cancelLongClick(view, longPressRunnable)
+                isLongClick = false
+                longPressRunnable = Runnable {
+                    isLongClick = true
+                    view.performLongClick()
+                }
+                view.postDelayed(longPressRunnable, LONG_PRESS_TIME)
+            }
+
+            fun cancelLongClick() {
+                cancelLongClick(view, longPressRunnable)
+                longPressRunnable = null
+                isLongClick = false
+            }
+
             view.setOnTouchListener { v, event ->
-                if (System.currentTimeMillis() - time < 200) {
+                if (System.currentTimeMillis() - lastTouchTime < 200) {
                     return@setOnTouchListener true
                 }
                 view.getLocationOnScreen(location)
@@ -53,7 +69,7 @@ class PressEffectHelper private constructor() {
                         isDown = true
                         v.alpha = 1f
                         v.postDelayed({ v.alpha = if (isDown) pressAlpha else 1.0f }, 150)
-                        longClick(view)
+                        startLongClick()
                         return@setOnTouchListener true
                     }
                     MotionEvent.ACTION_MOVE -> {
@@ -78,7 +94,7 @@ class PressEffectHelper private constructor() {
                                     v.performClick()
                                 }
                             }
-                            time = System.currentTimeMillis()
+                            lastTouchTime = System.currentTimeMillis()
                             cancelLongClick()
                             return@setOnTouchListener true
                         }
@@ -119,6 +135,11 @@ class PressEffectHelper private constructor() {
             bottomRightRadiusDp: Float = 0f,
             bottomLeftRadiusDp: Float = 0f
         ) {
+            val location = IntArray(2)
+            var isDown = false
+            var lastTouchTime = 0L
+            var isLongClick = false
+            var longPressRunnable: Runnable? = null
             val originalBgColor = view.background
             val pressDrawable: Drawable = if (topLeftRadiusDp == 0f && topRightRadiusDp == 0f && bottomLeftRadiusDp == 0f && bottomRightRadiusDp == 0f) {
                 ColorDrawable(bgColor)
@@ -138,8 +159,24 @@ class PressEffectHelper private constructor() {
                 }
             }
 
+            fun startLongClick() {
+                cancelLongClick(view, longPressRunnable)
+                isLongClick = false
+                longPressRunnable = Runnable {
+                    isLongClick = true
+                    view.performLongClick()
+                }
+                view.postDelayed(longPressRunnable, LONG_PRESS_TIME)
+            }
+
+            fun cancelLongClick() {
+                cancelLongClick(view, longPressRunnable)
+                longPressRunnable = null
+                isLongClick = false
+            }
+
             view.setOnTouchListener { v, event ->
-                if (System.currentTimeMillis() - time < 200) {
+                if (System.currentTimeMillis() - lastTouchTime < 200) {
                     return@setOnTouchListener true
                 }
                 view.getLocationOnScreen(location)
@@ -154,7 +191,7 @@ class PressEffectHelper private constructor() {
                         isDown = true
                         v.background = originalBgColor
                         v.postDelayed({ v.background = if (isDown) pressDrawable else originalBgColor }, 150)
-                        longClick(view)
+                        startLongClick()
                         return@setOnTouchListener true
                     }
                     MotionEvent.ACTION_MOVE -> {
@@ -179,7 +216,7 @@ class PressEffectHelper private constructor() {
                                     v.performClick()
                                 }
                             }
-                            time = System.currentTimeMillis()
+                            lastTouchTime = System.currentTimeMillis()
                             cancelLongClick()
                             return@setOnTouchListener true
                         }
@@ -199,28 +236,10 @@ class PressEffectHelper private constructor() {
             }
         }
 
-        /**
-         * 启动长按检测定时器
-         *
-         * @param view 要检测长按的 View
-         */
-        private fun longClick(view: View) {
-            cancelLongClick()
-            longPressDisposable = MainScope()
-            longPressDisposable?.launch {
-                delay(LONG_PRESS_TIME)
-                isLongClick = true
-                view.performLongClick()
+        private fun cancelLongClick(view: View, longPressRunnable: Runnable?) {
+            if (longPressRunnable != null) {
+                view.removeCallbacks(longPressRunnable)
             }
-        }
-
-        /**
-         * 取消长按检测定时器
-         */
-        private fun cancelLongClick() {
-            longPressDisposable?.cancel()
-            longPressDisposable = null
-            isLongClick = false
         }
     }
 }

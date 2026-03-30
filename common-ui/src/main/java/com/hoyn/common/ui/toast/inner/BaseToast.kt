@@ -286,6 +286,24 @@ open class BaseToast(var mContext: Context) : IToast, Cloneable {
         }
 
         /**
+         * 取消当前 Toast 并显示下一个
+         */
+        fun cancelCurrentAndShowNext() {
+            YTN.instance().cancelCurrentAndShowNext()
+        }
+
+        /**
+         * 添加 Toast 并替换当前显示的 Toast
+         *
+         * 原子操作，避免竞态条件
+         *
+         * @param toast 要显示的 Toast
+         */
+        fun addAndReplaceCurrent(toast: BaseToast) {
+            YTN.instance().addAndReplaceCurrent(toast)
+        }
+
+        /**
          * 取消指定 Activity 的所有 Toast
          *
          * @param mActivity 要取消 Toast 的 Activity

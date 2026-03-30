@@ -13,24 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
-## [1.2.0] - 2026-03-19
-
-### Added
-- `claude.md` - AI 开发规范文件，定义项目架构原则和代码规范
-- `docs/checklist/modules.md` - 模块功能清单，帮助开发者优先使用库内已有功能
-- README 新增「AI 辅助开发」章节，说明如何配置 AI 工具
-- README 新增「架构模式详解」章节，详细说明 Clean Architecture 分层
+## [1.2.1] - 2026-03-30
 
 ### Changed
-- 更新所有文档中的版本号至 1.2.0
-- 将 MODULES_CHECKLIST.md 移至 `docs/checklist/modules.md`
-- 更新 .gitignore，添加 `.claude/` 目录忽略规则
-
-## [1.1.0] - 2026-03-19
-
-### Changed
-- version bump to 1.1.0 for feature enhancements
-- updated all documentation references to latest version
+- aligned `libVersion` with `1.2.1`, updating all dependency snippets in README and module checklist
 
 ## [1.0.9] - 2026-03-17
 
@@ -153,7 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.1.0 | 2026-03-19 | version bump for feature enhancements |
+| 1.2.1 | 2026-03-30 | libVersion aligned to 1.2.1, dependency snippets refreshed |
 | 1.0.9 | 2026-03-17 | documentation and release metadata aligned with the published 1.0.9 tag |
 | 1.0.8 | 2026-03-17 | compileSdk and targetSdk baseline unified to 34, AndroidX and Compose stack downgraded for 34 compatibility |
 | 1.0.7 | 2026-03-17 | compileSdk and targetSdk baseline unified to 35, androidx.core downgraded to 1.16.0 |
@@ -182,7 +168,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
-[1.1.0]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.1.0
+[1.2.1]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.1
 [1.0.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.9
 [1.0.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.8
 [1.0.7]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.7

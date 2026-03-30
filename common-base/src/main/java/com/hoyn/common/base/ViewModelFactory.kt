@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
+import org.koin.core.context.GlobalContext
+import org.koin.core.parameter.parametersOf
 
 /**
  * ViewModel 工厂
@@ -99,6 +101,21 @@ class ViewModelFactory<VM : ViewModel>(
             application: Application,
             savedStateHandle: SavedStateHandle
         ): VM {
+            // 首先尝试从 Koin 获取 ViewModel
+            val koin = GlobalContext.getOrNull()
+            if (koin != null) {
+                val kClass = modelClass.kotlin as kotlin.reflect.KClass<ViewModel>
+                val koinInstance = runCatching {
+                    koin.get<ViewModel>(kClass, null) {
+                        parametersOf(application, savedStateHandle)
+                    } as VM
+                }.getOrNull()
+                if (koinInstance != null) {
+                    return koinInstance
+                }
+            }
+
+            // 回退到反射创建
             val appAndStateConstructor = runCatching {
                 modelClass.getDeclaredConstructor(Application::class.java, SavedStateHandle::class.java)
             }.getOrNull()

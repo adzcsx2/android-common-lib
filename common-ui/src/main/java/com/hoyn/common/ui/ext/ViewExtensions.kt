@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
+import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -105,15 +108,6 @@ fun View.disable() {
 // ==================== 点击事件 ====================
 
 /**
- * 设置点击事件
- *
- * @param action 点击回调
- */
-fun View.onClick(action: (View) -> Unit) {
-    setOnClickListener(action)
-}
-
-/**
  * 设置长按事件
  *
  * @param action 长按回调，返回 true 表示消费事件
@@ -124,12 +118,16 @@ fun View.onLongClick(action: (View) -> Boolean) {
 
 /**
  * 防抖动点击事件
- * @param delay 防抖延迟时间，默认600ms
+ *
+ * 推荐写法：view.click { ... }
+ *
+ * @param delay 防抖延迟时间，默认600ms；传 0 表示不做防抖
+ * @param block 点击回调
  */
 @SuppressLint("CheckResult")
-inline fun View.click(crossinline function: (view: View) -> Unit, delay: Int = 600) {
+inline fun View.click(delay: Int = 600, crossinline block: (view: View) -> Unit) {
     this.setOnClickListener {
-        stableFun({ function.invoke(it) }, delay)
+        stableFun({ block.invoke(it) }, delay)
     }
 }
 
@@ -163,7 +161,7 @@ inline fun View.continuousClick(
     crossinline invalidClickFunction: (view: View) -> Unit,
     delay: Int
 ) {
-    click({
+    click(0) {
         val tag = this.getTag(R.id.id_tag_click2)
         if (tag == null || System.currentTimeMillis() - tag.toString().toLong() < delay) {
             effectiveClickFunction.invoke(it)
@@ -171,7 +169,7 @@ inline fun View.continuousClick(
             invalidClickFunction.invoke(it)
         }
         this.setTag(R.id.id_tag_click2, System.currentTimeMillis())
-    }, 0)
+    }
 }
 
 /**
@@ -181,7 +179,7 @@ inline fun View.continuousClick(
  */
 @SuppressLint("CheckResult")
 inline fun View.holdClick(crossinline function: (view: View) -> Unit) {
-    click(function, 999999)
+    click(999999) { function.invoke(it) }
 }
 
 /**
@@ -203,7 +201,7 @@ fun <T> View.setClickNotNull(t: T, onClick: ((t: T) -> Unit)?) {
     if (onClick == null) {
         setOnClickListener(null)
     } else {
-        click({ onClick.invoke(t) })
+        click { onClick.invoke(t) }
     }
 }
 
@@ -216,7 +214,7 @@ fun View.setClickNotNull(onClick: (() -> Unit)?) {
     if (onClick == null) {
         setOnClickListener(null)
     } else {
-        click({ onClick.invoke() })
+        click { onClick.invoke() }
     }
 }
 
@@ -261,20 +259,17 @@ fun View.pressEffectDisable() {
 
 // ==================== 双击检测 ====================
 
-private var lastClickTime: Long = 0
-private const val SPACE_TIME = 500
-
 /**
- * 判断是否为双击
+ * 判断当前 View 是否为双击
  *
+ * @param intervalMs 双击判定间隔，默认 500ms
  * @return true 表示双击，false 表示单击
  */
-fun isDoubleClick(): Boolean {
+fun View.isDoubleClick(intervalMs: Long = 500L): Boolean {
     val currentTime = System.currentTimeMillis()
-    val isDoubleClick = currentTime - lastClickTime <= SPACE_TIME
-    if (!isDoubleClick) {
-        lastClickTime = currentTime
-    }
+    val lastClickTime = (getTag(R.id.id_tag_double_click_time) as? Long) ?: 0L
+    val isDoubleClick = currentTime - lastClickTime <= intervalMs
+    setTag(R.id.id_tag_double_click_time, currentTime)
     return isDoubleClick
 }
 
@@ -312,6 +307,66 @@ fun Context.getDimension(@DimenRes resId: Int): Float {
     return resources.getDimension(resId)
 }
 
+// ==================== 选中态资源绑定 ====================
+
+private const val SELECT_STATE_MODE_BACKGROUND = 0
+private const val SELECT_STATE_MODE_IMAGE = 1
+
+/**
+ * 绑定 ImageView 选中/未选中状态资源。
+ *
+ * 绑定后可通过 imageView.selectState = true/false 切换显示资源。
+ */
+fun android.widget.ImageView.bindSelectState(
+    @DrawableRes selectedRes: Int,
+    @DrawableRes unselectedRes: Int,
+    selected: Boolean = false
+) {
+    setTag(R.id.id_tag_select_state_selected_res, selectedRes)
+    setTag(R.id.id_tag_select_state_unselected_res, unselectedRes)
+    setTag(R.id.id_tag_select_state_render_mode, SELECT_STATE_MODE_IMAGE)
+    selectState = selected
+}
+
+/**
+ * 绑定 View 选中/未选中状态背景资源。
+ *
+ * 绑定后可通过 view.selectState = true/false 切换背景资源。
+ */
+fun View.bindSelectState(
+    @DrawableRes selectedRes: Int,
+    @DrawableRes unselectedRes: Int,
+    selected: Boolean = false
+) {
+    setTag(R.id.id_tag_select_state_selected_res, selectedRes)
+    setTag(R.id.id_tag_select_state_unselected_res, unselectedRes)
+    val renderMode = if (this is android.widget.ImageView) {
+        SELECT_STATE_MODE_IMAGE
+    } else {
+        SELECT_STATE_MODE_BACKGROUND
+    }
+    setTag(R.id.id_tag_select_state_render_mode, renderMode)
+    selectState = selected
+}
+
+/**
+ * View 选中状态属性，改变时更新背景资源。
+ */
+var View.selectState: Boolean
+    get() = (getTag(R.id.id_tag_select_state_value) as? Boolean) ?: false
+    set(value) {
+        setTag(R.id.id_tag_select_state_value, value)
+        val selectedRes = (getTag(R.id.id_tag_select_state_selected_res) as? Int) ?: return
+        val unselectedRes = (getTag(R.id.id_tag_select_state_unselected_res) as? Int) ?: return
+        val renderMode = (getTag(R.id.id_tag_select_state_render_mode) as? Int)
+            ?: if (this is android.widget.ImageView) SELECT_STATE_MODE_IMAGE else SELECT_STATE_MODE_BACKGROUND
+        if (renderMode == SELECT_STATE_MODE_IMAGE && this is android.widget.ImageView) {
+            setImageResource(if (value) selectedRes else unselectedRes)
+        } else {
+            setBackgroundResource(if (value) selectedRes else unselectedRes)
+        }
+    }
+
 // ==================== 属性扩展 ====================
 
 var View.backgroundColor: Int
@@ -334,9 +389,57 @@ var android.widget.ImageView.imageBitmap: android.graphics.Bitmap?
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setImageBitmap(v)
 
-var android.widget.TextView.textColor: Int
+var android.widget.TextView.textColor: Any
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
-    set(v) = setTextColor(v)
+    set(v) {
+        when (v) {
+            is String -> {
+                val color = runCatching { Color.parseColor(v) }
+                    .getOrElse { throw IllegalArgumentException("Invalid color string: $v", it) }
+                setTextColor(color)
+            }
+            is Int -> setTextColor(resolveTextColor(v))
+            else -> throw IllegalArgumentException("textColor only supports String(#RRGGBB/#AARRGGBB) or Int")
+        }
+    }
+
+/**
+ * 设置 TextView 文本颜色（兼容 ColorRes 和 ColorInt）
+ *
+ * @param value 颜色资源 ID（R.color.xxx）或颜色值（#RRGGBB）
+ */
+@JvmName("setTextColor")
+fun android.widget.TextView.setTextColorIntCompat(value: Int) {
+    setTextColor(resolveTextColor(value))
+}
+
+/**
+ * 解析颜色值
+ *
+ * 自动判断传入的是颜色资源 ID 还是颜色值，并返回对应的颜色 Int
+ *
+ * @param value 颜色资源 ID 或颜色值
+ * @return 解析后的颜色 Int 值
+ */
+private fun android.widget.TextView.resolveTextColor(value: Int): Int {
+    return runCatching {
+        if (resources.getResourceTypeName(value) == "color") {
+            context.colorOf(value)
+        } else {
+            value
+        }
+    }.getOrDefault(value)
+}
+
+/**
+ * 获取颜色资源对应的颜色值
+ *
+ * @param colorResId 颜色资源 ID（R.color.xxx）
+ * @return 颜色 Int 值
+ */
+private fun Context.colorOf(@ColorRes colorResId: Int): Int {
+    return ContextCompat.getColor(this, colorResId)
+}
 
 var android.widget.TextView.hintTextColor: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
@@ -425,8 +528,11 @@ var android.widget.Toolbar.titleResource: Int
 /**
  * 抛出无 getter 异常
  *
+ * 用于仅支持写入的属性扩展，当尝试读取时抛出异常
+ *
  * @throws RuntimeException 始终抛出此异常
  */
 fun noGetter(): Nothing = throw RuntimeException("Property does not have a getter")
 
+/** 无 getter 异常消息常量 */
 const val NO_GETTER: String = "Property does not have a getter"

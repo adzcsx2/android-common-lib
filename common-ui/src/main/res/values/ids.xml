@@ -3,4 +3,11 @@
     <!-- ViewExtensions 点击事件相关 ID -->
     <item type="id" name="id_tag_click" />
     <item type="id" name="id_tag_click2" />
+    <item type="id" name="id_tag_double_click_time" />
+
+    <!-- ViewExtensions 选中态相关 ID -->
+    <item type="id" name="id_tag_select_state_selected_res" />
+    <item type="id" name="id_tag_select_state_unselected_res" />
+    <item type="id" name="id_tag_select_state_value" />
+    <item type="id" name="id_tag_select_state_render_mode" />
 </resources>

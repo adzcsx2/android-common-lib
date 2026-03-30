@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.hoyn.common.base.event.GlobalLiveEvent
-import com.hoyn.common.core.Message
+import com.hoyn.common.base.event.Message
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

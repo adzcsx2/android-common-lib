@@ -91,10 +91,16 @@ object ToastUtil {
         toast.setDuration(duration)
         toast.setGravity(gravity, xOffset, yOffset)
 
-        // 取消之前的 Toast，立即显示新的
-        cancel()
-
-        toast.show()
+        // 使用原子操作：先入队再取消当前，避免竞态条件 (KI-001)
+        if (toast is BaseToast) {
+            BaseToast.addAndReplaceCurrent(toast)
+        } else if (toast is SystemToast) {
+            SystemToast.addAndReplaceCurrent(toast)
+        } else {
+            // 理论上不会进入此分支，兜底保持“新提示优先”语义
+            cancel()
+            toast.show()
+        }
     }
 
     /**

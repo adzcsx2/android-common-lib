@@ -8,6 +8,7 @@ import com.hoyn.common.base.event.SingleLiveEvent
 import com.hoyn.common.core.IBaseResponse
 import com.hoyn.common.core.ThrowableBean
 import kotlinx.coroutines.CancellationException
+import org.koin.core.component.KoinComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -30,7 +31,7 @@ import kotlinx.coroutines.withContext
  *
  * @param R Repository 类型参数，子类可以指定具体的 Repository 类型
  */
-abstract class BaseViewModel<R> : ViewModel() {
+abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
 
     /**
      * UI 变化事件

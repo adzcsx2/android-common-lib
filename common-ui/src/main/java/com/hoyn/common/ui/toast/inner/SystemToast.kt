@@ -73,6 +73,16 @@ class SystemToast(context: Context) : IToast, Cloneable {
         mToast?.show()
     }
 
+    /**
+     * 内部取消方法。
+     *
+     * 仅取消当前系统 Toast 实例，避免再次回调 SystemTN 产生递归。
+     */
+    fun cancelInternal() {
+        mToast?.cancel()
+        mToast = null
+    }
+
     override fun setView(mView: View): SystemToast {
         this.contentView = mView
         return this
@@ -184,6 +194,13 @@ class SystemToast(context: Context) : IToast, Cloneable {
          */
         fun cancelAll() {
             SystemTN.instance().cancelAll()
+        }
+
+        /**
+         * 添加并立即替换当前显示的系统 Toast。
+         */
+        fun addAndReplaceCurrent(toast: SystemToast) {
+            SystemTN.instance().addAndReplaceCurrent(toast)
         }
     }
 }

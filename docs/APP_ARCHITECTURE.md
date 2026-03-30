@@ -24,14 +24,15 @@ This project provides a modular Android common library with:
 
 **Core abstractions layer** - stable contracts and models.
 
-| File | Purpose |
-|------|---------|
-| UIState.kt | Sealed class for page state (Loading/Success/Error/Empty) |
-| IBaseResponse.kt | Interface for API response contracts |
-| Message.kt | Data class for event communication |
-| ThrowableBean.kt | Data class for error encapsulation |
+| File             | Purpose                                                   |
+| ---------------- | --------------------------------------------------------- |
+| UIState.kt       | Sealed class for page state (Loading/Success/Error/Empty) |
+| IBaseResponse.kt | Interface for API response contracts                      |
+| Message.kt       | Data class for event communication                        |
+| ThrowableBean.kt | Data class for error encapsulation                        |
 
 **Rules:**
+
 - Do NOT add Android-specific code here
 - Do NOT add UI components here
 - Keep API stable and minimal
@@ -40,18 +41,19 @@ This project provides a modular Android common library with:
 
 **Architecture foundation layer** - base classes for app development.
 
-| File | Purpose |
-|------|---------|
-| BaseActivity.kt | Base Activity with ViewBinding, coroutines, touch dispatch |
-| BaseFragment.kt | Base Fragment with lazy loading, ViewBinding |
-| BaseViewModel.kt | Base ViewModel with network request helpers, event dispatch |
-| ViewModelFactory.kt | Factory for creating ViewModels with parameters |
-| event/SingleLiveEvent.kt | One-time event stream backed by BaseLiveEvent |
-| event/BaseLiveEvent.kt | Lifecycle-aware live event foundation with manual observer support |
-| event/GlobalLiveEvent.kt | Global live event for cross-component communication |
-| ext/ViewModelExtensions.kt | Extension functions for observing ViewModel events |
+| File                       | Purpose                                                            |
+| -------------------------- | ------------------------------------------------------------------ |
+| BaseActivity.kt            | Base Activity with ViewBinding, coroutines, touch dispatch         |
+| BaseFragment.kt            | Base Fragment with lazy loading, ViewBinding                       |
+| BaseViewModel.kt           | Base ViewModel with network request helpers, event dispatch        |
+| ViewModelFactory.kt        | Factory for creating ViewModels with parameters                    |
+| event/SingleLiveEvent.kt   | One-time event stream backed by BaseLiveEvent                      |
+| event/BaseLiveEvent.kt     | Lifecycle-aware live event foundation with manual observer support |
+| event/GlobalLiveEvent.kt   | Global live event for cross-component communication                |
+| ext/ViewModelExtensions.kt | Extension functions for observing ViewModel events                 |
 
 **Rules:**
+
 - Depends on common-core and common-utils
 - Do NOT depend on common-ui (avoid circular dependency)
 - Do NOT add generic UI tools here (use common-ui instead)
@@ -60,16 +62,17 @@ This project provides a modular Android common library with:
 
 **Utilities layer** - reusable non-UI utilities.
 
-| File | Purpose |
-|------|---------|
-| Logger.kt | Unified logging with debug/release support |
-| MMKVUtils.kt | Key-value storage using MMKV |
-| ContextExtensions.kt | Context extension functions |
-| device/DeviceHelper.kt | Device information utilities |
-| device/DisplayUtils.kt | Display/screen utilities |
-| CoroutinesExtensions.kt | Coroutine helper functions |
+| File                    | Purpose                                    |
+| ----------------------- | ------------------------------------------ |
+| Logger.kt               | Unified logging with debug/release support |
+| MMKVUtils.kt            | Key-value storage using MMKV               |
+| ContextExtensions.kt    | Context extension functions                |
+| device/DeviceHelper.kt  | Device information utilities               |
+| device/DisplayUtils.kt  | Display/screen utilities                   |
+| CoroutinesExtensions.kt | Coroutine helper functions                 |
 
 **Rules:**
+
 - Logger exists only here, do not create duplicate implementations
 - Keep utilities cross-cutting and reusable
 
@@ -77,16 +80,17 @@ This project provides a modular Android common library with:
 
 **Network layer** - Retrofit + OkHttp abstraction.
 
-| File | Purpose |
-|------|---------|
-| RetrofitFactory.kt | Retrofit service creation |
-| OkHttpClientFactory.kt | OkHttpClient configuration |
-| ApiResponse.kt | Generic API response wrapper (implements IBaseResponse) |
-| BaseRepository.kt | Base class for data repositories |
-| ExceptionHandle.kt | Network error handling |
-| LoggingInterceptor.kt | HTTP request/response logging |
+| File                   | Purpose                                                 |
+| ---------------------- | ------------------------------------------------------- |
+| RetrofitFactory.kt     | Retrofit service creation                               |
+| OkHttpClientFactory.kt | OkHttpClient configuration                              |
+| ApiResponse.kt         | Generic API response wrapper (implements IBaseResponse) |
+| BaseRepository.kt      | Base class for data repositories                        |
+| ExceptionHandle.kt     | Network error handling                                  |
+| LoggingInterceptor.kt  | HTTP request/response logging                           |
 
 **Rules:**
+
 - ApiResponse.isSuccess() returns true when code == 0
 - All API responses should implement IBaseResponse
 
@@ -94,16 +98,17 @@ This project provides a modular Android common library with:
 
 **UI presentation layer** - UI helpers and widgets.
 
-| File | Purpose |
-|------|---------|
-| toast/ToastUtils.kt | Toast notification utilities |
-| utils/StatusBarHelper.kt | Status bar styling |
-| utils/NotchHelper.kt | Notch device support |
-| utils/PressEffectHelper.kt | View press effects |
-| permission/LivePermissions.kt | Runtime permission handling |
-| ext/ViewExtensions.kt | View extension functions |
+| File                          | Purpose                      |
+| ----------------------------- | ---------------------------- |
+| toast/ToastUtil.kt            | Toast notification utilities |
+| utils/StatusBarHelper.kt      | Status bar styling           |
+| utils/NotchHelper.kt          | Notch device support         |
+| utils/PressEffectHelper.kt    | View press effects           |
+| permission/LivePermissions.kt | Runtime permission handling  |
+| ext/ViewExtensions.kt         | View extension functions     |
 
 **Rules:**
+
 - Depends on common-base (has access to BaseActivity, etc.)
 - Do NOT add architecture classes here (they belong in common-base)
 
@@ -111,15 +116,16 @@ This project provides a modular Android common library with:
 
 **Compose foundation layer** - Jetpack Compose components and theme.
 
-| File | Purpose |
-|------|---------|
-| theme/Theme.kt | App theme with light/dark mode support |
-| base/BaseComposeActivity.kt | Base class for pure Compose activities |
+| File                        | Purpose                                            |
+| --------------------------- | -------------------------------------------------- |
+| theme/Theme.kt              | App theme with light/dark mode support             |
+| base/BaseComposeActivity.kt | Base class for pure Compose activities             |
 | base/BaseComposeFragment.kt | Base class for Compose fragments (supports hybrid) |
-| ext/ComposeExtensions.kt | Compose extension functions |
-| ext/StateExtensions.kt | UIState observation extensions |
+| ext/ComposeExtensions.kt    | Compose extension functions                        |
+| ext/StateExtensions.kt      | UIState observation extensions                     |
 
 **Rules:**
+
 - Depends on common-core and common-base
 - Provides Material3 theme by default
 - Supports Compose + View hybrid development
@@ -129,9 +135,9 @@ This project provides a modular Android common library with:
 
 **Image loading layer** - Glide abstraction.
 
-| File | Purpose |
-|------|---------|
-| ImageLoader.kt | Image loading utilities |
+| File               | Purpose                               |
+| ------------------ | ------------------------------------- |
+| ImageLoader.kt     | Image loading utilities               |
 | GlideExtensions.kt | Extension functions for image loading |
 
 ---
@@ -162,13 +168,13 @@ This project provides a modular Android common library with:
 
 ### Forbidden Dependencies
 
-| Module | MUST NOT depend on |
-|--------|-------------------|
-| common-core | Any other module |
-| common-base | common-ui, common-network, common-image |
-| common-utils | common-ui, common-base, common-network, common-image |
-| common-network | common-ui |
-| common-image | common-ui |
+| Module         | MUST NOT depend on                                   |
+| -------------- | ---------------------------------------------------- |
+| common-core    | Any other module                                     |
+| common-base    | common-ui, common-network, common-image              |
+| common-utils   | common-ui, common-base, common-network, common-image |
+| common-network | common-ui                                            |
+| common-image   | common-ui                                            |
 
 ---
 
@@ -401,7 +407,7 @@ class MyViewModel : BaseViewModel<MyRepository>() {
 // In Activity/Fragment
 observeAllUIEvents(
     viewModel = viewModel,
-    onToast = { message -> ToastUtils.show(this, message) },
+    onToast = { message -> ToastUtil.show(message) },
     onShowDialog = { message -> showLoading(message) },
     onDismissDialog = { hideLoading() },
     onError = { error -> showError(error.errMsg) }
@@ -475,7 +481,7 @@ class UserActivity : BaseActivity<ActivityUserBinding>() {
         // Observe UI events
         observeAllUIEvents(
             viewModel = viewModel,
-            onToast = { ToastUtils.show(this, it) },
+            onToast = { ToastUtil.show(it) },
             onShowDialog = { showLoading(it) },
             onDismissDialog = { hideLoading() }
         )
@@ -535,12 +541,14 @@ class UserRepository : BaseRepository<UserApi>() {
 ## 11. Adding a New Page - Step by Step
 
 1. **Create data model** (if needed)
+
    ```kotlin
    // data/model/Post.kt
    data class Post(val id: Int, val title: String, val body: String)
    ```
 
 2. **Create API interface**
+
    ```kotlin
    // data/api/PostApi.kt
    interface PostApi {
@@ -550,6 +558,7 @@ class UserRepository : BaseRepository<UserApi>() {
    ```
 
 3. **Create Repository** (if complex logic needed)
+
    ```kotlin
    // data/repository/PostRepository.kt
    class PostRepository : BaseRepository<PostApi>() {
@@ -560,6 +569,7 @@ class UserRepository : BaseRepository<UserApi>() {
    ```
 
 4. **Create ViewModel**
+
    ```kotlin
    // ui/post/PostViewModel.kt
    class PostViewModel : BaseViewModel<PostRepository>() {
@@ -569,6 +579,7 @@ class UserRepository : BaseRepository<UserApi>() {
    ```
 
 5. **Create Activity**
+
    ```kotlin
    // ui/post/PostActivity.kt
    class PostActivity : BaseActivity<ActivityPostBinding>() {
@@ -593,7 +604,7 @@ class UserRepository : BaseRepository<UserApi>() {
 - Observe UI events using observeAllUIEvents
 - Use Logger for all logging (not Android Log)
 - Use MMKVUtils for key-value storage
-- Use ToastUtils for toast notifications
+- Use ToastUtil for toast notifications
 - Handle exceptions using ExceptionHandle
 
 ### Don't
@@ -639,16 +650,16 @@ Before making architecture-related changes:
 
 ## 15. Quick Reference
 
-| Task | Module | Key Classes |
-|------|--------|-------------|
-| Add new page (View) | app | BaseActivity, BaseViewModel, UIState |
-| Add new page (Compose) | app | BaseComposeActivity, BaseViewModel, UIState |
-| Add network API | app + common-network | RetrofitFactory, ApiResponse |
-| Add utility | common-utils | Logger, MMKVUtils |
-| Add UI helper | common-ui | ToastUtils, StatusBarHelper |
-| Add architecture class | common-base | BaseActivity, BaseViewModel |
-| Add Compose component | common-compose | BaseComposeActivity, Theme |
-| Add Compose component | common-compose | BaseComposeActivity, Theme |
+| Task                   | Module               | Key Classes                                 |
+| ---------------------- | -------------------- | ------------------------------------------- |
+| Add new page (View)    | app                  | BaseActivity, BaseViewModel, UIState        |
+| Add new page (Compose) | app                  | BaseComposeActivity, BaseViewModel, UIState |
+| Add network API        | app + common-network | RetrofitFactory, ApiResponse                |
+| Add utility            | common-utils         | Logger, MMKVUtils                           |
+| Add UI helper          | common-ui            | ToastUtil, StatusBarHelper                  |
+| Add architecture class | common-base          | BaseActivity, BaseViewModel                 |
+| Add Compose component  | common-compose       | BaseComposeActivity, Theme                  |
+| Add Compose component  | common-compose       | BaseComposeActivity, Theme                  |
 
 ---
 

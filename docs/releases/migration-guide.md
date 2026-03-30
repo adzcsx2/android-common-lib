@@ -1,19 +1,18 @@
 # Migration Guide
 
-## Version 1.1.0 Migration
+## Version 1.2.1 Migration
 
-Update your dependency version to `1.1.0` to benefit from the latest feature enhancements:
+Update your dependency version to `1.2.1`:
 
 ```gradle
 dependencies {
-   implementation("com.github.adzcsx2.android-common-lib:common-all:1.1.0")
+   implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.1")
 }
 ```
 
 Notes:
-- This is a minor version update with new features and improvements.
-- Check the [CHANGELOG](/docs/CHANGELOG.md) for detailed changes.
-- No breaking changes from 1.0.x versions.
+- No API or baseline changes from `1.2.0`.
+- This release aligns `libVersion` and all dependency snippets to `1.2.1`.
 
 ## Version 1.0.9 Migration
 
@@ -183,7 +182,6 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
-| 1.1.0 | 24 | 34 | 2.3.10 |
 | 1.0.9 | 24 | 34 | 2.3.10 |
 | 1.0.8 | 24 | 34 | 2.3.10 |
 | 1.0.7 | 24 | 35 | 2.3.10 |

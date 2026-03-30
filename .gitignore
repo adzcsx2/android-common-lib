@@ -85,3 +85,9 @@ midscene_run/
 # Claude AI user configuration (keep claude.md in repo)
 .claude/
 !claude.md
+# AI guidance files (generated, do not commit)
+claude.md
+/*.mdc
+docs/checklist/api.md
+docs/checklist/dependencies.md
+docs/checklist/modules.md

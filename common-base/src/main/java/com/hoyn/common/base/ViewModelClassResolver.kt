@@ -10,7 +10,7 @@ import java.lang.reflect.TypeVariable
  *
  * 通过反射获取 BaseActivity/BaseFragment 中声明的 ViewModel 泛型类型
  */
-internal object ViewModelClassResolver {
+object ViewModelClassResolver {
 
     /**
      * 解析 ViewModel 的 Class 对象

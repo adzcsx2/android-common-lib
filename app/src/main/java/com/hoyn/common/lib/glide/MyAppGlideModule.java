@@ -11,17 +11,15 @@ import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.ImageHeaderParser;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.bitmap_recycle.ArrayPool;
 import com.bumptech.glide.load.engine.bitmap_recycle.LruBitmapPool;
 import com.bumptech.glide.load.engine.cache.ExternalPreferredCacheDiskCacheFactory;
 import com.bumptech.glide.load.engine.cache.LruResourceCache;
 import com.bumptech.glide.load.engine.cache.MemorySizeCalculator;
-import com.bumptech.glide.load.resource.bitmap.DefaultImageHeaderParser;
+import com.bumptech.glide.load.resource.bitmap.ExifInterfaceImageHeaderParser;
 import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestOptions;
 
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -30,7 +28,6 @@ import java.util.List;
  * <p>本类通过 @GlideModule 注解被 Glide 自动识别，用于配置 Glide 的全局选项。
  * 主要功能包括：
  * <ul>
- *   <li>禁用 EXIF 处理以避免 PNG 图片加载时的警告</li>
  *   <li>配置内存缓存和磁盘缓存策略</li>
  *   <li>优化图片解码格式以减少内存占用</li>
  *   <li>禁用 manifest 解析以提高性能</li>
@@ -39,11 +36,15 @@ import java.util.List;
  * @see AppGlideModule
  */
 @GlideModule
-public class MyAppGlideModule extends AppGlideModule {
-    /** Glide 磁盘缓存目录名称 */
+public class MyAppGlideModule extends AppGlideModule implements com.bumptech.glide.module.GlideModule {
+    /**
+     * Glide 磁盘缓存目录名称
+     */
     private static final String DISK_CACHE_DIR = "glide-theme-cache";
 
-    /** Glide 磁盘缓存大小：500MB */
+    /**
+     * Glide 磁盘缓存大小：500MB
+     */
     private static final int DISK_CACHE_SIZE_BYTES = 500 * 1024 * 1024;
 
     /**
@@ -74,10 +75,6 @@ public class MyAppGlideModule extends AppGlideModule {
 
         builder.setDefaultRequestOptions(defaultOptions);
 
-        // 设置日志级别为 ERROR，过滤掉 WARNING 级别的日志
-        // 这样就不会显示 ExifInterface 的警告了
-        builder.setLogLevel(android.util.Log.ERROR);
-
         // 配置内存缓存
         // 内存缓存大小：2 个屏幕
         // 位图池大小：3 个屏幕
@@ -93,30 +90,6 @@ public class MyAppGlideModule extends AppGlideModule {
                 DISK_CACHE_DIR,
                 DISK_CACHE_SIZE_BYTES
         ));
-    }
-
-    /**
-     * 注册自定义组件以修改 Glide 的默认行为
-     *
-     * <p>本方法通过禁用 EXIF 方向解析来避免加载 PNG 图片时的警告。
-     * EXIF 信息主要用于 JPEG 图片的自动旋转，对于 PNG 图片通常不需要。
-     *
-     * @param context 应用程序上下文
-     * @param glide Glide 实例
-     * @param registry 组件注册表，用于注册自定义组件
-     */
-    @Override
-    public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
-        // 禁用 EXIF 解析，避免 PNG 图片加载时的 ExifInterface 警告
-        List<ImageHeaderParser> parsers = registry.getImageHeaderParsers();
-        try {
-            // 尝试修改解析器列表，移除会触发 EXIF 解析的解析器
-            ((List<ImageHeaderParser>) parsers).clear();
-            ((List<ImageHeaderParser>) parsers).add(new DefaultImageHeaderParser());
-        } catch (Exception e) {
-            // 如果列表不可变，注册自定义解析器
-            registry.register(new SkipExifOrientationParser());
-        }
     }
 
     /**
@@ -136,68 +109,17 @@ public class MyAppGlideModule extends AppGlideModule {
         return false;
     }
 
-    /**
-     * 跳过 EXIF 方向解析的自定义图片头部解析器
-     *
-     * <p>本类实现 ImageHeaderParser 接口，用于拦截图片加载过程中的 EXIF 方向解析。
-     * 对于不需要自动旋转的图片（如 PNG），直接返回正常方向可以避免触发 ExifInterface，
-     * 从而消除相关的警告日志。
-     *
-     * <p>EXIF 方向值含义：
-     * <ul>
-     *   <li>1：正常方向，不旋转</li>
-     *   <li>2-8：各种旋转和翻转方向</li>
-     * </ul>
-     */
-    private static class SkipExifOrientationParser implements ImageHeaderParser {
-        /**
-         * 从输入流中获取图片类型
-         *
-         * @param is 图片输入流
-         * @return 始终返回 UNKNOWN，表示不解析具体类型
-         */
-        @Override
-        public ImageType getType(InputStream is) {
-            return ImageType.UNKNOWN;
-        }
-
-        /**
-         * 从字节缓冲区中获取图片类型
-         *
-         * @param byteBuffer 包含图片数据的字节缓冲区
-         * @return 始终返回 UNKNOWN，表示不解析具体类型
-         */
-        @Override
-        public ImageType getType(ByteBuffer byteBuffer) {
-            return ImageType.UNKNOWN;
-        }
-
-        /**
-         * 获取图片的 EXIF 方向信息
-         *
-         * <p>直接返回 1（正常方向），跳过实际的 EXIF 解析过程。
-         *
-         * @param is 图片输入流
-         * @param byteArrayPool 字节数组池，用于临时存储
-         * @return 始终返回 1，表示图片方向正常
-         */
-        @Override
-        public int getOrientation(InputStream is, ArrayPool byteArrayPool) {
-            return 1;
-        }
-
-        /**
-         * 获取图片的 EXIF 方向信息（ByteBuffer 版本）
-         *
-         * <p>直接返回 1（正常方向），跳过实际的 EXIF 解析过程。
-         *
-         * @param byteBuffer 包含图片数据的字节缓冲区
-         * @param byteArrayPool 字节数组池，用于临时存储
-         * @return 始终返回 1，表示图片方向正常
-         */
-        @Override
-        public int getOrientation(ByteBuffer byteBuffer, ArrayPool byteArrayPool) {
-            return 1;
+    @Override
+    public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
+        // 移除 ExifInterfaceImageHeaderParser，它对 PNG/GIF/WebP 等非 JPEG 格式
+        // 也会调用 ExifInterface 导致 "Invalid byte order" 警告日志。
+        // Glide 的 DefaultImageHeaderParser 已经能正确处理所有格式的方向检测。
+        List<ImageHeaderParser> parsers = registry.getImageHeaderParsers();
+        Iterator<ImageHeaderParser> iterator = parsers.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next() instanceof ExifInterfaceImageHeaderParser) {
+                iterator.remove();
+            }
         }
     }
 }

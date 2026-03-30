@@ -45,6 +45,7 @@ The library is organized into focused, single-responsibility modules:
 - **implementation**: Dependencies used internally only
 
 This ensures:
+
 - Smaller APK size for consumers
 - No version conflicts with transitive dependencies
 - Clear public API surface
@@ -56,17 +57,20 @@ This ensures:
 **Purpose**: Core abstractions and stable contracts
 
 **Dependencies**:
+
 - androidx.core:core-ktx (implementation)
 - androidx.lifecycle (api)
 - kotlinx-coroutines (api)
 
 **Responsibilities**:
+
 - UIState sealed class for page state management
 - IBaseResponse interface for API response contracts
 - Message data class for event communication
 - ThrowableBean data class for error encapsulation
 
 **Design Decisions**:
+
 - Stable API for long-term support
 - No business logic, only core abstractions
 - Minimal but sufficient dependencies
@@ -76,12 +80,14 @@ This ensures:
 **Purpose**: Architecture foundation for app development
 
 **Dependencies**:
+
 - common-core (api)
 - common-utils (api)
 - AndroidX Activity/Fragment/AppCompat (api)
 - AndroidX Lifecycle/ViewModel (api)
 
 **Responsibilities**:
+
 - BaseActivity with ViewBinding support
 - BaseFragment with lazy loading
 - BaseViewModel with coroutine management and network request helpers
@@ -91,6 +97,7 @@ This ensures:
 - ViewModel extensions for observing UI events
 
 **Design Decisions**:
+
 - Single place for all architecture foundation classes
 - Not a dumping ground for generic UI tools
 - ViewBinding for compile-time safety
@@ -101,6 +108,7 @@ This ensures:
 **Purpose**: Extension functions and utilities
 
 **Dependencies**:
+
 - common-core (api)
 - AndroidX KTX libraries (implementation)
 - Kotlin Coroutines (implementation)
@@ -108,6 +116,7 @@ This ensures:
 - Gson (api)
 
 **Responsibilities**:
+
 - Logger unified logging interface
 - MMKVUtils key-value storage
 - Context extensions
@@ -115,6 +124,7 @@ This ensures:
 - Coroutine helpers
 
 **Design Decisions**:
+
 - Uses Kotlin extension functions for clean API
 - Follows Android/Kotlin best practices
 - Reactive design with coroutines
@@ -124,12 +134,14 @@ This ensures:
 **Purpose**: Network layer abstraction on Retrofit/OkHttp
 
 **Dependencies**:
+
 - common-core (api)
 - common-utils (api)
 - Retrofit libraries (api)
 - OkHttp libraries (api)
 
 **Responsibilities**:
+
 - API service creation
 - Request/Response handling
 - Timeout configuration
@@ -137,6 +149,7 @@ This ensures:
 - SSL/TLS support
 
 **Design Decisions**:
+
 - Factory pattern for instance creation
 - Generic response wrapper (ApiResponse implements IBaseResponse)
 - Automatic logging integration
@@ -148,17 +161,20 @@ This ensures:
 **Purpose**: Image loading abstraction on Glide
 
 **Dependencies**:
+
 - common-core (api)
 - common-utils (api)
 - Glide (api)
 
 **Responsibilities**:
+
 - Image loading from URLs/resources
 - Placeholder and error handling
 - Transformations (circle, rounded)
 - Cache management
 
 **Design Decisions**:
+
 - Extension functions for simple API
 - Direct ImageLoader access for advanced use
 - Glide as underlying engine (stable, feature-rich)
@@ -169,6 +185,7 @@ This ensures:
 **Purpose**: UI presentation helpers
 
 **Dependencies**:
+
 - common-base (api)
 - Material Design (api)
 - SmartRefreshLayout (api)
@@ -176,7 +193,8 @@ This ensures:
 - Navigation (api)
 
 **Responsibilities**:
-- ToastUtils for toast notifications
+
+- ToastUtil for toast notifications
 - StatusBarHelper for status bar styling
 - NotchHelper for notch device support
 - PressEffectHelper for view press effects
@@ -184,6 +202,7 @@ This ensures:
 - View extensions (visibility, clicks, etc.)
 
 **Design Decisions**:
+
 - Extension functions for clean API
 - Separation of concerns from architecture classes
 - Presentation toolbox, not architecture root
@@ -236,6 +255,7 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 ```
 
 **Recommendation**:
+
 - Prefer `UIState` with `Flow` or `StateFlow` for new page state.
 - Keep `LiveData` and the existing event APIs as compatibility options for existing screens.
 - Do not introduce duplicate state channels without documenting the recommended usage.
@@ -255,7 +275,7 @@ fun doSomething() {
 // In Activity/Fragment
 observeAllUIEvents(
     viewModel = viewModel,
-    onToast = { ToastUtils.show(this, it) },
+    onToast = { ToastUtil.show(it) },
     onShowDialog = { showLoading(it) },
     onDismissDialog = { hideLoading() },
     onError = { handleError(it) }

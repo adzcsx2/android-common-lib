@@ -24,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,11 +36,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hoyn.common.compose.base.BaseComposeActivity
 import com.hoyn.common.compose.ext.collectAsUIState
 import com.hoyn.common.compose.ext.getErrorOrNull
@@ -60,23 +59,22 @@ import com.hoyn.common.lib.data.model.Post
  * - 列表展示
  * - 网络优先策略，离线缓存支持
  * - 语言设置由 BaseComposeActivity 统一处理
+ * - ViewModel 由基类自动注入，无需在 Koin 中注册
  *
  * TAG 由 BaseActivity 自动提供
  * 启动方式：context.startActivity<ComposeDemoActivity>()
  */
-class ComposeDemoActivity : BaseComposeActivity() {
+class ComposeDemoActivity : BaseComposeActivity<ComposeDemoViewModel>() {
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        val viewModel: ComposeDemoViewModel = viewModel()
         val uiState = viewModel.uiState.collectAsUIState()
 
         ComposeDemoScreen(
             uiState = uiState,
             onBack = { finish() },
             onRefresh = { viewModel.loadPosts() },
-            onShowToast = { viewModel.showTestToast(this) }
+            onShowToast = { viewModel.showTestToast() }
         )
     }
 }
@@ -84,7 +82,6 @@ class ComposeDemoActivity : BaseComposeActivity() {
 /**
  * Compose Demo 主屏幕
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposeDemoScreen(
     uiState: UIState<List<Post>>,
@@ -132,7 +129,8 @@ fun ComposeDemoScreen(
 
                 uiState.isError -> {
                     ErrorContent(
-                        message = uiState.getErrorOrNull() ?: stringResource(R.string.unknown_error),
+                        message = uiState.getErrorOrNull()
+                            ?: stringResource(R.string.unknown_error),
                         onRetry = onRefresh
                     )
                 }

@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.hoyn.common.base.BaseFragment
 import com.hoyn.common.lib.databinding.FragmentFragmentDemoBinding
-import com.hoyn.common.ui.ext.onClick
+import com.hoyn.common.ui.ext.click
 import kotlinx.coroutines.launch
 
 class FragmentDemoFragment : BaseFragment<FragmentFragmentDemoBinding, FragmentDemoViewModel>() {
@@ -37,11 +37,11 @@ class FragmentDemoFragment : BaseFragment<FragmentFragmentDemoBinding, FragmentD
         latestUiState = initialState
         render(initialState)
 
-        binding.btnIncrement.onClick {
+        binding.btnIncrement.click {
             viewModel.incrementCounter()
         }
 
-        binding.btnReset.onClick {
+        binding.btnReset.click {
             viewModel.resetCounter()
         }
 

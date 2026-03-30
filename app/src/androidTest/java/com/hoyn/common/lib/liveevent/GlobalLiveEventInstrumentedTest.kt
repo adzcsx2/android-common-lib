@@ -3,7 +3,7 @@ package com.hoyn.common.lib.liveevent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.hoyn.common.base.event.GlobalLiveEvent
-import com.hoyn.common.core.Message
+import com.hoyn.common.base.event.Message
 import com.hoyn.common.lib.ui.liveevent.LiveEventDemoActivity
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

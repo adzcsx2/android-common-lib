@@ -5,8 +5,8 @@ import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityStatusBarDemoBinding
-import com.hoyn.common.ui.ext.onClick
-import com.hoyn.common.ui.toast.ToastUtils
+import com.hoyn.common.ui.ext.click
+import com.hoyn.common.ui.toast.ToastUtil
 import com.hoyn.common.ui.utils.StatusBarHelper
 
 /**
@@ -33,42 +33,42 @@ class StatusBarDemoActivity : BaseActivity<ActivityStatusBarDemoBinding, NoViewM
      * 设置视图和点击事件
      */
     private fun setupViews() {
-        binding.btnBack.onClick { finish() }
+        binding.btnBack.click { finish() }
 
         // 默认状态
-        binding.btnDefault.setOnClickListener {
-            StatusBarHelper.translucent(this, Color.parseColor("#6200EE"))
-            ToastUtils.show(this, "已设置为默认紫色")
+        binding.btnDefault.click {
+            StatusBarHelper.setStatusBarColor(this, Color.parseColor("#6200EE"), exitEdgeToEdge = true)
+            ToastUtil.show("已设置为默认紫色")
         }
 
         // 红色状态栏
-        binding.btnRed.setOnClickListener {
-            StatusBarHelper.translucent(this, Color.RED)
-            ToastUtils.show(this, "已设置为红色")
+        binding.btnRed.click {
+            StatusBarHelper.setStatusBarColor(this, Color.RED, exitEdgeToEdge = true)
+            ToastUtil.show("已设置为红色")
         }
 
         // 绿色状态栏
-        binding.btnGreen.setOnClickListener {
-            StatusBarHelper.translucent(this, Color.GREEN)
-            ToastUtils.show(this, "已设置为绿色")
+        binding.btnGreen.click {
+            StatusBarHelper.setStatusBarColor(this, Color.GREEN, exitEdgeToEdge = true)
+            ToastUtil.show("已设置为绿色")
         }
 
         // 蓝色状态栏
-        binding.btnBlue.setOnClickListener {
-            StatusBarHelper.translucent(this, Color.BLUE)
-            ToastUtils.show(this, "已设置为蓝色")
+        binding.btnBlue.click {
+            StatusBarHelper.setStatusBarColor(this, Color.BLUE, exitEdgeToEdge = true)
+            ToastUtil.show("已设置为蓝色")
         }
 
         // 透明状态栏
-        binding.btnTransparent.setOnClickListener {
+        binding.btnTransparent.click {
             StatusBarHelper.translucent(this)
-            ToastUtils.show(this, "已设置为透明")
+            ToastUtil.show("已设置为透明")
         }
 
         // 浅色状态栏（深色图标）
-        binding.btnLight.setOnClickListener {
-            StatusBarHelper.translucent(this, Color.WHITE)
-            ToastUtils.show(this, "已设置为浅色（深色图标）")
+        binding.btnLight.click {
+            StatusBarHelper.setStatusBarColor(this, Color.WHITE, exitEdgeToEdge = true)
+            ToastUtil.show("已设置为浅色（深色图标）")
         }
     }
 }

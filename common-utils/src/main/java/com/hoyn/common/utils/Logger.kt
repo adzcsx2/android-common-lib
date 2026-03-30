@@ -32,22 +32,13 @@ object Logger {
         isDebug = debug
         defaultTag = tag
         LogUtils.getConfig()
-            .setLogSwitch(isDebug)  // Debug才开启日志
+            .setLogSwitch(isDebug)           // Debug才开启日志
+            .setConsoleSwitch(true)          // 确保控制台输出开启
+            .setConsoleFilter(LogUtils.V)    // 设置最低过滤级别为 VERBOSE (KI-002)
             .setGlobalTag(tag)               // 全局Tag
-            .stackDeep = 3                          // 调用栈深度
+            .stackDeep = 3                   // 调用栈深度
     }
 
-    /**
-     * 输出 Verbose 级别日志
-     *
-     * 用于输出详细的调试信息，仅在调试模式下输出
-     *
-     * @param message 日志消息内容
-     * @param tag 日志标签，默认使用全局标签
-     */
-    fun v(message: String, tag: String = defaultTag) {
-        if (isDebug) LogUtils.v(tag, message)
-    }
 
     /**
      * 输出 Debug 级别日志
@@ -119,7 +110,7 @@ object Logger {
      * @param tag 日志标签，默认使用全局标签
      */
     fun json(obj: Any, tag: String = defaultTag) {
-        if (isDebug) LogUtils.json(defaultTag, obj)
+        if (isDebug) LogUtils.json(tag, obj)
 
     }
 }

@@ -86,7 +86,7 @@ Rules:
 
 Keep presentation helpers only:
 
-- `ToastUtils`
+- `ToastUtil`
 - `StatusBarHelper`
 - `NotchHelper`
 - `PressEffectHelper`
@@ -256,13 +256,13 @@ Claude Code must finish with all of the following:
 3. a complete app architecture sample
 4. a dedicated app architecture document for future AI development
 5. a concise final summary containing:
-    - issue list
-    - module ownership matrix
-    - key implementation changes
-    - documentation changes
-    - app sample summary
-    - path to the new app architecture document
-    - remaining risks or recommended next steps
+   - issue list
+   - module ownership matrix
+   - key implementation changes
+   - documentation changes
+   - app sample summary
+   - path to the new app architecture document
+   - remaining risks or recommended next steps
 
 ## 10. Operating Instruction For Future AI Sessions
 
@@ -272,9 +272,10 @@ Before making architecture-related changes in this repository:
 2. read the final app architecture document created by this task
 3. follow the documented module boundaries
 4. avoid reopening already-settled architecture decisions unless the user explicitly requests a new direction
-    fun observe(): SharedFlow<T> = flow.asSharedFlow()
-}
-```
+   fun observe(): SharedFlow<T> = flow.asSharedFlow()
+   }
+
+````
 
 ### 7.2 页面状态模式
 
@@ -292,30 +293,30 @@ sealed class UIState<out T> {
     data class Error(val code: Int, val message: String) : UIState<Nothing>()
     object Empty : UIState<Nothing>()
 }
-```
+````
 
 ### 7.3 DI (依赖注入)
 
-| 选项 | 说明 | 推荐 |
-|------|------|------|
-| **Koin** | 轻量 Kotlin DSL，学习成本低 | ✅ **推荐** |
-| Hilt | Google 官方，但配置复杂 | 可选 |
-| 手动注入 | 无框架 | 不推荐 |
-| 反射注入 (旧) | 已禁止 | ❌ |
+| 选项          | 说明                        | 推荐        |
+| ------------- | --------------------------- | ----------- |
+| **Koin**      | 轻量 Kotlin DSL，学习成本低 | ✅ **推荐** |
+| Hilt          | Google 官方，但配置复杂     | 可选        |
+| 手动注入      | 无框架                      | 不推荐      |
+| 反射注入 (旧) | 已禁止                      | ❌          |
 
 ### 7.4 Navigation
 
-| 选项 | 说明 | 推荐 |
-|------|------|------|
+| 选项                     | 说明        | 推荐        |
+| ------------------------ | ----------- | ----------- |
 | **Navigation Component** | Google 官方 | ✅ **推荐** |
-| 自定义路由 | 复杂 | 不推荐 |
+| 自定义路由               | 复杂        | 不推荐      |
 
 ### 7.5 Paging
 
-| 选项 | 说明 | 推荐 |
-|------|------|------|
+| 选项         | 说明     | 推荐                    |
+| ------------ | -------- | ----------------------- |
 | **Paging 3** | 官方方案 | ✅ **推荐**（如需分页） |
-| 手动分页 | 简单场景 | 可选 |
+| 手动分页     | 简单场景 | 可选                    |
 
 ### 7.6 Compose 预留方式
 
@@ -340,15 +341,15 @@ buildFeatures {
 
 ### 8.2 当前关键版本
 
-| 依赖 | 当前版本 | 建议 |
-|------|----------|------|
-| AGP | 9.0.0-rc01 | 保持（预览版） |
-| Kotlin | 2.1.0 | 保持 |
-| Lifecycle | 2.8.7 | 保持 |
-| Retrofit | 2.11.0 | 保持 |
-| OkHttp | 4.12.0 | 保持 |
-| MMKV | 2.3.0 | 保持 |
-| Coroutines | 1.9.0 | 保持 |
+| 依赖       | 当前版本   | 建议           |
+| ---------- | ---------- | -------------- |
+| AGP        | 9.0.0-rc01 | 保持（预览版） |
+| Kotlin     | 2.1.0      | 保持           |
+| Lifecycle  | 2.8.7      | 保持           |
+| Retrofit   | 2.11.0     | 保持           |
+| OkHttp     | 4.12.0     | 保持           |
+| MMKV       | 2.3.0      | 保持           |
+| Coroutines | 1.9.0      | 保持           |
 
 ### 8.3 升级原则
 
@@ -369,7 +370,7 @@ buildFeatures {
    - [ ] 创建 `ThrowableBean` 数据类
    - [ ] 创建 `UIState` sealed class（页面状态）
    - [ ] 创建 `EventFlow` 事件机制（替代 LiveEventBus）
-    - [ ] 基于 `BaseLiveEvent` 提供生命周期自动解绑和手动解绑能力
+   - [ ] 基于 `BaseLiveEvent` 提供生命周期自动解绑和手动解绑能力
 
 2. **Phase 2: BaseViewModel 实现**
    - [ ] 创建 `BaseViewModel<BR>` 类
@@ -396,6 +397,7 @@ buildFeatures {
 ### 9.2 关键代码参考
 
 **IBaseResponse 接口** (common-core):
+
 ```kotlin
 interface IBaseResponse<T> {
     fun code(): Int
@@ -406,6 +408,7 @@ interface IBaseResponse<T> {
 ```
 
 **EventFlow 实现** (common-core):
+
 ```kotlin
 class SingleEvent<T> {
     private val flow = MutableSharedFlow<T>(
@@ -530,12 +533,14 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", ver
 在开始工作前，各窗口应确认：
 
 ### 2号窗口
+
 - [ ] 已阅读完整 AI_HANDOFF.md
 - [ ] 确认 common-core、common-network、common-ui 的修改权限
 - [ ] 确认不修改任何 Gradle 文件
 - [ ] 确认使用现代替代方案（非 LiveEventBus/反射）
 
 ### 3号窗口
+
 - [ ] 已阅读完整 AI_HANDOFF.md
 - [ ] 确认 Gradle 文件修改权限
 - [ ] 等待 2号窗口完成架构实现
@@ -554,26 +559,26 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", ver
 
 #### 当前版本审计
 
-| 依赖 | 当前版本 | 最新稳定版 | 升级建议 | 风险等级 |
-|------|----------|-----------|----------|----------|
-| **AGP** | 9.0.0-rc01 | **9.2.0** | ✅ 建议升级 | 低 - 正式版已发布 |
-| **Kotlin** | 2.1.0 | **2.3.0** | ✅ 建议升级 | 低 - 向后兼容 |
-| **Lifecycle** | 2.8.7 | **2.9.2** | ✅ 建议升级 | 低 |
-| **Activity KTX** | 1.9.3 | 1.10.1 | ✅ 建议升级 | 低 |
-| **Fragment KTX** | 1.8.5 | 1.8.7 | ⚠️ 可选升级 | 低 |
-| **Retrofit** | 2.11.0 | **3.0.0** | ⚠️ 谨慎升级 | 中 - 重大更新 |
-| **OkHttp** | 4.12.0 | 4.12.0 | ✅ 保持 | - |
-| **Coroutines** | 1.9.0 | 1.10.1 | ✅ 建议升级 | 低 |
-| **MMKV** | 2.3.0 | 2.3.0 | ✅ 保持 | - |
-| **Glide** | 4.16.0 | 4.16.0 | ✅ 保持 | - |
+| 依赖             | 当前版本   | 最新稳定版 | 升级建议    | 风险等级          |
+| ---------------- | ---------- | ---------- | ----------- | ----------------- |
+| **AGP**          | 9.0.0-rc01 | **9.2.0**  | ✅ 建议升级 | 低 - 正式版已发布 |
+| **Kotlin**       | 2.1.0      | **2.3.0**  | ✅ 建议升级 | 低 - 向后兼容     |
+| **Lifecycle**    | 2.8.7      | **2.9.2**  | ✅ 建议升级 | 低                |
+| **Activity KTX** | 1.9.3      | 1.10.1     | ✅ 建议升级 | 低                |
+| **Fragment KTX** | 1.8.5      | 1.8.7      | ⚠️ 可选升级 | 低                |
+| **Retrofit**     | 2.11.0     | **3.0.0**  | ⚠️ 谨慎升级 | 中 - 重大更新     |
+| **OkHttp**       | 4.12.0     | 4.12.0     | ✅ 保持     | -                 |
+| **Coroutines**   | 1.9.0      | 1.10.1     | ✅ 建议升级 | 低                |
+| **MMKV**         | 2.3.0      | 2.3.0      | ✅ 保持     | -                 |
+| **Glide**        | 4.16.0     | 4.16.0     | ✅ 保持     | -                 |
 
 #### 需新增的依赖
 
-| 依赖 | 推荐版本 | 用途 | 放置模块 |
-|------|----------|------|----------|
-| **Koin** | 3.5.6 (LTS) | DI 框架 | common-core |
-| **Navigation** | 2.9.7 | 导航组件 | common-ui / app |
-| **Paging 3** | 3.3.6 | 分页加载 | common-ui (可选) |
+| 依赖           | 推荐版本    | 用途     | 放置模块         |
+| -------------- | ----------- | -------- | ---------------- |
+| **Koin**       | 3.5.6 (LTS) | DI 框架  | common-core      |
+| **Navigation** | 2.9.7       | 导航组件 | common-ui / app  |
+| **Paging 3**   | 3.3.6       | 分页加载 | common-ui (可选) |
 
 #### 升级顺序
 
@@ -591,13 +596,13 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", ver
 
 #### 升级风险分析
 
-| 升级项 | 风险 | 缓解措施 |
-|--------|------|----------|
-| AGP rc → stable | 低 | 正式版更稳定，API 变化小 |
-| Kotlin 2.1 → 2.3 | 低 | 向后兼容，主要新增特性 |
+| 升级项             | 风险   | 缓解措施                                   |
+| ------------------ | ------ | ------------------------------------------ |
+| AGP rc → stable    | 低     | 正式版更稳定，API 变化小                   |
+| Kotlin 2.1 → 2.3   | 低     | 向后兼容，主要新增特性                     |
 | Retrofit 2.x → 3.0 | **中** | 升级到 OkHttp 4.12 Kotlin 版本，API 有变化 |
-| 新增 Koin | 低 | 独立模块，不影响现有代码 |
-| 新增 Navigation | 低 | 仅 app 模块使用 |
+| 新增 Koin          | 低     | 独立模块，不影响现有代码                   |
+| 新增 Navigation    | 低     | 仅 app 模块使用                            |
 
 ---
 
@@ -607,14 +612,15 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", ver
 
 #### 11.2.1 事件机制 (Event Bus 替代)
 
-| 选项 | 推荐度 | 说明 |
-|------|--------|------|
+| 选项                     | 推荐度       | 说明                             |
+| ------------------------ | ------------ | -------------------------------- |
 | ✅ **Kotlin SharedFlow** | **强烈推荐** | 官方协程方案，轻量，无第三方依赖 |
-| Kotlin Channel | 可选 | 更像队列，适合生产-消费模式 |
-| RxJava | 不推荐 | 重量级，增加包体积 |
-| LiveEventBus (旧) | ❌ 禁止 | 已废弃 |
+| Kotlin Channel           | 可选         | 更像队列，适合生产-消费模式      |
+| RxJava                   | 不推荐       | 重量级，增加包体积               |
+| LiveEventBus (旧)        | ❌ 禁止      | 已废弃                           |
 
 **推荐实现** (由 2号窗口在 common-core 中实现):
+
 ```kotlin
 // 单次消费事件
 class SingleEvent<T> {
@@ -639,11 +645,12 @@ object GlobalEvents {
 
 #### 11.2.2 页面状态模式
 
-| 选项 | 推荐度 | 说明 |
-|------|--------|------|
+| 选项                            | 推荐度       | 说明                                         |
+| ------------------------------- | ------------ | -------------------------------------------- |
 | ✅ **Sealed Class + StateFlow** | **强烈推荐** | Kotlin 原生，类型安全，与 ViewModel 完美配合 |
 
 **推荐实现** (由 2号窗口在 common-core 中实现):
+
 ```kotlin
 sealed class UIState<out T> {
     object Idle : UIState<Nothing>()
@@ -656,14 +663,15 @@ sealed class UIState<out T> {
 
 #### 11.2.3 DI (依赖注入)
 
-| 选项 | 推荐度 | 说明 |
-|------|--------|------|
+| 选项              | 推荐度   | 说明                                    |
+| ----------------- | -------- | --------------------------------------- |
 | ✅ **Koin 3.5.6** | **推荐** | 轻量 Kotlin DSL，学习成本低，无代码生成 |
-| Hilt | 可选 | Google 官方，但配置复杂，需要注解处理 |
-| 手动注入 | 不推荐 | 样板代码多，维护困难 |
-| 反射注入 (旧) | ❌ 禁止 | 性能差，不安全 |
+| Hilt              | 可选     | Google 官方，但配置复杂，需要注解处理   |
+| 手动注入          | 不推荐   | 样板代码多，维护困难                    |
+| 反射注入 (旧)     | ❌ 禁止  | 性能差，不安全                          |
 
 **Koin 配置示例** (由 3号窗口在 libs.versions.toml 中配置):
+
 ```kotlin
 // libs.versions.toml
 [versions]
@@ -676,12 +684,13 @@ koin-viewmodel = { group = "io.insert-koin", name = "koin-androidx-viewmodel", v
 
 #### 11.2.4 Navigation
 
-| 选项 | 推荐度 | 说明 |
-|------|--------|------|
+| 选项                              | 推荐度   | 说明                                        |
+| --------------------------------- | -------- | ------------------------------------------- |
 | ✅ **Navigation Component 2.9.7** | **推荐** | Google 官方，支持 Fragment/Activity/Compose |
-| 自定义路由 | 不推荐 | 维护成本高 |
+| 自定义路由                        | 不推荐   | 维护成本高                                  |
 
 **Navigation 配置** (由 3号窗口配置):
+
 ```kotlin
 // libs.versions.toml
 [versions]
@@ -694,12 +703,13 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", ver
 
 #### 11.2.5 Paging
 
-| 选项 | 推荐度 | 说明 |
-|------|--------|------|
+| 选项                | 推荐度               | 说明                               |
+| ------------------- | -------------------- | ---------------------------------- |
 | ✅ **Paging 3.3.6** | **推荐（如需分页）** | 官方方案，与 Room/Network 配合良好 |
-| 手动分页 | 可选 | 简单场景够用 |
+| 手动分页            | 可选                 | 简单场景够用                       |
 
 **Paging 配置** (由 3号窗口配置，可选):
+
 ```kotlin
 // libs.versions.toml
 [versions]
@@ -711,12 +721,13 @@ paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", versi
 
 #### 11.2.6 Compose 预留方式
 
-| 选项 | 推荐度 | 说明 |
-|------|--------|------|
+| 选项                            | 推荐度   | 说明                           |
+| ------------------------------- | -------- | ------------------------------ |
 | ✅ **预留 common-compose 模块** | **推荐** | 独立模块，不影响现有 View 体系 |
-| 混合在 common-ui | 不推荐 | 耦合度高 |
+| 混合在 common-ui                | 不推荐   | 耦合度高                       |
 
 **Compose 预留结构**:
+
 ```
 common-compose/           # 未来创建
 ├── build.gradle.kts      # 配置 Compose
@@ -733,14 +744,14 @@ common-compose/           # 未来创建
 
 ### 11.3 架构选项决策汇总
 
-| 架构项 | 推荐选择 | 版本 | 理由 |
-|--------|----------|------|------|
-| 事件机制 | SharedFlow | - | 官方方案，轻量，无第三方依赖 |
-| 页面状态 | Sealed Class + StateFlow | - | 类型安全，Kotlin 原生 |
-| DI | **Koin** | 3.5.6 | 轻量，Kotlin DSL，学习成本低 |
-| Navigation | **Navigation Component** | 2.9.7 | 官方方案，生态完整 |
-| Paging | **Paging 3** (可选) | 3.3.6 | 官方方案，如需分页则启用 |
-| Compose | **预留独立模块** | - | 暂不引入，保持架构可扩展 |
+| 架构项     | 推荐选择                 | 版本  | 理由                         |
+| ---------- | ------------------------ | ----- | ---------------------------- |
+| 事件机制   | SharedFlow               | -     | 官方方案，轻量，无第三方依赖 |
+| 页面状态   | Sealed Class + StateFlow | -     | 类型安全，Kotlin 原生        |
+| DI         | **Koin**                 | 3.5.6 | 轻量，Kotlin DSL，学习成本低 |
+| Navigation | **Navigation Component** | 2.9.7 | 官方方案，生态完整           |
+| Paging     | **Paging 3** (可选)      | 3.3.6 | 官方方案，如需分页则启用     |
+| Compose    | **预留独立模块**         | -     | 暂不引入，保持架构可扩展     |
 
 ---
 
@@ -786,6 +797,7 @@ app/
 **功能**: 作为 Demo 列表入口，展示所有可用示例
 
 **UI 结构**:
+
 - RecyclerView 展示 Demo 列表
 - 点击跳转到对应 Demo 页面
 - 支持 Navigation 组件导航
@@ -804,6 +816,7 @@ app/
 #### 11.4.3 网络列表示例页
 
 **NetworkDemoActivity** 功能:
+
 - 展示网络请求完整流程
 - 使用 ViewModel + Repository 模式
 - 展示 Loading/Success/Error 状态
@@ -811,6 +824,7 @@ app/
 - 支持下拉刷新
 
 **API 示例** (使用公开 API):
+
 ```kotlin
 // 使用 JSONPlaceholder 或类似公开 API
 interface DemoApiService {
@@ -824,17 +838,18 @@ interface DemoApiService {
 
 #### 11.4.4 简单示例页
 
-| 示例页 | 展示内容 |
-|--------|----------|
-| ToastDemoActivity | 短/长 Toast，自定义位置 Toast |
-| PermissionDemoActivity | 相机/存储权限请求流程 |
-| StatusBarDemoActivity | 状态栏颜色/透明度设置 |
-| MMKVDemoActivity | 存储/读取/删除操作 |
-| LogDemoActivity | 不同级别日志输出 |
+| 示例页                 | 展示内容                      |
+| ---------------------- | ----------------------------- |
+| ToastDemoActivity      | 短/长 Toast，自定义位置 Toast |
+| PermissionDemoActivity | 相机/存储权限请求流程         |
+| StatusBarDemoActivity  | 状态栏颜色/透明度设置         |
+| MMKVDemoActivity       | 存储/读取/删除操作            |
+| LogDemoActivity        | 不同级别日志输出              |
 
 #### 11.4.5 Compose 混合接入预留
 
 **预留结构**:
+
 ```kotlin
 // 未来 Compose Demo 示例 (暂不实现)
 // app/src/main/java/com/hoyn/common/lib/compose/
@@ -854,6 +869,7 @@ interface DemoApiService {
 ```
 
 **混合导航预留**:
+
 ```kotlin
 // 未来在 nav_graph.xml 中添加 Compose 目的地
 // <fragment
@@ -907,11 +923,11 @@ paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", versi
 
 #### 各模块依赖变更
 
-| 模块 | 新增依赖 |
-|------|----------|
-| common-core | koin-android, lifecycle-viewmodel |
-| common-ui | navigation-fragment, navigation-ui, paging-runtime (可选) |
-| app | navigation-fragment, navigation-ui, koin-android |
+| 模块        | 新增依赖                                                  |
+| ----------- | --------------------------------------------------------- |
+| common-core | koin-android, lifecycle-viewmodel                         |
+| common-ui   | navigation-fragment, navigation-ui, paging-runtime (可选) |
+| app         | navigation-fragment, navigation-ui, koin-android          |
 
 ---
 
@@ -931,47 +947,47 @@ paging-runtime = { group = "androidx.paging", name = "paging-runtime-ktx", versi
 
 #### common-core 模块
 
-| 文件 | 类型 | 说明 |
-|------|------|------|
-| `IBaseResponse.kt` | interface | 通用 API 响应接口，所有响应数据类应实现此接口 |
-| `Message.kt` | data class | 消息事件载体，用于全局事件通信 |
-| `ThrowableBean.kt` | data class | 异常信息载体，用于封装错误信息 |
-| `UIState.kt` | sealed class | UI 状态封装（Loading/Success/Error/Empty），支持 Compose 预留 |
+| 文件               | 类型         | 说明                                                          |
+| ------------------ | ------------ | ------------------------------------------------------------- |
+| `IBaseResponse.kt` | interface    | 通用 API 响应接口，所有响应数据类应实现此接口                 |
+| `Message.kt`       | data class   | 消息事件载体，用于全局事件通信                                |
+| `ThrowableBean.kt` | data class   | 异常信息载体，用于封装错误信息                                |
+| `UIState.kt`       | sealed class | UI 状态封装（Loading/Success/Error/Empty），支持 Compose 预留 |
 
 #### common-network 模块
 
-| 文件 | 类型 | 说明 |
-|------|------|------|
+| 文件                | 类型           | 说明                                   |
+| ------------------- | -------------- | -------------------------------------- |
 | `BaseRepository.kt` | abstract class | 数据层基类，提供 Retrofit API 访问入口 |
-| `ApiResponse.kt` | data class | 已修改，实现 IBaseResponse 接口 |
+| `ApiResponse.kt`    | data class     | 已修改，实现 IBaseResponse 接口        |
 
 #### common-ui 模块
 
-| 文件 | 类型 | 说明 |
-|------|------|------|
-| `base/BaseViewModel.kt` | abstract class | ViewModel 基类，提供协程管理、网络请求封装、UI 事件分发 |
-| `base/ViewModelFactory.kt` | class | ViewModel 工厂，支持自定义创建逻辑 |
-| `event/SingleLiveEvent.kt` | class | 一次性事件流，基于 BaseLiveEvent 实现 |
-| `event/BaseLiveEvent.kt` | abstract class | 生命周期感知 LiveEvent 基类，支持手动解绑 |
-| `event/GlobalLiveEvent.kt` | object | 全局 LiveEvent，替代 LiveEventBus |
-| `ext/ViewModelExtensions.kt` | extension functions | ViewModel 扩展方法，提供 UI 事件观察 |
+| 文件                         | 类型                | 说明                                                    |
+| ---------------------------- | ------------------- | ------------------------------------------------------- |
+| `base/BaseViewModel.kt`      | abstract class      | ViewModel 基类，提供协程管理、网络请求封装、UI 事件分发 |
+| `base/ViewModelFactory.kt`   | class               | ViewModel 工厂，支持自定义创建逻辑                      |
+| `event/SingleLiveEvent.kt`   | class               | 一次性事件流，基于 BaseLiveEvent 实现                   |
+| `event/BaseLiveEvent.kt`     | abstract class      | 生命周期感知 LiveEvent 基类，支持手动解绑               |
+| `event/GlobalLiveEvent.kt`   | object              | 全局 LiveEvent，替代 LiveEventBus                       |
+| `ext/ViewModelExtensions.kt` | extension functions | ViewModel 扩展方法，提供 UI 事件观察                    |
 
 ### 12.2 修改的模块
 
-| 模块 | 修改内容 |
-|------|----------|
-| common-core | 新增 IBaseResponse、Message、ThrowableBean、UIState |
+| 模块           | 修改内容                                                 |
+| -------------- | -------------------------------------------------------- |
+| common-core    | 新增 IBaseResponse、Message、ThrowableBean、UIState      |
 | common-network | 新增 BaseRepository，修改 ApiResponse 实现 IBaseResponse |
-| common-ui | 新增 BaseViewModel、ViewModelFactory、事件机制、扩展方法 |
+| common-ui      | 新增 BaseViewModel、ViewModelFactory、事件机制、扩展方法 |
 
 ### 12.3 架构限制说明
 
 > **重要**: 由于 common-core 没有 Lifecycle 和 Coroutines 依赖，以下类暂时放在 common-ui：
 
-| 原计划位置 | 定际位置 | 原因 | 后续建议 |
-|------------|----------|------|----------|
-| common-core | **common-ui** | BaseViewModel 依赖 Lifecycle/ViewModel | 3号窗口为 common-core 添加 Lifecycle 依赖后可迁移 |
-| common-core | **common-ui** | EventFlow 依赖 Coroutines | 3号窗口为 common-core 添加 Coroutines 依赖后可迁移 |
+| 原计划位置  | 定际位置      | 原因                                   | 后续建议                                           |
+| ----------- | ------------- | -------------------------------------- | -------------------------------------------------- |
+| common-core | **common-ui** | BaseViewModel 依赖 Lifecycle/ViewModel | 3号窗口为 common-core 添加 Lifecycle 依赖后可迁移  |
+| common-core | **common-ui** | EventFlow 依赖 Coroutines              | 3号窗口为 common-core 添加 Coroutines 依赖后可迁移 |
 
 ### 12.4 给 3号窗口的 app 接入说明
 
@@ -1014,7 +1030,7 @@ class UserActivity : BaseActivity<ActivityUserBinding>() {
     override fun initView(savedInstanceState: Bundle?) {
         // 观察 UI 事件
         observeAllUIEvents<UserViewModel>(
-            onToast = { ToastUtils.show(it) },
+            onToast = { ToastUtil.show(it) },
             onShowDialog = { /* 显示加载框 */ },
             onDismissDialog = { /* 隐藏加载框 */ },
             onError = { /* 处理错误 */ }
@@ -1039,43 +1055,45 @@ observeGlobalMessage { message ->
 
 ### 12.5 已稳定的接口
 
-| 接口/类 | 位置 | 稳定性 | 说明 |
-|--------|------|--------|------|
-| `IBaseResponse<T>` | common-core | ✅ 稳定 | 可安全使用 |
-| `Message` | common-core | ✅ 稳定 | 可安全使用 |
-| `ThrowableBean` | common-core | ✅ 稳定 | 可安全使用 |
-| `UIState<T>` | common-core | ✅ 稳定 | 可安全使用 |
-| `BaseRepository<T>` | common-network | ✅ 稳定 | 可安全使用 |
-| `ApiResponse<T>` | common-network | ✅ 稳定 | 已实现 IBaseResponse |
-| `BaseViewModel<R>` | common-ui | ⚠️ 暂时位置 | 功能稳定，但建议后续迁移到 common-core |
-| `SingleLiveEvent<T>` | common-ui | ✅ 稳定 | 可安全使用 |
-| `GlobalLiveEvent` | common-ui | ✅ 稳定 | 可安全使用 |
-| `ViewModelFactory` | common-ui | ✅ 稳定 | 可安全使用 |
+| 接口/类              | 位置           | 稳定性      | 说明                                   |
+| -------------------- | -------------- | ----------- | -------------------------------------- |
+| `IBaseResponse<T>`   | common-core    | ✅ 稳定     | 可安全使用                             |
+| `Message`            | common-core    | ✅ 稳定     | 可安全使用                             |
+| `ThrowableBean`      | common-core    | ✅ 稳定     | 可安全使用                             |
+| `UIState<T>`         | common-core    | ✅ 稳定     | 可安全使用                             |
+| `BaseRepository<T>`  | common-network | ✅ 稳定     | 可安全使用                             |
+| `ApiResponse<T>`     | common-network | ✅ 稳定     | 已实现 IBaseResponse                   |
+| `BaseViewModel<R>`   | common-ui      | ⚠️ 暂时位置 | 功能稳定，但建议后续迁移到 common-core |
+| `SingleLiveEvent<T>` | common-ui      | ✅ 稳定     | 可安全使用                             |
+| `GlobalLiveEvent`    | common-ui      | ✅ 稳定     | 可安全使用                             |
+| `ViewModelFactory`   | common-ui      | ✅ 稳定     | 可安全使用                             |
 
 ### 12.6 绝对不能被 3号窗口改动的接口
 
-| 接口/类 | 原因 |
-|--------|------|
-| `IBaseResponse` 接口签名 | 已被 ApiResponse 实现，修改会破坏兼容性 |
-| `UIState` sealed class 结构 | 子类可能已使用模式匹配，修改会破坏编译 |
-| `Message` 数据类字段 | 已用于事件通信，修改字段会破坏兼容性 |
-| `ThrowableBean` 数据类字段 | 已用于错误处理，修改字段会破坏兼容性 |
-| `BaseViewModel<R>` 抽象方法 | 子类需要实现 `repository` 和 `handleException`，修改签名会破坏子类 |
-| `BaseViewModel.UIChange` 内部类结构 | 已用于事件分发，修改会破坏兼容性 |
-| `SingleLiveEvent<T>` 构造参数 | SharedFlow 配置已优化，修改会影响事件语义 |
-| `GlobalLiveEvent` object 结构 | 全局单例，修改会影响所有观察者 |
+| 接口/类                             | 原因                                                               |
+| ----------------------------------- | ------------------------------------------------------------------ |
+| `IBaseResponse` 接口签名            | 已被 ApiResponse 实现，修改会破坏兼容性                            |
+| `UIState` sealed class 结构         | 子类可能已使用模式匹配，修改会破坏编译                             |
+| `Message` 数据类字段                | 已用于事件通信，修改字段会破坏兼容性                               |
+| `ThrowableBean` 数据类字段          | 已用于错误处理，修改字段会破坏兼容性                               |
+| `BaseViewModel<R>` 抽象方法         | 子类需要实现 `repository` 和 `handleException`，修改签名会破坏子类 |
+| `BaseViewModel.UIChange` 内部类结构 | 已用于事件分发，修改会破坏兼容性                                   |
+| `SingleLiveEvent<T>` 构造参数       | SharedFlow 配置已优化，修改会影响事件语义                          |
+| `GlobalLiveEvent` object 结构       | 全局单例，修改会影响所有观察者                                     |
 
 ### 12.7 关键设计决策
 
 #### 12.7.1 不使用反射注入 Repository
 
 原 ybase 的 BaseViewModel 使用反射注入 Repository：
+
 ```kotlin
 // ❌ 旧方式（已禁止）
 val repository: BR by lazy { Clazz.getClass<BR>(this).newInstance() }
 ```
 
 新方式要求子类显式声明 Repository：
+
 ```kotlin
 // ✅ 新方式
 protected abstract val repository: R
@@ -1086,6 +1104,7 @@ protected abstract val repository: R
 #### 12.7.2 使用 SharedFlow 替代 LiveData
 
 原 ybase 使用 SingleLiveEvent (基于 MutableLiveData):
+
 ```kotlin
 // ❌ 旧方式
 inner class UIChange {
@@ -1094,6 +1113,7 @@ inner class UIChange {
 ```
 
 新方式使用 SharedFlow:
+
 ```kotlin
 // ✅ 新方式
 inner class UIChange {
@@ -1106,6 +1126,7 @@ inner class UIChange {
 #### 12.7.3 异常处理可子类可重写
 
 BaseViewModel 提供默认异常处理，子类可重写以集成项目特定的 ExceptionHandle：
+
 ```kotlin
 protected open fun handleException(throwable: Throwable): ThrowableBean {
     return ThrowableBean(errMsg = throwable.message ?: "Unknown error")
@@ -1135,31 +1156,31 @@ override fun handleException(throwable: Throwable): ThrowableBean {
 
 #### 已完成的版本升级
 
-| 依赖 | 升级前 | 升级后 | 状态 |
-|------|--------|--------|------|
-| AGP | 9.0.0-rc01 | **9.1.0** | ✅ 完成 |
-| Gradle | 9.1.0 | **9.3.1** | ✅ 完成 |
-| Kotlin | 2.1.0 | **2.3.0** | ✅ 完成 |
-| Coroutines | 1.9.0 | **1.10.1** | ✅ 完成 |
-| Lifecycle | 2.8.7 | **2.9.2** | ✅ 完成 |
-| Activity KTX | 1.9.3 | **1.10.1** | ✅ 完成 |
-| Fragment KTX | 1.8.5 | **1.8.7** | ✅ 完成 |
-| Navigation | - | **2.9.7** | ✅ 新增 |
-| Retrofit | 2.11.0 | 2.11.0 | ⏸️ 保持 |
-| OkHttp | 4.12.0 | 4.12.0 | ⏸️ 保持 |
+| 依赖         | 升级前     | 升级后     | 状态    |
+| ------------ | ---------- | ---------- | ------- |
+| AGP          | 9.0.0-rc01 | **9.1.0**  | ✅ 完成 |
+| Gradle       | 9.1.0      | **9.3.1**  | ✅ 完成 |
+| Kotlin       | 2.1.0      | **2.3.0**  | ✅ 完成 |
+| Coroutines   | 1.9.0      | **1.10.1** | ✅ 完成 |
+| Lifecycle    | 2.8.7      | **2.9.2**  | ✅ 完成 |
+| Activity KTX | 1.9.3      | **1.10.1** | ✅ 完成 |
+| Fragment KTX | 1.8.5      | **1.8.7**  | ✅ 完成 |
+| Navigation   | -          | **2.9.7**  | ✅ 新增 |
+| Retrofit     | 2.11.0     | 2.11.0     | ⏸️ 保持 |
+| OkHttp       | 4.12.0     | 4.12.0     | ⏸️ 保持 |
 
 #### 未添加的依赖（用户选择）
 
-| 依赖 | 原因 |
-|------|------|
-| Koin | 用户不需要 DI |
+| 依赖     | 原因           |
+| -------- | -------------- |
+| Koin     | 用户不需要 DI  |
 | Paging 3 | 用户不需要分页 |
 
 #### 版本升级过程中修复的编译问题
 
-1. **BaseViewModel.kt 重复类定义**: 删除了重复的类定义，2. **ViewModelExtensions.kt 泛型问题**: 重新设计了扩展方法，   让它们接收 ViewModel 实例作为参数
-3. **SingleLiveEvent.emit() 无参数版本**: 添加了无参数的 emit() 方法
-4. **BaseFragment.kt 未使用的导入**: 删除了对 common-network 的引用
+1. **BaseViewModel.kt 重复类定义**: 删除了重复的类定义，2. **ViewModelExtensions.kt 泛型问题**: 重新设计了扩展方法， 让它们接收 ViewModel 实例作为参数
+2. **SingleLiveEvent.emit() 无参数版本**: 添加了无参数的 emit() 方法
+3. **BaseFragment.kt 未使用的导入**: 删除了对 common-network 的引用
 
 ### 13.2 common-core 依赖更新
 
@@ -1178,28 +1199,19 @@ dependencies {
 }
 ```
 
-### 13.3 ToastUtils 扩展
+### 13.3 Toast API 统一
 
-添加了便捷的 show() 和 showLong() 方法:
+当前统一入口为 `ToastUtil`，新代码无需再传入 `Context`：
 
 ```kotlin
-object ToastUtils {
-    /**
-     * 显示 Toast（底部显示）
-     */
-    fun show(mContext: Context?, msg: String?, duration: Int = DURATION_SHORT) {
-        showBottomToast(mContext, msg, duration)
-    }
-
-    /**
-     * 显示长 Toast
-     */
-    fun showLong(mContext: Context?, msg: String?) {
-        showBottomToast(mContext, msg, DURATION_LONG)
-    }
-    // ...
-}
+ToastUtil.show("操作成功")
+ToastUtil.showLong("长提示")
+ToastUtil.showCenter("中间提示")
 ```
+
+历史调用已统一迁移到 `ToastUtil`。
+
+这是一次 source-breaking 迁移，外部调用方升级时也必须将旧入口全部替换为 `ToastUtil`。
 
 ### 13.4 App Demo 实现
 
@@ -1221,13 +1233,13 @@ app/
 
 #### Demo 列表
 
-| Demo 名称 | 功能 | 涉及模块 |
-|-----------|------|----------|
-| Toast 示例 | 短/长/中间 Toast | common-ui |
+| Demo 名称    | 功能                                | 涉及模块                  |
+| ------------ | ----------------------------------- | ------------------------- |
+| Toast 示例   | 短/长/中间 Toast                    | common-ui                 |
 | 网络请求示例 | ViewModel + Retrofit + RecyclerView | common-network, common-ui |
-| MMKV 示例 | 存储/读取/删除 | common-utils |
-| 日志示例 | 不同级别日志 | common-utils |
-| 状态栏示例 | 状态栏颜色设置 | common-ui |
+| MMKV 示例    | 存储/读取/删除                      | common-utils              |
+| 日志示例     | 不同级别日志                        | common-utils              |
+| 状态栏示例   | 状态栏颜色设置                      | common-ui                 |
 
 #### 网络请求示例特点
 
@@ -1255,26 +1267,26 @@ app/src/main/java/com/hoyn/common/lib/compose/
 
 ### 13.1 用户架构决策确认
 
-| 架构项 | 用户决策 | 版本 |
-|--------|----------|------|
-| 事件机制 | ✅ SharedFlow (已由2号窗口实现) | - |
-| 页面状态 | ✅ Sealed Class + StateFlow (已由2号窗口实现) | - |
-| DI | ❌ 不需要 | - |
-| Navigation | ✅ 需要 | 2.9.7 |
-| Paging | ❌ 不需要 | - |
-| Compose | 预留 | 暂不引入 |
-| Retrofit | ❌ 保持当前版本 | 2.11.0 |
+| 架构项     | 用户决策                                      | 版本     |
+| ---------- | --------------------------------------------- | -------- |
+| 事件机制   | ✅ SharedFlow (已由2号窗口实现)               | -        |
+| 页面状态   | ✅ Sealed Class + StateFlow (已由2号窗口实现) | -        |
+| DI         | ❌ 不需要                                     | -        |
+| Navigation | ✅ 需要                                       | 2.9.7    |
+| Paging     | ❌ 不需要                                     | -        |
+| Compose    | 预留                                          | 暂不引入 |
+| Retrofit   | ❌ 保持当前版本                               | 2.11.0   |
 
 ### 13.2 版本升级计划 (已确认)
 
-| 依赖 | 当前版本 | 升级到 | 状态 |
-|------|----------|--------|------|
-| AGP | 9.0.0-rc01 | 9.2.0 | ✅ 升级 |
-| Kotlin | 2.1.0 | 2.3.0 | ✅ 升级 |
-| Coroutines | 1.9.0 | 1.10.1 | ✅ 升级 |
-| Lifecycle | 2.8.7 | 2.9.2 | ✅ 升级 |
-| Activity KTX | 1.9.3 | 1.10.1 | ✅ 升级 |
-| Fragment KTX | 1.8.5 | 1.8.7 | ✅ 升级 |
-| Navigation | - | 2.9.7 | ✅ 新增 |
-| Retrofit | 2.11.0 | 2.11.0 | ⏸️ 保持 |
-| OkHttp | 4.12.0 | 4.12.0 | ⏸️ 保持 |
+| 依赖         | 当前版本   | 升级到 | 状态    |
+| ------------ | ---------- | ------ | ------- |
+| AGP          | 9.0.0-rc01 | 9.2.0  | ✅ 升级 |
+| Kotlin       | 2.1.0      | 2.3.0  | ✅ 升级 |
+| Coroutines   | 1.9.0      | 1.10.1 | ✅ 升级 |
+| Lifecycle    | 2.8.7      | 2.9.2  | ✅ 升级 |
+| Activity KTX | 1.9.3      | 1.10.1 | ✅ 升级 |
+| Fragment KTX | 1.8.5      | 1.8.7  | ✅ 升级 |
+| Navigation   | -          | 2.9.7  | ✅ 新增 |
+| Retrofit     | 2.11.0     | 2.11.0 | ⏸️ 保持 |
+| OkHttp       | 4.12.0     | 4.12.0 | ⏸️ 保持 |

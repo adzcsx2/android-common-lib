@@ -12,6 +12,7 @@ import com.hoyn.common.lib.databinding.ActivityLiveEventDemoBinding
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.hoyn.common.ui.ext.click
 
 /**
  * LiveEvent Demo Activity
@@ -52,28 +53,28 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
      * 设置点击事件监听器
      */
     private fun setupClickListeners() {
-        binding.btnSendNormal.setOnClickListener {
+        binding.btnSendNormal.click {
             val code = (100..999).random()
             val msg = "普通消息 #$code"
             GlobalLiveEvent.sendMessage(code, msg)
             log("发送普通消息: code=$code, msg=$msg")
         }
 
-        binding.btnSendSticky.setOnClickListener {
+        binding.btnSendSticky.click {
             val code = (1000..1999).random()
             val msg = "粘性消息 #$code"
             GlobalLiveEvent.sendMessage(code, msg)
             log("发送粘性消息: code=$code, msg=$msg (订阅前发送，Sticky订阅可收到)")
         }
 
-        binding.btnSendDelay.setOnClickListener {
+        binding.btnSendDelay.click {
             val code = (2000..2999).random()
             val msg = "延迟消息 #$code"
             GlobalLiveEvent.sendMessageDelay(code, msg, 2000)
             log("延迟2秒发送消息: code=$code, msg=$msg")
         }
 
-        binding.btnToggleService.setOnClickListener {
+        binding.btnToggleService.click {
             if (!serviceStarted) {
                 startService(Intent(this, LiveEventDemoService::class.java))
                 serviceStarted = true
@@ -87,13 +88,13 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
             }
         }
 
-        binding.btnSendToService.setOnClickListener {
+        binding.btnSendToService.click {
             val msg = "来自Activity的Service消息 #${(3000..3999).random()}"
             GlobalLiveEvent.sendMessage(CODE_SERVICE_REQUEST, msg)
             log("发送给Service的LiveEvent消息: $msg")
         }
 
-        binding.btnSendBroadcastDemo.setOnClickListener {
+        binding.btnSendBroadcastDemo.click {
             val intent = Intent(this, LiveEventDemoReceiver::class.java).apply {
                 action = ACTION_LIVE_EVENT_DEMO_BROADCAST
             }
@@ -101,7 +102,7 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
             log("已发送广播，等待Receiver转发到GlobalLiveEvent")
         }
 
-        binding.btnSubscribeNormal.setOnClickListener {
+        binding.btnSubscribeNormal.click {
             if (normalObserver == null) {
                 normalObserver = GlobalLiveEvent.observeMessage(this) { msg ->
                     log("收到普通消息: code=${msg.code}, msg=${msg.msg}")
@@ -116,7 +117,7 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
             }
         }
 
-        binding.btnSubscribeSticky.setOnClickListener {
+        binding.btnSubscribeSticky.click {
             if (stickyObserver == null) {
                 stickyObserver = GlobalLiveEvent.observeStickyMessage(this) { msg ->
                     log("收到粘性消息: code=${msg.code}, msg=${msg.msg}")
@@ -131,7 +132,7 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
             }
         }
 
-        binding.btnSubscribeManual.setOnClickListener {
+        binding.btnSubscribeManual.click {
             if (manualObserver == null) {
                 manualObserver = GlobalLiveEvent.createMessageObserver { msg ->
                     log("收到手动订阅消息: code=${msg.code}, msg=${msg.msg}")
@@ -147,7 +148,7 @@ class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewM
             }
         }
 
-        binding.btnClearLog.setOnClickListener {
+        binding.btnClearLog.click {
             logBuilder.clear()
             binding.tvLog.text = ""
         }

@@ -4,8 +4,8 @@ import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityLogDemoBinding
-import com.hoyn.common.ui.ext.onClick
-import com.hoyn.common.ui.toast.ToastUtils
+import com.hoyn.common.ui.ext.click
+import com.hoyn.common.ui.toast.ToastUtil
 import com.hoyn.common.utils.Logger
 
 /**
@@ -32,21 +32,33 @@ class LogDemoActivity : BaseActivity<ActivityLogDemoBinding, NoViewModel>() {
      * 设置视图和点击事件
      */
     private fun setupViews() {
-        binding.btnBack.onClick { finish() }
+        binding.btnBack.click { finish() }
 
-        binding.btnVerbose.setOnClickListener {
-            Logger.v("这是一条 VERBOSE 日志")
-            showToast("已输出 VERBOSE 日志")
-        }
 
-        binding.btnDebug.setOnClickListener {
+        binding.btnDebug.click {
             Logger.d("这是一条 DEBUG 日志")
             showToast("已输出 DEBUG 日志")
         }
 
-        binding.btnInfo.setOnClickListener {
+        binding.btnInfo.click {
             Logger.i("这是一条 INFO 日志")
             showToast("已输出 INFO 日志")
+        }
+
+        binding.btnWarn.click {
+            Logger.w("这是一条 WARN 日志")
+            showToast("已输出 WARN 日志")
+        }
+
+        binding.btnError.click {
+            Logger.e("这是一条 ERROR 日志")
+            showToast("已输出 ERROR 日志")
+        }
+
+        binding.btnJson.click {
+            val testData = mapOf("name" to "CommonLib", "version" to "1.0.0")
+            Logger.json(testData)
+            showToast("已输出 JSON 日志")
         }
     }
 
@@ -56,6 +68,6 @@ class LogDemoActivity : BaseActivity<ActivityLogDemoBinding, NoViewModel>() {
      * @param message 消息内容
      */
     private fun showToast(message: String) {
-        ToastUtils.show(this, message)
+        ToastUtil.show(message)
     }
 }

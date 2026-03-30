@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityToastDemoBinding
-import com.hoyn.common.ui.ext.onClick
+import com.hoyn.common.ui.ext.click
 import com.hoyn.common.ui.toast.ToastUtil
 
 /**
@@ -35,30 +35,30 @@ class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() 
      */
     private fun setupViews() {
         // 返回
-        binding.btnBack.onClick { finish() }
+        binding.btnBack.click { finish() }
 
         // 短 Toast - 无需 Context
-        binding.btnShortToast.onClick {
+        binding.btnShortToast.click {
             ToastUtil.show("这是一个短 Toast")
         }
 
         // 长 Toast
-        binding.btnLongToast.onClick {
+        binding.btnLongToast.click {
             ToastUtil.showLong("这是一个长 Toast，显示时间较长")
         }
 
         // 中间 Toast
-        binding.btnCenterToast.onClick {
+        binding.btnCenterToast.click {
             ToastUtil.showCenter("这是一个中间 Toast")
         }
 
         // 中间长 Toast
-        binding.btnCenterLongToast.onClick {
+        binding.btnCenterLongToast.click {
             ToastUtil.showCenterLong("这是一个中间长 Toast")
         }
 
         // 队列优先级测试 - 快速连续显示多个 Toast
-        binding.btnQueueTest.onClick {
+        binding.btnQueueTest.click {
             // 模拟快速连续点击，新 Toast 会取消前一个
             var count = 0
             repeat(5) {
@@ -70,7 +70,7 @@ class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() 
         }
 
         // 取消当前 Toast
-        binding.btnCancel.onClick {
+        binding.btnCancel.click {
             ToastUtil.cancel()
         }
     }

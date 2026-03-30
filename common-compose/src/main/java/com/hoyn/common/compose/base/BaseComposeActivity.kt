@@ -5,7 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModel
 import com.hoyn.common.base.ActivityStackManager
+import com.hoyn.common.base.ViewModelClassResolver
+import com.hoyn.common.base.ViewModelFactory
 import com.hoyn.common.compose.theme.AppTheme
 import com.hoyn.common.utils.LanguageHelper
 
@@ -13,15 +16,31 @@ import com.hoyn.common.utils.LanguageHelper
  * Base Compose Activity
  *
  * 提供纯 Compose Activity 的基类
- * 支持多语言设置、Activity 栈管理
+ * 支持多语言设置、Activity 栈管理、ViewModel 自动注入
+ *
+ * @param VM ViewModel 类型
  */
-abstract class BaseComposeActivity : ComponentActivity() {
+abstract class BaseComposeActivity<VM : ViewModel> : ComponentActivity() {
 
     /**
      * 自动生成的 TAG，使用类名
      * 子类可以直接使用，无需手动定义
      */
     val TAG: String get() = javaClass.simpleName
+
+    /**
+     * ViewModel 实例
+     * 通过 ViewModelFactory 自动创建，无需在 Koin 中注册
+     */
+    protected val viewModel: VM by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelFactory.createAuto(
+            owner = this,
+            savedStateOwner = this,
+            application = application,
+            modelClass = ViewModelClassResolver.resolve(this, BaseComposeActivity::class.java),
+            defaultArgs = intent?.extras
+        )
+    }
 
     /**
      * 附加基础 Context

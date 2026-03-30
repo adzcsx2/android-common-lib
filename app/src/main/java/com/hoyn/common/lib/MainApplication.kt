@@ -1,6 +1,7 @@
 package com.hoyn.common.lib
 
 import android.app.Application
+import com.hoyn.common.lib.di.initKoin
 import com.hoyn.common.utils.LanguageHelper
 import com.hoyn.common.utils.Logger
 import com.hoyn.common.utils.MMKVUtils
@@ -27,14 +28,11 @@ class MainApplication : Application() {
      *
      * 初始化日志、MMKV、主题等组件
      */
-    /**
-     * Application 创建时的回调
-     *
-     * 初始化日志、MMKV、主题等组件
-     */
     override fun onCreate() {
         super.onCreate()
         instance = this
+        // 初始化 Koin
+        initKoin(this)
         // 初始化日志
         Logger.init(BuildConfig.DEBUG, getString(R.string.app_name))
         // 初始化 MMKV

@@ -1,13 +1,13 @@
 package com.hoyn.common.lib.ui.fragment_demo
 
-import android.os.Bundle
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityFragmentDemoBinding
-import com.hoyn.common.ui.ext.onClick
+import com.hoyn.common.ui.ext.click
 
 /**
  * Fragment 示例页面
@@ -48,7 +48,7 @@ class FragmentDemoActivity : BaseActivity<ActivityFragmentDemoBinding, NoViewMod
      * @param savedInstanceState 保存的实例状态
      */
     override fun initView(savedInstanceState: Bundle?) {
-        binding.btnBack.onClick { finish() }
+        binding.btnBack.click { finish() }
 
         if (savedInstanceState == null) {
             val initialSessionId = intent.getStringExtra(EXTRA_INITIAL_SESSION_ID)

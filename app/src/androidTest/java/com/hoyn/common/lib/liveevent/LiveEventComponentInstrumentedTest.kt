@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.hoyn.common.base.event.GlobalLiveEvent
-import com.hoyn.common.core.Message
 import com.hoyn.common.lib.ui.liveevent.ACTION_LIVE_EVENT_DEMO_BROADCAST
 import com.hoyn.common.lib.ui.liveevent.CODE_RECEIVER_RESPONSE
 import com.hoyn.common.lib.ui.liveevent.CODE_SERVICE_REQUEST

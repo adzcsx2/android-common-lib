@@ -1,17 +1,13 @@
 package com.hoyn.common.lib.ui.network
 
-import android.app.Application
-import androidx.lifecycle.viewModelScope
 import com.hoyn.common.base.BaseViewModel
 import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.data.repository.PostRepository
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import org.koin.core.component.inject
 
 /**
  * 网络请求示例 ViewModel
@@ -20,20 +16,12 @@ import kotlinx.coroutines.launch
  * - 管理 UI 状态
  * - 调用 Repository 获取数据
  * - 处理业务逻辑
+ *
+ * 注意：KoinComponent 已从 BaseViewModel 继承，无需单独声明
  */
-class NetworkDemoViewModel(
-    application: Application,
-    repository: PostRepository? = null,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<PostRepository>() {
+class NetworkDemoViewModel : BaseViewModel<PostRepository>() {
 
-    constructor(application: Application) : this(
-        application = application,
-        repository = null,
-        ioDispatcher = Dispatchers.IO
-    )
-
-    override val repository: PostRepository = repository ?: PostRepository.getInstance(application)
+    override val repository: PostRepository by inject()
 
     // UI 状态流
     private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)
@@ -43,10 +31,6 @@ class NetworkDemoViewModel(
     private val _isFromCache = MutableStateFlow(false)
     val isFromCache: StateFlow<Boolean> = _isFromCache.asStateFlow()
 
-    init {
-        // 刃不在构造函数中自动加载，由外部调用 loadPosts() 触发
-    }
-
     /**
      * 加载帖子列表
      *
@@ -55,13 +39,11 @@ class NetworkDemoViewModel(
      * 2. 网络失败时从本地缓存加载
      */
     fun loadPosts() {
-        viewModelScope.launch(ioDispatcher) {
+        launchIO {
             _uiState.value = UIState.Loading
             _isFromCache.value = false
 
-            val result = repository.getPosts()
-
-            result.fold(
+            repository.getPosts().fold(
                 onSuccess = { resultData ->
                     _isFromCache.value = resultData.isFromCache
 
@@ -82,7 +64,7 @@ class NetworkDemoViewModel(
      * 清除缓存
      */
     fun clearCache() {
-        viewModelScope.launch {
+        launchIO {
             repository.clearCache()
         }
     }

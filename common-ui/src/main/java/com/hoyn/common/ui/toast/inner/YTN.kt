@@ -49,6 +49,10 @@ class YTN private constructor() {
      * @param toast 要显示的 BaseToast 实例
      */
     fun add(toast: BaseToast) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mHandler.post { add(toast) }
+            return
+        }
         mQueue.add(toast)
         if (mCurrentToast == null) {
             scheduleNext()
@@ -121,17 +125,107 @@ class YTN private constructor() {
      * 清空队列并移除当前显示的 Toast 视图
      */
     fun cancelAll() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mHandler.post { cancelAll() }
+            return
+        }
         mHandler.removeCallbacksAndMessages(null)
-        mCurrentToast?.let {
+        mCurrentToast?.let { toast ->
             try {
-                it.getWMManager()?.removeViewImmediate(it.getView())
-                it.setShowing(false)
+                val view = toast.getView()
+                val wm = toast.getWMManager()
+                // 安全检查：确保 view 存在且有 window token
+                if (view != null && view.windowToken != null && wm != null) {
+                    wm.removeViewImmediate(view)
+                }
+                toast.setShowing(false)
             } catch (e: Exception) {
+                // 捕获所有异常，包括 WindowManager.BadTokenException
                 e.printStackTrace()
             }
         }
         mQueue.clear()
         mCurrentToast = null
+    }
+
+    /**
+     * 取消当前 Toast 并立即显示下一个
+     *
+     * 用于新 Toast 取代旧 Toast 的场景，不清空队列
+     */
+    fun cancelCurrentAndShowNext() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mHandler.post { cancelCurrentAndShowNext() }
+            return
+        }
+        mCurrentToast?.let { toast ->
+            try {
+                val view = toast.getView()
+                val wm = toast.getWMManager()
+                // 安全检查：确保 view 存在且有 window token
+                if (view != null && view.windowToken != null && wm != null) {
+                    wm.removeViewImmediate(view)
+                }
+                toast.setShowing(false)
+            } catch (e: Exception) {
+                // 捕获所有异常，包括 WindowManager.BadTokenException
+                e.printStackTrace()
+            }
+        }
+        mCurrentToast = null
+        // 立即调度下一个（不清空队列）
+        mHandler.removeCallbacksAndMessages(null)
+        scheduleNext()
+    }
+
+    /**
+     * 添加新 Toast 并立即替换当前显示的 Toast
+     *
+     * 原子操作：确保新 Toast 入队后再取消当前 Toast，避免竞态条件
+     * 解决快速连续点击导致的崩溃问题 (KI-001)
+     *
+     * @param toast 要显示的新 Toast
+     */
+    fun addAndReplaceCurrent(toast: BaseToast) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mHandler.post { addAndReplaceCurrent(toast) }
+            return
+        }
+
+        // 仅保留最新消息，避免高频点击后旧消息继续排队
+        mQueue.clear()
+
+        // 先将新 toast 入队
+        mQueue.add(toast)
+
+        // 如果当前没有 toast 在显示，直接调度
+        if (mCurrentToast == null) {
+            scheduleNext()
+            return
+        }
+
+        // 取消当前 toast 并立即显示下一个（此时队列中已有新 toast）
+        mCurrentToast?.let { currentToast ->
+            try {
+                val view = currentToast.getView()
+                val wm = currentToast.getWMManager()
+                // 安全检查：确保 view 存在且有 window token
+                if (view != null && view.windowToken != null && wm != null) {
+                    wm.removeViewImmediate(view)
+                }
+                currentToast.setShowing(false)
+            } catch (e: Exception) {
+                // 捕获所有异常，包括 WindowManager.BadTokenException
+                e.printStackTrace()
+            }
+        }
+
+        // 清除之前的延迟回调
+        mHandler.removeCallbacksAndMessages(null)
+        mCurrentToast = null
+
+        // 立即调度下一个（队列中已有新 toast）
+        scheduleNext()
     }
 
     /**

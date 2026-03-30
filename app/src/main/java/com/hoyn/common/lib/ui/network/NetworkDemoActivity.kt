@@ -10,8 +10,9 @@ import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityNetworkDemoBinding
-import com.hoyn.common.ui.ext.onClick
-import com.hoyn.common.ui.toast.ToastUtils
+import com.hoyn.common.ui.ext.click
+import com.hoyn.common.ui.toast.ToastUtil
+import com.hoyn.common.utils.Logger
 import kotlinx.coroutines.launch
 
 /**
@@ -41,11 +42,10 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
 
     /**
      * 初始化数据
-     *
-     * ViewModel 初始化时已自动加载数据
      */
     override fun initData() {
-        // ViewModel 初始化时已自动加载数据
+        Logger.d("initData: 开始加载数据")
+        viewModel.loadPosts()
     }
 
     /**
@@ -55,11 +55,11 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
         binding.rvPosts.adapter = adapter
 
-        binding.btnRefresh.onClick {
+        binding.btnRefresh.click {
             viewModel.loadPosts()
         }
 
-        binding.btnBack.onClick {
+        binding.btnBack.click {
             finish()
         }
     }
@@ -81,7 +81,7 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { fromCache ->
                     if (fromCache) {
-                        ToastUtils.show(this@NetworkDemoActivity, getString(R.string.using_cached_data))
+                        ToastUtil.show(getString(R.string.using_cached_data))
                     }
                 }
         }
@@ -100,6 +100,7 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
                 binding.tvEmpty.visibility = View.GONE
                 binding.tvError.visibility = View.GONE
             }
+
             is UIState.Success -> {
                 binding.progressBar.visibility = View.GONE
                 binding.rvPosts.visibility = View.VISIBLE
@@ -107,6 +108,7 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
                 binding.tvError.visibility = View.GONE
                 adapter.submitList(state.data)
             }
+
             is UIState.Error -> {
                 binding.progressBar.visibility = View.GONE
                 binding.rvPosts.visibility = View.GONE
@@ -114,6 +116,7 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
                 binding.tvError.visibility = View.VISIBLE
                 binding.tvError.text = state.message
             }
+
             is UIState.Empty -> {
                 binding.progressBar.visibility = View.GONE
                 binding.rvPosts.visibility = View.GONE

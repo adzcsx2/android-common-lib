@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hoyn.common.lib.databinding.ItemDemoBinding
-import com.hoyn.common.ui.ext.onClick
+import com.hoyn.common.ui.ext.click
 
 /**
  * Demo 列表适配器
@@ -54,6 +54,6 @@ class DemoViewHolder(
             binding.tvBadge.visibility = View.GONE
         }
 
-        binding.root.onClick { item.action.invoke() }
+        binding.root.click { item.action.invoke() }
     }
 }

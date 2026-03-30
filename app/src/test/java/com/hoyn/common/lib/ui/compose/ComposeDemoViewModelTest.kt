@@ -9,16 +9,22 @@ import com.hoyn.common.lib.data.repository.PostRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.dsl.module
+import org.koin.test.KoinTest
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ComposeDemoViewModelTest {
+class ComposeDemoViewModelTest : KoinTest {
 
     private lateinit var mockApplication: Application
     private lateinit var mockRepository: PostRepository
@@ -35,12 +41,58 @@ class ComposeDemoViewModelTest {
         mockApplication = mock()
         mockRepository = mock()
         whenever(mockApplication.applicationContext).thenReturn(mock<Context>())
-        viewModel = ComposeDemoViewModel(mockApplication, mockRepository, testDispatcher)
+
+        startKoin {
+            modules(module {
+                single { mockRepository }
+            })
+        }
+
+        viewModel = ComposeDemoViewModel(
+            application = mockApplication,
+            ioDispatcher = testDispatcher,
+            autoLoadOnInit = false
+        )
+    }
+
+    @After
+    fun tearDown() {
+        stopKoin()
     }
 
     @Test
     fun initial_state_should_be_Loading() = runTest {
         assertTrue(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    fun init_should_not_auto_load_when_disabled() = runTest {
+        verifyNoInteractions(mockRepository)
+    }
+
+    @Test
+    fun init_should_auto_load_when_enabled() = runTest {
+        stopKoin()
+
+        whenever(mockRepository.getPosts()).thenReturn(
+            Result.success(PostLoadResult(posts = samplePosts, isFromCache = false, updatedAt = 1000L))
+        )
+
+        startKoin {
+            modules(module {
+                single { mockRepository }
+            })
+        }
+
+        val autoLoadViewModel = ComposeDemoViewModel(
+            application = mockApplication,
+            ioDispatcher = testDispatcher,
+            autoLoadOnInit = true
+        )
+
+        val finalState = autoLoadViewModel.uiState.value
+        assertTrue(finalState is UIState.Success)
+        assertEquals(samplePosts, (finalState as UIState.Success<List<Post>>).data)
     }
 
     @Test

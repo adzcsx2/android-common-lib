@@ -20,6 +20,10 @@ navigation = "2.8.9"
 archCore = "2.2.0"
 mockitoCore = "5.5.0"
 mockitoKotlin = "5.1.0"
+robolectric = "4.11.1"
+
+# Koin
+koin = "3.5.6"
 
 # Network
 retrofit = "2.11.0"
@@ -97,6 +101,14 @@ androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testin
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+
+# Koin
+koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
+koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koin" }
+koin-test-junit4 = { group = "io.insert-koin", name = "koin-test-junit4", version.ref = "koin" }
 
 # Utils
 utilcodex = { group = "com.blankj", name = "utilcodex", version.ref = "utilcodex" }

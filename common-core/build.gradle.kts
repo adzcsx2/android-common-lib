@@ -47,6 +47,10 @@ dependencies {
     api(libs.kotlinx.coroutines.core)
     api(libs.kotlinx.coroutines.android)
 
+    // Koin - 依赖注入框架，暴露给所有依赖模块
+    api(libs.koin.core)
+    api(libs.koin.android)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

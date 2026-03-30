@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * 屏幕状态枚举
- *
+ * update at 2026.3.25
  * 表示设备可能处于的不同屏幕状态
  */
 enum class ScreenState {

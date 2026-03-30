@@ -12,18 +12,18 @@
 
 ## 快速查找
 
-| 需求 | 模块 | 优先级 |
-|------|------|--------|
-| [网络请求](#网络请求) | common-network | 🔴 必须 |
-| [图片加载](#图片加载) | common-image | 🔴 必须 |
-| [状态管理](#状态管理) | common-core | 🔴 必须 |
-| [日志记录](#日志记录) | common-utils | 🟡 推荐 |
-| [Toast 提示](#toast-提示) | common-ui | 🟡 推荐 |
-| [状态栏设置](#状态栏设置) | common-ui | 🟡 推荐 |
-| [权限请求](#权限请求) | common-ui | 🟡 推荐 |
-| [本地存储](#本地存储) | common-utils | 🟡 推荐 |
-| [协程扩展](#协程扩展) | common-utils | 🟢 可选 |
-| [View 扩展](#view-扩展) | common-ui | 🟢 可选 |
+| 需求                      | 模块           | 优先级  |
+| ------------------------- | -------------- | ------- |
+| [网络请求](#网络请求)     | common-network | 🔴 必须 |
+| [图片加载](#图片加载)     | common-image   | 🔴 必须 |
+| [状态管理](#状态管理)     | common-core    | 🔴 必须 |
+| [日志记录](#日志记录)     | common-utils   | 🟡 推荐 |
+| [Toast 提示](#toast-提示) | common-ui      | 🟡 推荐 |
+| [状态栏设置](#状态栏设置) | common-ui      | 🟡 推荐 |
+| [权限请求](#权限请求)     | common-ui      | 🟡 推荐 |
+| [本地存储](#本地存储)     | common-utils   | 🟡 推荐 |
+| [协程扩展](#协程扩展)     | common-utils   | 🟢 可选 |
+| [View 扩展](#view-扩展)   | common-ui      | 🟢 可选 |
 
 ---
 
@@ -36,11 +36,13 @@
 **功能**: Retrofit + OkHttp 封装，统一的 API 响应处理
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 1. 配置（Application 中）
 NetworkConfig.connectTimeout = 30
@@ -70,6 +72,7 @@ if (response.isSuccess()) {
 ```
 
 **相关类**:
+
 - `RetrofitFactory` - 创建 Retrofit 服务
 - `NetworkConfig` - 网络配置
 - `ApiResponse<T>` - 统一响应封装，实现 `IBaseResponse`
@@ -83,11 +86,13 @@ if (response.isSuccess()) {
 **功能**: Glide 图片加载封装
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 基础加载
 imageView.loadImage(url)
@@ -121,11 +126,13 @@ ImageLoader.load(imageView)
 **功能**: UIState 封装，配合 StateFlow 管理页面状态
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // ViewModel 中
 class MyViewModel : BaseViewModel() {
@@ -158,6 +165,7 @@ lifecycleScope.launch {
 ```
 
 **相关类**:
+
 - `UIState<T>` - 页面状态封装 (Loading/Success/Error/Empty)
 - `IBaseResponse` - API 响应接口
 - `Message` - 事件消息
@@ -172,11 +180,13 @@ lifecycleScope.launch {
 **功能**: 统一日志管理
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 初始化（Application 中）
 Logger.init(debug = BuildConfig.DEBUG, tag = "MyApp")
@@ -201,20 +211,22 @@ Logger.t("CustomTag").d("Message")
 **功能**: Toast 工具封装
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 短时间显示
-ToastUtils.show(context, "提示信息")
+ToastUtil.show("提示信息")
 
 // 长时间显示
-ToastUtils.showLong(context, "长提示")
+ToastUtil.showLong("长提示")
 
 // 在主线程安全显示
-ToastUtils.show(context, "安全提示")
+ToastUtil.show("安全提示")
 ```
 
 ---
@@ -226,11 +238,13 @@ ToastUtils.show(context, "安全提示")
 **功能**: 状态栏颜色、沉浸式、刘海屏适配
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 设置状态栏颜色
 StatusBarHelper.setColor(activity, Color.RED)
@@ -260,11 +274,13 @@ val hasNotch = NotchHelper.hasNotch(activity)
 **功能**: 运行时权限请求封装
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 在 Activity/Fragment 中
 LivePermissions.request(this, Manifest.permission.CAMERA)
@@ -297,11 +313,13 @@ if (LivePermissions.check(context, Manifest.permission.CAMERA)) {
 **功能**: MMKV 键值存储
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 存储数据
 MMKVUtils.encode("key", "value")
@@ -329,11 +347,13 @@ MMKVUtils.clearAll()
 **功能**: 协程调度器扩展
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 在 IO 线程执行
 suspend fun ioOperation() = withIO {
@@ -360,11 +380,13 @@ suspend fun computeOperation() = withDefault {
 **功能**: View 常用操作扩展
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // 显示/隐藏
 view.visible()
@@ -395,11 +417,13 @@ val height = view.height
 **模块**: `common-base`
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 class UserViewModel : BaseViewModel<UserRepository>() {
     override val repository: UserRepository by lazy { UserRepository() }
@@ -427,11 +451,13 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 **模块**: `common-base`
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // Activity
 class MainActivity : BaseActivity<ActivityMainBinding>() {
@@ -457,7 +483,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 // 观察 ViewModel 事件
 observeAllUIEvents(
     viewModel = viewModel,
-    onToast = { ToastUtils.show(this, it) },
+    onToast = { ToastUtil.show(it) },
     onShowDialog = { showLoading(it) },
     onDismissDialog = { hideLoading() }
 )
@@ -472,11 +498,13 @@ observeAllUIEvents(
 **模块**: `common-compose`
 
 **依赖**:
+
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-compose:1.2.0")
+implementation("com.github.adzcsx2.android-common-lib:common-compose:1.2.1")
 ```
 
 **使用示例**:
+
 ```kotlin
 // Activity
 class MyComposeActivity : BaseComposeActivity() {
@@ -515,6 +543,7 @@ fun MyScreen() {
 **功能**: 跨组件通信
 
 **使用示例**:
+
 ```kotlin
 // 发送全局事件
 GlobalLiveEvent.sendMessage(Message(code = 1001, msg = "登录过期"))
@@ -551,16 +580,16 @@ common-ui (依赖 common-base)
 ```kotlin
 dependencies {
     // 核心功能
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.0")
-    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
 
     // 架构基础
-    implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.1")
 
     // 按需添加
-    implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.0")
-    implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.0")
-    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
 }
 ```
 
@@ -568,17 +597,17 @@ dependencies {
 
 ## 版本兼容性
 
-| 项目 | 版本 |
-|------|------|
-| compileSdk | 34 |
-| minSdk | 24 |
-| targetSdk | 34 |
-| Kotlin | 2.3.10 |
-| JVM Target | 11 |
+| 项目       | 版本   |
+| ---------- | ------ |
+| compileSdk | 34     |
+| minSdk     | 24     |
+| targetSdk  | 34     |
+| Kotlin     | 2.3.10 |
+| JVM Target | 11     |
 
 ---
 
 ## 更新日志
 
-- **1.2.0** - 当前版本，包含所有上述功能
+- **1.2.1** - 当前版本，包含所有上述功能
 - 详见 [CHANGELOG.md](../CHANGELOG.md)
