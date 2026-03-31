@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        maven { url = uri("https://mirrors.huaweicloud.com/repository/maven") }
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -9,6 +10,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven { url = uri("https://mirrors.huaweicloud.com/repository/maven") }
         google()
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
