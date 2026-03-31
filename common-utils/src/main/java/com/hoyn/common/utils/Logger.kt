@@ -11,16 +11,6 @@ import com.blankj.utilcode.util.LogUtils
 object Logger {
 
     /**
-     * 是否为调试模式，控制日志输出
-     */
-    private var isDebug = true
-
-    /**
-     * 默认日志标签
-     */
-    private var defaultTag = "CommonLib"
-
-    /**
      * 初始化日志工具
      *
      * 应在 Application 的 onCreate 中调用此方法进行初始化
@@ -29,10 +19,8 @@ object Logger {
      * @param tag 全局日志标签，用于标识日志来源，默认为 "CommonLib"
      */
     fun init(debug: Boolean, tag: String = "CommonLib") {
-        isDebug = debug
-        defaultTag = tag
         LogUtils.getConfig()
-            .setLogSwitch(isDebug)           // Debug才开启日志
+            .setLogSwitch(debug)             // Debug才开启日志
             .setConsoleSwitch(true)          // 确保控制台输出开启
             .setConsoleFilter(LogUtils.V)    // 设置最低过滤级别为 VERBOSE (KI-002)
             .setGlobalTag(tag)               // 全局Tag
@@ -48,8 +36,8 @@ object Logger {
      * @param message 日志消息内容
      * @param tag 日志标签，默认使用全局标签
      */
-    fun d(message: String, tag: String = defaultTag) {
-        if (isDebug) LogUtils.d(tag, message)
+    fun d(message: String, tag: String? = null) {
+        LogUtils.d(tag, message)
     }
 
     /**
@@ -60,8 +48,8 @@ object Logger {
      * @param message 日志消息内容
      * @param tag 日志标签，默认使用全局标签
      */
-    fun i(message: String, tag: String = defaultTag) {
-        if (isDebug) LogUtils.i(tag, message)
+    fun i(message: String, tag: String? = null) {
+        LogUtils.i(tag, message)
     }
 
     /**
@@ -72,20 +60,21 @@ object Logger {
      * @param message 日志消息内容
      * @param tag 日志标签，默认使用全局标签
      */
-    fun w(message: String, tag: String = defaultTag) {
-        if (isDebug) LogUtils.w(tag, message)
+    fun w(message: String, tag: String? = null) {
+        LogUtils.w(tag, message)
     }
 
     /**
      * 输出 Error 级别日志
-     *
+     * 按json格式输出
+     * 默认Type是Error
      * 用于输出错误信息，无论是否调试模式都会输出
      *
      * @param message 日志消息内容
      * @param tag 日志标签，默认使用全局标签
      */
-    fun e(message: String, tag: String = defaultTag) {
-        LogUtils.e(tag, message)
+    fun e(message: String, tag: String? = null, type: Int = LogUtils.E) {
+        LogUtils.json(type, tag, message)
     }
 
     /**
@@ -97,20 +86,21 @@ object Logger {
      * @param throwable 异常对象，用于打印堆栈信息
      * @param tag 日志标签，默认使用全局标签
      */
-    fun e(message: String, throwable: Throwable, tag: String = defaultTag) {
+    fun e(message: String, throwable: Throwable, tag: String? = null) {
         LogUtils.e(tag, message, throwable)
     }
 
     /**
      * 输出 JSON 格式日志
-     *
+     * V 级
      * 将对象格式化为 JSON 字符串输出，便于查看数据结构
      *
      * @param obj 要格式化的对象
      * @param tag 日志标签，默认使用全局标签
      */
-    fun json(obj: Any, tag: String = defaultTag) {
-        if (isDebug) LogUtils.json(tag, obj)
-
+    fun json(obj: Any, tag: String? = null) {
+        LogUtils.json(tag, obj)
     }
+
+
 }

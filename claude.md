@@ -1,293 +1,100 @@
-# Android Common Library - Claude AI 开发规范
+# Android Common Library - AI 开发规范
 
-> 本文件定义 Android Common Library 项目的开发规范，使用 Claude Code 或其他 AI 工具辅助开发时，请将此文件复制到项目根目录。
+> 本文件是 AI 辅助开发的唯一入口规则文件。修改代码前必须通读全文。
 
-## 项目概述
+## AI 工作原则
 
-**Android Common Library** 是一个模块化 Android 公共库，提供常用的工具类、网络请求、图片加载、UI 组件等功能。
+1. **先搜索再写**: 修改前先搜索目标文件同目录和同类实现，优先复用已有代码
+2. **禁止重复造轮子**: 新功能实现前，必须查阅 [docs/checklist/modules.md](./docs/checklist/modules.md) 确认库内是否已有对应组件
+3. **最小改动**: 优先在已有类中扩展，不轻易新增平行封装；不做无关重构
+4. **只改应该改的模块**: 严格遵循[模块依赖层次](#模块依赖层次与禁止依赖)，不越界
+5. **保持接口稳定**: common-core 和 common-base 中的公开 API 不可破坏性修改，详见 [docs/AI_HANDOFF.md](./docs/AI_HANDOFF.md) 第 12.5/12.6 节
+6. **不写通用教程**: 本文件只记录项目特有规则，Android 通用知识不在范围内
 
-**Maven 坐标**: `com.github.adzcsx2.android-common-lib`
+## 单一事实来源
 
-**模块依赖方式**:
-```kotlin
-// 按需引入单个模块
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.0")
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.0")
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.0")
-// ... 其他模块
+| 内容                 | 权威文档                                                 |
+| -------------------- | -------------------------------------------------------- |
+| 构建与版本           | `build.gradle.kts` / `gradle.properties` / `gradle/libs.versions.toml` |
+| 模块列表             | `settings.gradle.kts`                                   |
+| 模块职责与 API 清单  | [docs/checklist/modules.md](./docs/checklist/modules.md) |
+| 架构设计与依赖方向   | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)           |
+| App 接入基线与模板   | [docs/APP_ARCHITECTURE.md](./docs/APP_ARCHITECTURE.md)   |
+| 历史决策与接口稳定性 | [docs/AI_HANDOFF.md](./docs/AI_HANDOFF.md)               |
+| 版本变更与迁移       | [docs/CHANGELOG.md](./docs/CHANGELOG.md)                 |
 
-// 或引入全部模块
-implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.0")
+## 复用优先级
+
+修改代码时必须按以下顺序检查，已有实现优先于新写：
+
+1. **View 操作**: 必须使用 `ViewExtensions` (`click`, `visible`, `gone`, `invisible`, `enable`, `disable`, `pressEffectAlpha`, `pressEffectBgColor`, `holdClick`, `releaseClick`, `setClickNotNull` 等)，禁止直接 `setOnClickListener` 或手动设 `visibility`
+2. **Toast**: 统一使用 `ToastUtil.show()` / `ToastUtil.showLong()` / `ToastUtil.showCenter()`
+3. **日志**: 统一使用 `com.hoyn.common.utils.Logger`
+4. **存储**: 统一使用 `MMKVUtils`
+5. **图片加载**: View 体系用 `GlideUtils` / `ImageExtensions`，Compose 用 `Coil`
+6. **状态栏**: 统一使用 `StatusBarHelper`
+7. **权限**: 统一使用 `LivePermissions`
+8. **基类**: Activity 继承 `BaseActivity`，Fragment 继承 `BaseFragment`，ViewModel 继承 `BaseViewModel`
+
+## 局部一致性规则
+
+- **语言**: 纯 Kotlin；仅 Glide Module 等必要场景保留 Java，禁止新增 Java 业务代码
+- **构建**: Version Catalog (`gradle/libs.versions.toml`) 管理版本，禁止硬编码版本号
+- **View Binding**: 已启用，禁止引入 ButterKnife/DataBinding
+- **Compose**: 仅 common-compose 和 app 启用 Compose 编译器；View 体系禁止混用 @Composable
+- **发布版本**: 统一在 `gradle.properties` 的 `libVersion` 维护，当前 `1.2.1`
+
+## 项目强约束
+
+- **View 操作**: 必须使用 `ViewExtensions`（如 `view.click { }`），禁止直接 `setOnClickListener`；可见性用 `visible()`/`gone()`/`invisible()`
+- **文本不硬编码**: 字符串优先查 `strings.xml`，禁止在代码中硬写中文/英文文案
+- **颜色不硬编码**: 颜色优先查 `colors.xml`，禁止在代码中硬编码颜色值
+- **API 成功语义**: `isSuccess()` 统一为 `code == 0`
+- **禁止单例 object 用于 Repository**: 使用 Koin 或 `by lazy`
+- **禁用反射注入 ViewModel/Repository**: 子类必须显式声明 `override val repository`
+- **禁用 @OnLifecycleEvent 注解**: 使用 DefaultLifecycleObserver
+- **Logger 唯一实现**: `com.hoyn.common.utils.Logger`，禁止重复日志工具
+- **README.md 保护**: 只追加不删除，详见 [.claude/README.md](./.claude/README.md)
+- **文档位置**: 所有文档放 `/docs/`，源码目录内不创建 md 文件
+
+## 模块依赖层次与禁止依赖
+
+依赖方向: common-core -> common-utils / common-base / common-compose -> common-network / common-image -> common-ui -> common-all -> app
+
+| 模块                          | 禁止依赖                                             |
+| ----------------------------- | ---------------------------------------------------- |
+| common-core                   | 任何其他 common-\* 模块                              |
+| common-utils                  | common-base, common-ui, common-network, common-image |
+| common-base                   | common-ui, common-network, common-image              |
+| common-network / common-image | common-ui                                            |
+
+## 模块速查
+
+| 模块           | 包名                      | 关键类                                                                                                        |
+| -------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| common-core    | `com.hoyn.common.core`    | `UIState`, `IBaseResponse`, `ThrowableBean`, `Message`                                                        |
+| common-base    | `com.hoyn.common.base`    | `BaseActivity`, `BaseFragment`, `BaseViewModel`, `ViewModelFactory`, `GlobalLiveEvent`, `SingleLiveEvent`     |
+| common-utils   | `com.hoyn.common.utils`   | `Logger`, `MMKVUtils`, `CoroutinesExtensions`, `ContextExtensions`                                            |
+| common-network | `com.hoyn.common.network` | `RetrofitFactory`, `OkHttpClientFactory`, `NetworkConfig`, `ApiResponse`, `BaseRepository`, `ExceptionHandle` |
+| common-image   | `com.hoyn.common.image`   | `GlideUtils`, `ImageExtensions`                                                                               |
+| common-ui      | `com.hoyn.common.ui`      | `ToastUtil`, `StatusBarHelper`, `NotchHelper`, `PressEffectHelper`, `LivePermissions`, `ViewExtensions`        |
+| common-compose | `com.hoyn.common.compose` | `BaseComposeActivity`, `BaseComposeFragment`, `Theme`                                                         |
+
+## 编码规则
+
+- **DI**: Koin `single`/`factory`/`viewModel`；禁止 `object` Repository
+- **状态管理**: `StateFlow<UIState<T>>`，ViewModel 中用 `launchOnlyResult` 封装网络请求
+- **事件观察**: Activity/Fragment 中用 `observeAllUIEvents(viewModel, onToast, onShowDialog, onDismissDialog, onError)`
+- **全局事件**: `GlobalLiveEvent.sendMessage(Message(code, msg))` / `observeGlobalMessage { }`
+- **命名**: Repository `XxxRepository` | DataSource `XxxDataSource` | ViewModel `XxxViewModel` | API `XxxApi` | DAO `XxxDao` | Entity `XxxEntity`
+
+## 质量门禁
+
+```bash
+./gradlew qualityCheck              # lint + debug 单元测试 (全模块)
+./gradlew libraryPublishDryRun      # 验证所有库模块可发布到 Maven Local
 ```
 
-## 架构原则
+## 关键依赖版本 (libs.versions.toml)
 
-### 1. Clean Architecture 分层
-
-```
-data/
-├── remote/          # 远程数据源 (API)
-│   ├── api/         # API 接口定义
-│   └── datasource/  # Remote DataSource 实现
-├── local/           # 本地数据源 (Database/Cache)
-│   ├── dao/         # Room DAO
-│   ├── entity/      # 数据库实体
-│   └── datasource/  # Local DataSource 实现
-├── model/           # 领域模型
-└── repository/      # Repository（协调数据源）
-
-ui/
-├── viewmodel/       # ViewModel (状态管理)
-├── activity/        # Activity
-└── fragment/        # Fragment
-
-di/                  # 依赖注入 (Koin 模块)
-```
-
-### 2. 关键设计原则
-
-| 原则 | 说明 |
-|------|------|
-| **单一职责** | Repository 只协调数据源，不包含业务逻辑 |
-| **依赖注入** | 使用 Koin，**禁止单例模式** |
-| **数据源独立** | Remote/Local DataSource 分别实现 |
-| **状态管理** | 使用 `UIState` + `StateFlow` |
-| **不可变性** | 优先使用 `val` 和不可变数据类 |
-
-### 3. 模块依赖层次
-
-```
-                    common-core (核心抽象层)
-                           │
-         ┌─────────────────┼─────────────────┐
-         │                 │                 │
-   common-utils       common-base      common-compose
-         │                 │                 │
-         └────────┬────────┘                 │
-                  │                          │
-         ┌────────┴────────┐                 │
-         │                 │                 │
-   common-network     common-image          │
-         │                 │                 │
-         └────────┬────────┘                 │
-                  │                          │
-             common-ui ←────────────────────┘
-                  │
-              Your App
-```
-
-## 模块优先级原则 (CRITICAL)
-
-**当功能已存在于 common-lib 模块时，必须优先使用库内功能，禁止重复实现。**
-
-### 使用前检查清单
-
-在编写新代码前，先检查以下模块是否已提供所需功能：
-
-| 需求 | 对应模块 | 使用方式 |
-|------|----------|----------|
-| 网络请求 | common-network | `RetrofitFactory.createService()` |
-| 图片加载 | common-image | `imageView.loadImage(url)` |
-| 日志记录 | common-utils | `Logger.d()`, `Logger.e()` |
-| 状态管理 | common-core | `StateFlow<UIState<T>>` |
-| Toast | common-ui | `ToastUtils.show()` |
-| 状态栏 | common-ui | `StatusBarHelper` |
-| 权限请求 | common-ui | `LivePermissions` |
-| 键值存储 | common-utils | `MMKVUtils` |
-| 协程扩展 | common-utils | `withIO`, `withMain` |
-
-详细功能清单请查看 [docs/checklist/modules.md](./docs/checklist/modules.md)
-
-## 代码规范
-
-### 1. 依赖注入规范
-
-**禁止使用单例模式，全部由 Koin 管理。**
-
-```kotlin
-// ✅ 正确：使用 Koin 注入
-class MyViewModel(
-    private val repository: MyRepository
-) : BaseViewModel() {
-    // ...
-}
-
-// 定义在 di/Module.kt
-val appModule = module {
-    single { MyRepository(get(), get()) }
-    viewModel { MyViewModel(get()) }
-}
-
-// ❌ 错误：使用单例
-object MyRepository {
-    // ...
-}
-```
-
-### 2. Repository 规范
-
-Repository 只负责协调数据源，不包含业务逻辑。
-
-```kotlin
-// ✅ 正确：Repository 只协调数据源
-class PostRepository(
-    private val remoteDataSource: PostRemoteDataSource,
-    private val localDataSource: PostLocalDataSource
-) {
-    suspend fun getPosts(): Result<PostLoadResult> {
-        // 1. 尝试从远程获取
-        val remoteResult = remoteDataSource.getPosts()
-        if (remoteResult.isSuccess) {
-            // 2. 成功时缓存到本地
-            persistRemotePosts(remoteResult.getOrThrow())
-            return remoteResult
-        }
-        // 3. 失败时从本地加载
-        return localDataSource.getPosts()
-    }
-}
-
-// ❌ 错误：Repository 包含业务逻辑
-class PostRepository {
-    suspend fun getPostsAndProcessAndFilterAndSort() {
-        // 业务逻辑应该在 ViewModel 或 UseCase 中
-    }
-}
-```
-
-### 3. DataSource 规范
-
-Remote 和 Local DataSource 独立实现，职责清晰。
-
-```kotlin
-// Remote DataSource - 只负责网络请求
-interface PostRemoteDataSource {
-    suspend fun getPosts(): Result<PostLoadResult>
-}
-
-// Local DataSource - 只负责本地数据
-interface PostLocalDataSource {
-    suspend fun getPosts(): Result<PostLoadResult>
-    suspend fun replacePosts(entities: List<PostEntity>, cachedAt: Long)
-}
-```
-
-### 4. ViewModel 规范
-
-使用 `UIState` 管理页面状态。
-
-```kotlin
-class MyViewModel(
-    private val repository: MyRepository
-) : BaseViewModel() {
-
-    private val _uiState = MutableStateFlow<UIState<Data>>(UIState.Loading)
-    val uiState: StateFlow<UIState<Data>> = _uiState
-
-    fun loadData() {
-        launchOnlyResult(
-            block = { repository.getData() },
-            success = { data -> _uiState.value = UIState.Success(data) },
-            error = { e -> _uiState.value = UIState.Error(-1, e.message) }
-        )
-    }
-}
-```
-
-### 5. 命名规范
-
-| 类型 | 规范 | 示例 |
-|------|------|------|
-| Repository | `XxxRepository` | `PostRepository` |
-| DataSource | `XxxDataSource` / `XxxDataSourceImpl` | `PostRemoteDataSource` |
-| ViewModel | `XxxViewModel` | `PostViewModel` |
-| Activity | `XxxActivity` | `MainActivity` |
-| Fragment | `XxxFragment` | `HomeFragment` |
-| API 接口 | `XxxApi` | `PostApi` |
-| DAO | `XxxDao` | `PostDao` |
-| Entity | `XxxEntity` | `PostEntity` |
-| Model | `Xxx` | `Post` |
-
-## Koin 模块规范
-
-```kotlin
-// di/AppModule.kt
-val appModule = module {
-    // 1. API
-    single<PostApi> { RetrofitFactory.createService(BASE_URL) }
-
-    // 2. DataSource
-    single<PostRemoteDataSource> { PostRemoteDataSourceImpl(get()) }
-    single<PostLocalDataSource> { PostLocalDataSourceImpl(get()) }
-
-    // 3. Database
-    single { AppDatabase.getInstance(androidContext()) }
-
-    // 4. Repository
-    single<PostRepository> { PostRepository(get(), get()) }
-
-    // 5. ViewModel
-    viewModel { PostViewModel(get()) }
-}
-
-// Application 初始化
-class MyApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        startKoin {
-            androidContext(this@MyApplication)
-            modules(appModule)
-        }
-    }
-}
-```
-
-## 测试规范
-
-- 单元测试覆盖率达到 80%
-- 使用 MockK 进行 mock
-- 测试文件与源文件放在同一包下
-
-```kotlin
-class PostRepositoryTest {
-    private val mockRemote = mockk<PostRemoteDataSource>()
-    private val mockLocal = mockk<PostLocalDataSource>()
-    private val repository = PostRepository(mockRemote, mockLocal)
-
-    @Test
-    fun `getPosts returns remote result when successful`() = runTest {
-        // Given
-        coEvery { mockRemote.getPosts() } returns Result.success(mockData)
-
-        // When
-        val result = repository.getPosts()
-
-        // Then
-        assertTrue(result.isSuccess)
-    }
-}
-```
-
-## 常见错误
-
-| 错误 | 正确做法 |
-|------|----------|
-| 使用单例 | 使用 Koin 注入 |
-| Repository 包含业务逻辑 | 业务逻辑放在 ViewModel/UseCase |
-| 直接在 ViewModel 调用 API | 通过 Repository 协调 |
-| 使用 LiveData | 优先使用 StateFlow + UIState |
-| 重复实现已有功能 | 检查 MODULES_CHECKLIST.md |
-
-## 项目版本信息
-
-- compileSdk: 34
-- minSdk: 24
-- targetSdk: 34
-- Kotlin: 2.3.10
-- AGP: 9.1.0
-
-## 相关文档
-
-- [README.md](./README.md) - 项目说明
-- [MODULES_CHECKLIST.md](./MODULES_CHECKLIST.md) - 模块功能清单
-- [ARCHITECTURE.md](./docs/ARCHITECTURE.md) - 架构详解
+Kotlin 2.3.10 | AGP 9.1.0 | Lifecycle 2.8.7 | Coroutines 1.10.1 | Retrofit 2.11.0 | OkHttp 4.12.0 | Glide 4.16.0 | MMKV 2.3.0 | Koin 3.5.6 | Navigation 2.8.9 | Room 2.8.4 | Compose BOM 2024.04.01
