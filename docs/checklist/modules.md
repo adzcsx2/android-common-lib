@@ -38,7 +38,7 @@
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.2")
 ```
 
 **使用示例**:
@@ -88,7 +88,7 @@ if (response.isSuccess()) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.2")
 ```
 
 **使用示例**:
@@ -128,7 +128,7 @@ ImageLoader.load(imageView)
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.2")
 ```
 
 **使用示例**:
@@ -182,7 +182,7 @@ lifecycleScope.launch {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.2")
 ```
 
 **使用示例**:
@@ -213,7 +213,7 @@ Logger.t("CustomTag").d("Message")
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.2")
 ```
 
 **使用示例**:
@@ -240,7 +240,7 @@ ToastUtil.show("安全提示")
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.2")
 ```
 
 **使用示例**:
@@ -276,7 +276,7 @@ val hasNotch = NotchHelper.hasNotch(activity)
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.2")
 ```
 
 **使用示例**:
@@ -315,7 +315,7 @@ if (LivePermissions.check(context, Manifest.permission.CAMERA)) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.2")
 ```
 
 **使用示例**:
@@ -349,7 +349,7 @@ MMKVUtils.clearAll()
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.2")
 ```
 
 **使用示例**:
@@ -382,7 +382,7 @@ suspend fun computeOperation() = withDefault {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.2")
 ```
 
 **使用示例**:
@@ -419,7 +419,7 @@ val height = view.height
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.2")
 ```
 
 **使用示例**:
@@ -453,7 +453,7 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.2")
 ```
 
 **使用示例**:
@@ -500,7 +500,7 @@ observeAllUIEvents(
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-compose:1.2.1")
+implementation("com.github.adzcsx2.android-common-lib:common-compose:1.2.2")
 ```
 
 **使用示例**:
@@ -580,16 +580,16 @@ common-ui (依赖 common-base)
 ```kotlin
 dependencies {
     // 核心功能
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.1")
-    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.2")
+    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.2")
 
     // 架构基础
-    implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.2")
 
     // 按需添加
-    implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.1")
-    implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.1")
-    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.2")
+    implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.2")
+    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.2")
 }
 ```
 
@@ -609,5 +609,5 @@ dependencies {
 
 ## 更新日志
 
-- **1.2.1** - 当前版本，包含所有上述功能
+- **1.2.2** - 当前版本，包含所有上述功能
 - 详见 [CHANGELOG.md](../CHANGELOG.md)

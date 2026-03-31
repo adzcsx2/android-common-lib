@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.2.2] - 2026-03-31
+
+### Changed
+- Updated documentation to version 1.2.2
+- Aligned `libVersion` and all dependency snippets to `1.2.2`
+
 ## [1.2.1] - 2026-03-30
 
 ### Added
@@ -155,6 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2.2 | 2026-03-31 | Documentation update to 1.2.2 |
 | 1.2.1 | 2026-03-30 | ViewExtensions enhancements, ToastUtils removed, StatusBarHelper expanded, DataSource pattern, Koin DI |
 | 1.0.9 | 2026-03-17 | documentation and release metadata aligned with the published 1.0.9 tag |
 | 1.0.8 | 2026-03-17 | compileSdk and targetSdk baseline unified to 34, AndroidX and Compose stack downgraded for 34 compatibility |
@@ -184,6 +191,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.2.2]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.2
 [1.2.1]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.1
 [1.0.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.9
 [1.0.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.8

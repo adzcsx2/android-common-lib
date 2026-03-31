@@ -42,7 +42,7 @@
 - **构建**: Version Catalog (`gradle/libs.versions.toml`) 管理版本，禁止硬编码版本号
 - **View Binding**: 已启用，禁止引入 ButterKnife/DataBinding
 - **Compose**: 仅 common-compose 和 app 启用 Compose 编译器；View 体系禁止混用 @Composable
-- **发布版本**: 统一在 `gradle.properties` 的 `libVersion` 维护，当前 `1.2.1`
+- **发布版本**: 统一在 `gradle.properties` 的 `libVersion` 维护，当前 `1.2.2`
 
 ## 项目强约束
 
