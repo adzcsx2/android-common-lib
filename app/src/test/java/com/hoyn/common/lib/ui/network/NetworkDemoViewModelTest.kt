@@ -7,8 +7,13 @@ import com.hoyn.common.lib.data.remote.api.CommentApi
 import com.hoyn.common.lib.data.repository.PostLoadResult
 import com.hoyn.common.lib.data.repository.PostRepository
 import com.hoyn.common.network.ApiResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -63,21 +68,27 @@ class NetworkDemoViewModelTest : KoinTest {
 
     @Before
     fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
         mockRepository = declareMock()
         mockCommentApi = declareMock()
         viewModel = NetworkDemoViewModel()
     }
 
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     /**
-     * 等待协程完成
+     * 等待 IO 协程完成（用于 launchIO 场景）
      */
-    private fun waitForCoroutine(timeoutMs: Long = 2000) {
+    private fun waitForIO() {
         val latch = CountDownLatch(1)
         Thread {
-            Thread.sleep(300) // 等待协程完成（含 handleError delay(100)）
+            Thread.sleep(100)
             latch.countDown()
         }.start()
-        latch.await(timeoutMs, TimeUnit.MILLISECONDS)
+        latch.await(1000, TimeUnit.MILLISECONDS)
         ShadowLooper.idleMainLooper()
     }
 
@@ -93,7 +104,7 @@ class NetworkDemoViewModelTest : KoinTest {
         )
 
         viewModel.loadPosts()
-        waitForCoroutine()
+        waitForIO()
 
         val finalState = viewModel.uiState.value
         assertTrue("Expected Success but got $finalState", finalState is UIState.Success)
@@ -106,7 +117,7 @@ class NetworkDemoViewModelTest : KoinTest {
             Result.success(PostLoadResult(posts = samplePosts, isFromCache = true, updatedAt = 1000L))
         )
         viewModel.loadPosts()
-        waitForCoroutine()
+        waitForIO()
         assertTrue(viewModel.isFromCache.value)
     }
 
@@ -116,7 +127,7 @@ class NetworkDemoViewModelTest : KoinTest {
             Result.success(PostLoadResult(posts = samplePosts, isFromCache = false, updatedAt = 1000L))
         )
         viewModel.loadPosts()
-        waitForCoroutine()
+        waitForIO()
         assertFalse(viewModel.isFromCache.value)
     }
 
@@ -126,7 +137,7 @@ class NetworkDemoViewModelTest : KoinTest {
             Result.success(PostLoadResult(posts = emptyList(), isFromCache = false, updatedAt = 1000L))
         )
         viewModel.loadPosts()
-        waitForCoroutine()
+        waitForIO()
         val finalState = viewModel.uiState.value
         assertTrue("Expected Empty but got $finalState", finalState is UIState.Empty)
     }
@@ -138,7 +149,7 @@ class NetworkDemoViewModelTest : KoinTest {
         )
 
         viewModel.loadPosts()
-        waitForCoroutine()
+        waitForIO()
 
         val finalState = viewModel.uiState.value
         assertTrue("Expected Error but got $finalState", finalState is UIState.Error)
@@ -148,8 +159,7 @@ class NetworkDemoViewModelTest : KoinTest {
     @Test
     fun `clearCache should call repository clearCache`() = runTest {
         viewModel.clearCache()
-        waitForCoroutine()
-        // 验证没有异常抛出
+        waitForIO()
     }
 
     @Test
@@ -161,7 +171,7 @@ class NetworkDemoViewModelTest : KoinTest {
             Result.success(PostLoadResult(posts = cachedPosts, isFromCache = true, updatedAt = 2000L))
         )
         viewModel.loadPosts()
-        waitForCoroutine()
+        waitForIO()
         val finalState = viewModel.uiState.value
         assertTrue("Expected Success but got $finalState", finalState is UIState.Success)
         assertTrue(viewModel.isFromCache.value)
@@ -179,7 +189,7 @@ class NetworkDemoViewModelTest : KoinTest {
         )
 
         viewModel.loadPosts()
-        waitForCoroutine()
+        waitForIO()
 
         val finalState = viewModel.uiState.value
         assertTrue("Expected Success but got $finalState", finalState is UIState.Success)
@@ -193,7 +203,6 @@ class NetworkDemoViewModelTest : KoinTest {
         )
 
         viewModel.loadComments()
-        waitForCoroutine()
 
         val finalState = viewModel.commentsState.value
         assertTrue("Expected Success but got $finalState", finalState is UIState.Success)
@@ -207,7 +216,6 @@ class NetworkDemoViewModelTest : KoinTest {
         )
 
         viewModel.loadComments()
-        waitForCoroutine()
 
         val finalState = viewModel.commentsState.value
         assertTrue(
@@ -227,7 +235,6 @@ class NetworkDemoViewModelTest : KoinTest {
         )
 
         viewModel.loadComments()
-        waitForCoroutine()
 
         val finalState = viewModel.commentsState.value
         assertTrue("Expected Error but got $finalState", finalState is UIState.Error)
