@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.2.9] - 2026-04-02
+
+### Added
+- 统一 Maven release publication 配置，在根 `build.gradle.kts` 中通过 `subprojects` 自动为所有 Android Library 模块创建 `release` MavenPublication
+
 ## [1.2.5] - 2026-04-02
 
 ### Changed
@@ -185,6 +190,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2.9 | 2026-04-02 | Unified Maven release publication configuration in root build.gradle.kts |
 | 1.2.8 | 2026-04-02 | JitPack install step with -Pgroup/-Pversion parameters, allprojects group/version propagation |
 | 1.2.7 | 2026-04-02 | JitPack allprojects group/version propagation, jitpack.yml install step |
 | 1.2.6 | 2026-04-02 | JitPack publishing fix, group/version mapping, updated 1.2.5 changelog |
@@ -218,6 +224,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.2.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.9
 [1.2.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.8
 [1.2.7]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.7
 [1.2.6]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.6

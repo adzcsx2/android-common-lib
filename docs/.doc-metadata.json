@@ -33,7 +33,7 @@
     {
       "date": "2026-04-02",
       "diffFile": "update-list/update-2026-04-02-2.md",
-      "summary": "版本发布 1.2.8：JitPack CI 配置、Java 17 升级、launchOnlyResult 增强、构建系统简化",
+      "summary": "版本发布 1.2.9：统一 Maven release publication 配置",
       "documentsUpdated": ["CHANGELOG.md", "PROJECT_OVERVIEW.md"]
     },
     {
