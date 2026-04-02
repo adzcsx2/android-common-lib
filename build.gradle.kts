@@ -10,6 +10,11 @@ plugins {
     alias(libs.plugins.room) apply false
 }
 
+// JitPack injects -Pgroup and -Pversion; map them to project.group/version
+// so that publishToMavenLocal writes to the correct Maven coordinates.
+group = (findProperty("group") as? String) ?: ""
+version = (findProperty("version") as? String) ?: ""
+
 allprojects {
     configurations.configureEach {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
