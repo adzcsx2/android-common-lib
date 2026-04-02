@@ -1,4 +1,6 @@
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
@@ -23,6 +25,25 @@ allprojects {
 allprojects {
     configurations.configureEach {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+    }
+}
+
+subprojects {
+    pluginManager.withPlugin("maven-publish") {
+        extensions.configure(PublishingExtension::class.java) {
+            publications {
+                if (findByName("release") == null && plugins.hasPlugin("com.android.library")) {
+                    create("release", MavenPublication::class.java) {
+                        groupId = project.group.toString()
+                        artifactId = project.name
+                        version = project.version.toString()
+                        afterEvaluate {
+                            from(components.findByName("release"))
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
