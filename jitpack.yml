@@ -1,2 +1,4 @@
 jdk:
   - openjdk17
+install:
+  - ./gradlew publishToMavenLocal -Pgroup=com.github.adzcsx2 -Pversion=$VERSION -x test -x lint
