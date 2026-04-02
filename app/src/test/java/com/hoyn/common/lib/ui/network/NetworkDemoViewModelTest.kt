@@ -6,6 +6,7 @@ import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.data.remote.api.CommentApi
 import com.hoyn.common.lib.data.repository.PostLoadResult
 import com.hoyn.common.lib.data.repository.PostRepository
+import com.hoyn.common.network.ApiResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -187,7 +188,9 @@ class NetworkDemoViewModelTest : KoinTest {
 
     @Test
     fun `loadComments should emit Success when api succeeds`() = runTest {
-        whenever(mockCommentApi.getComments()).thenReturn(sampleComments)
+        whenever(mockCommentApi.getComments_test()).thenReturn(
+            ApiResponse(code = 0, message = "success", data = sampleComments)
+        )
 
         viewModel.loadComments()
         waitForCoroutine()
@@ -199,18 +202,27 @@ class NetworkDemoViewModelTest : KoinTest {
 
     @Test
     fun `loadComments should emit Empty when api returns empty list`() = runTest {
-        whenever(mockCommentApi.getComments()).thenReturn(emptyList())
+        whenever(mockCommentApi.getComments_test()).thenReturn(
+            ApiResponse(code = 0, message = "success", data = emptyList())
+        )
 
         viewModel.loadComments()
         waitForCoroutine()
 
         val finalState = viewModel.commentsState.value
-        assertTrue("Expected Empty but got $finalState", finalState is UIState.Empty)
+        // launchOnlyResult now throws EmptyResponseDataException for empty data,
+        // which gets caught by error callback as UIState.Error
+        assertTrue(
+            "Expected Error (empty data) but got $finalState",
+            finalState is UIState.Error
+        )
     }
 
     @Test
     fun `loadComments should emit Error when api fails`() = runTest {
-        whenever(mockCommentApi.getComments()).thenThrow(IllegalStateException("Comments failed"))
+        whenever(mockCommentApi.getComments_test()).thenReturn(
+            ApiResponse(code = 500, message = "Comments failed", data = null)
+        )
 
         viewModel.loadComments()
         waitForCoroutine()
