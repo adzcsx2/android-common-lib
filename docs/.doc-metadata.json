@@ -1,8 +1,8 @@
 {
   "version": "1.3",
   "projectType": "android",
-  "lastUpdate": "2026-04-02T12:00:00Z",
-  "lastCommit": "e3f46a9301b5c0c75fa0efc722fe5fb725829a12",
+  "lastUpdate": "2026-04-02T14:00:00Z",
+  "lastCommit": "b651f35",
   "documents": {
     "PROJECT_OVERVIEW.md": {
       "updatedAt": "2026-04-02T00:00:00Z",
@@ -30,6 +30,12 @@
     }
   },
   "updateHistory": [
+    {
+      "date": "2026-04-02",
+      "diffFile": "update-list/update-2026-04-02-3.md",
+      "summary": "版本发布 1.2.9：统一 Maven release publication 配置",
+      "documentsUpdated": ["CHANGELOG.md", "README.md", "PROJECT_OVERVIEW.md", "DOC_CHANGELOG.md"]
+    },
     {
       "date": "2026-04-02",
       "diffFile": "update-list/update-2026-04-02-2.md",

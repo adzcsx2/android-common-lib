@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-04-02 - 版本发布 1.2.9
+
+**变更概述**: 统一 Maven release publication 配置，版本号更新至 1.2.9
+
+| 文档 | 变更类型 | 简介 |
+|------|----------|------|
+| CHANGELOG.md | 版本更新 | 新增 1.2.9 版本条目和 Version History 记录 |
+| README.md | 版本更新 | 依赖示例版本号更新为 1.2.9 |
+| PROJECT_OVERVIEW.md | 版本更新 | 当前版本更新为 1.2.9 |
+
+[查看详情](update-list/update-2026-04-02-3.md)
+
+---
+
 ## 2026-04-02 - 新增组件文档、代码注释补充
 
 **变更概述**: 新增 Dialog 安全示例、ActivityStackManager 示例、CommentApi 文档；补充代码注释
