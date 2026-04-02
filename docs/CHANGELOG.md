@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.2.5] - 2026-04-02
+
+### Changed
+- Upgrade Java compatibility from 11 to 17 across all modules
+
 ## [1.2.4] - 2026-04-02
 
 ### Added
@@ -176,6 +181,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2.5 | 2026-04-02 | Java 11 to 17 compatibility upgrade |
 | 1.2.4 | 2026-04-02 | launchOnlyResult error callback enhancement, ApiResponse @SerializedName, BaseResponse typealias, structured error handling, ApiResponseTest |
 | 1.2.3 | 2026-04-02 | BaseDialogFragment, DialogController, FragmentArgumentsDsl, MultiAdapterItem, ActivityStackManager, full code comments, docs update |
 | 1.0.9 | 2026-03-17 | documentation and release metadata aligned with the published 1.0.9 tag |
@@ -205,6 +211,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.2.5]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.5
 [1.2.4]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.4
 [1.2.3]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.3
 [1.0.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.9
