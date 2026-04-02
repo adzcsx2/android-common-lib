@@ -43,5 +43,3 @@ dependencies {
     api(project(":common-image"))
     api(project(":common-ui"))
 }
-
-apply(from = rootProject.file("scripts/publish.gradle.kts"))

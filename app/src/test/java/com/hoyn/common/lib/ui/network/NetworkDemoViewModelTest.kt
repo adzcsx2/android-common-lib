@@ -1,7 +1,9 @@
 package com.hoyn.common.lib.ui.network
 
 import com.hoyn.common.core.UIState
+import com.hoyn.common.lib.data.model.Comment
 import com.hoyn.common.lib.data.model.Post
+import com.hoyn.common.lib.data.remote.api.CommentApi
 import com.hoyn.common.lib.data.repository.PostLoadResult
 import com.hoyn.common.lib.data.repository.PostRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,11 +32,17 @@ import java.util.concurrent.TimeUnit
 class NetworkDemoViewModelTest : KoinTest {
 
     private lateinit var mockRepository: PostRepository
+    private lateinit var mockCommentApi: CommentApi
     private lateinit var viewModel: NetworkDemoViewModel
 
     private val samplePosts = listOf(
         Post(userId = 1, id = 1, title = "Post 1", body = "Body 1"),
         Post(userId = 2, id = 2, title = "Post 2", body = "Body 2")
+    )
+
+    private val sampleComments = listOf(
+        Comment(postId = 1, id = 1, name = "Name 1", email = "a@example.com", body = "Comment 1"),
+        Comment(postId = 1, id = 2, name = "Name 2", email = "b@example.com", body = "Comment 2")
     )
 
     // Mock Provider 规则 - 必须在 KoinTestRule 之前
@@ -48,12 +56,14 @@ class NetworkDemoViewModelTest : KoinTest {
     val koinTestRule = KoinTestRule.create {
         modules(module {
             single { mockRepository }
+            single { mockCommentApi }
         })
     }
 
     @Before
     fun setup() {
         mockRepository = declareMock()
+        mockCommentApi = declareMock()
         viewModel = NetworkDemoViewModel()
     }
 
@@ -173,5 +183,40 @@ class NetworkDemoViewModelTest : KoinTest {
         val finalState = viewModel.uiState.value
         assertTrue("Expected Success but got $finalState", finalState is UIState.Success)
         assertEquals(100, (finalState as UIState.Success<List<Post>>).data.size)
+    }
+
+    @Test
+    fun `loadComments should emit Success when api succeeds`() = runTest {
+        whenever(mockCommentApi.getComments()).thenReturn(sampleComments)
+
+        viewModel.loadComments()
+        waitForCoroutine()
+
+        val finalState = viewModel.commentsState.value
+        assertTrue("Expected Success but got $finalState", finalState is UIState.Success)
+        assertEquals(sampleComments, (finalState as UIState.Success<*>).data)
+    }
+
+    @Test
+    fun `loadComments should emit Empty when api returns empty list`() = runTest {
+        whenever(mockCommentApi.getComments()).thenReturn(emptyList())
+
+        viewModel.loadComments()
+        waitForCoroutine()
+
+        val finalState = viewModel.commentsState.value
+        assertTrue("Expected Empty but got $finalState", finalState is UIState.Empty)
+    }
+
+    @Test
+    fun `loadComments should emit Error when api fails`() = runTest {
+        whenever(mockCommentApi.getComments()).thenThrow(IllegalStateException("Comments failed"))
+
+        viewModel.loadComments()
+        waitForCoroutine()
+
+        val finalState = viewModel.commentsState.value
+        assertTrue("Expected Error but got $finalState", finalState is UIState.Error)
+        assertTrue((finalState as UIState.Error).message.contains("Comments failed"))
     }
 }

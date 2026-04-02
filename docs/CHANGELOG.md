@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - 全面补充中文 KDoc 注释（覆盖所有模块源文件）
 - 更新项目文档（INTERFACES/NAVIGATION/COMPONENTS/API）
-- `libVersion` 统一为 1.2.3
+- 移除 `libVersion` 和 `scripts/publish.gradle.kts`，简化为纯 git tag 发布流程
 
 ## [1.0.9] - 2026-03-17
 
@@ -177,11 +177,10 @@ When contributing to this project, please:
 
 ## Release Process
 
-1. Update `libVersion` in gradle.properties
-2. Update CHANGELOG.md
-3. Commit changes with message format: `chore: release version X.X.X`
-4. Create git tag: `git tag X.X.X`
-5. Push tag to trigger JitPack build
+1. Update CHANGELOG.md and documentation
+2. Commit changes with message format: `chore: release version X.X.X`
+3. Create git tag: `git tag X.X.X`
+4. Push code and tag to trigger JitPack build
 
 ---
 

@@ -75,6 +75,3 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.compose.ui.test.junit4)
 }
-
-// 应用发布配置
-apply(from = rootProject.file("scripts/publish.gradle.kts"))
