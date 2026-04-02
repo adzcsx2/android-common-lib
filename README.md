@@ -13,7 +13,7 @@ Android 模块化公共库，提供常用的工具类、网络请求、图片加
 | Android Studio         | Panda 2 \| 2025.3.2      |
 | Android Studio Runtime | JetBrains Runtime 21.0.9 |
 | Kotlin                 | 2.3.10                   |
-| Kotlin JVM target      | 11                       |
+| Kotlin JVM target      | 17                       |
 | compileSdk             | 34                       |
 | minSdk                 | 24                       |
 | targetSdk              | 34                       |
@@ -23,7 +23,7 @@ Android 模块化公共库，提供常用的工具类、网络请求、图片加
 > 通过 JitPack 直接引用已发布产物时，消费者项目除了添加依赖外，还需要满足以下最低要求：
 >
 > - Kotlin Gradle Plugin 必须对齐到 `2.3.10`
-> - Kotlin/JVM 编译目标必须为 `11`
+> - Kotlin/JVM 编译目标必须为 `17`
 > - `compileSdk` 需要大于等于 `34`
 > - `minSdk` 为 `24`
 >

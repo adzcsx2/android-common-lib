@@ -337,7 +337,7 @@ class MyApplication : Application() {
 | Package | `com.hoyn.common.image` |
 | Min SDK | 24 |
 | Compile SDK | 34 |
-| Java Version | 11 |
+| Java Version | 17 |
 
 ## Integration
 

@@ -20,7 +20,7 @@
 | targetSdk | 34 |
 | Kotlin | 2.3.10 |
 | AGP | 9.1.0 |
-| JVM Target | 11 |
+| JVM Target | 17 |
 | Gradle | 9.x |
 
 ## 技术栈

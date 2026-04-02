@@ -399,7 +399,7 @@ class MyActivity : AppCompatActivity() {
 | Package | `com.hoyn.common.ui` |
 | Min SDK | 24 |
 | Compile SDK | 34 |
-| Java Version | 11 |
+| Java Version | 17 |
 | ViewBinding | Enabled |
 
 ## Integration

@@ -13,7 +13,7 @@ Modular Android shared libraries for common utilities, networking, image loading
 | Android Studio | Panda 2 \| 2025.3.2 |
 | Android Studio Runtime | JetBrains Runtime 21.0.9 |
 | Kotlin | 2.3.10 |
-| Kotlin JVM target | 11 |
+| Kotlin JVM target | 17 |
 | compileSdk | 34 |
 | minSdk | 24 |
 | targetSdk | 34 |
@@ -23,7 +23,7 @@ Modular Android shared libraries for common utilities, networking, image loading
 > When consuming published JitPack artifacts directly, downstream projects must satisfy these baseline requirements:
 >
 > - Kotlin Gradle Plugin must be aligned to `2.3.10`
-> - Kotlin/JVM compilation target must be `11`
+> - Kotlin/JVM compilation target must be `17`
 > - `compileSdk` must be `>= 34`
 > - `minSdk` is `24`
 >
