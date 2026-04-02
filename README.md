@@ -140,13 +140,13 @@ dependencyResolutionManagement {
 ```kotlin
 dependencies {
     // 只引入需要的模块，减少 APK 体积
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.3")      // 核心基础模块
-    implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.3")      // 架构基础模块
-    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.3")     // 工具类扩展
-    implementation("com.github.adzcsx2.android-common-lib:common-compose:1.2.3")   // Compose 组件
-    implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.3")   // 网络请求
-    implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.3")     // 图片加载
-    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.3")        // UI 组件
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.4")      // 核心基础模块
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.4")      // 架构基础模块
+    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.4")     // 工具类扩展
+    implementation("com.github.adzcsx2.android-common-lib:common-compose:1.2.4")   // Compose 组件
+    implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.4")   // 网络请求
+    implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.4")     // 图片加载
+    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.4")        // UI 组件
 }
 ```
 
@@ -155,11 +155,11 @@ dependencies {
 ```kotlin
 dependencies {
     // 通过聚合模块引入全部库模块
-    implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.3")
+    implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.4")
 }
 ```
 
-> 注意：当前并不存在可直接使用的根坐标 `com.github.adzcsx2.android-common-lib:1.2.3`。如果你想一次性引入全部模块，请使用 `common-all`。
+> 注意：当前并不存在可直接使用的根坐标 `com.github.adzcsx2.android-common-lib:1.2.4`。如果你想一次性引入全部模块，请使用 `common-all`。
 
 ### 3. 使用最新版本 (SNAPSHOT)
 
@@ -171,7 +171,7 @@ dependencies {
     implementation("com.github.adzcsx2.android-common-lib:common-all:-SNAPSHOT")
 
     // 生产环境 - 使用固定版本，稳定可靠
-    implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.3")
+    implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.4")
 }
 ```
 
@@ -182,9 +182,9 @@ dependencies {
 | 写法             | 含义                       |
 | ---------------- | -------------------------- |
 | `1.0.0`          | 固定版本，对应 `1.0.0` tag |
-| `1.2.3`          | 固定版本，对应 `1.2.3` tag |
+| `1.2.4`          | 固定版本，对应 `1.2.4` tag |
 | `-SNAPSHOT`      | master 分支的最新提交      |
-| `1.2.3-SNAPSHOT` | 1.2.3 tag 之后的最新提交   |
+| `1.2.4-SNAPSHOT` | 1.2.4 tag 之后的最新提交   |
 
 #### 工作原理
 
@@ -192,10 +192,10 @@ dependencies {
 master 分支:  ──●──●──●──●──●──●──●──●──>
                  │     │           │
                tag   tag         最新提交
-                                                                                                                                                                                                 1.0.0  1.2.3       (SNAPSHOT)
+                                                                                                                                                                                                 1.0.0  1.2.4       (SNAPSHOT)
 ```
 
-- **固定版本 (1.0.0, 1.2.3)**: 永远对应那个 tag 的代码，不会变
+- **固定版本 (1.0.0, 1.2.4)**: 永远对应那个 tag 的代码，不会变
 - **SNAPSHOT**: 每次构建都会从 master 拉取最新代码
 
 > **注意**: SNAPSHOT 版本每次构建都会检查更新，可能会增加构建时间。生产环境建议使用固定版本。
@@ -234,7 +234,7 @@ git push origin X.X.X
 
 ```kotlin
 dependencies {
-    implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.3")
+    implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.4")
 }
 ```
 

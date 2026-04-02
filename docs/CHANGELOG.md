@@ -13,6 +13,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.2.4] - 2026-04-02
+
+### Added
+- `BaseResponse<T>` typealias for naming consistency with business projects
+- `ResponseCodeException` and `EmptyResponseDataException` in BaseViewModel for structured error handling
+- `onApiErrorCode()` hook in BaseViewModel for custom business error code handling
+- `toUiErrorStateOrNull()` extension in BaseViewModel for Throwable to UIState.Error conversion
+- Non-standard response format warning log in `LoggingInterceptor`
+- `ApiResponseTest` unit tests (success, error, deserialization with message/msg fields)
+
+### Changed
+- `ApiResponse` fields annotated with `@SerializedName` (`code`, `message`/`msg`, `data`) for robust deserialization
+- `launchOnlyResult` error callback signature changed from `(Throwable) -> Unit` to `(code: Int, message: String) -> Unit`
+- `BaseViewModel.handleException()` now handles `ResponseCodeException` with proper error code extraction
+- Empty response data (null or empty String) now throws `EmptyResponseDataException` instead of raw RuntimeException
+- Business error responses now throw `ResponseCodeException` instead of raw RuntimeException
+- Non-handled `EmptyResponseDataException` and handled `onApiErrorCode` responses no longer trigger error toast
+- Demo `loadComments()` refactored to use `launchOnlyResult` with new error callback
+
 ## [1.2.3] - 2026-04-02
 
 ### Added
@@ -157,6 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.2.4 | 2026-04-02 | launchOnlyResult error callback enhancement, ApiResponse @SerializedName, BaseResponse typealias, structured error handling, ApiResponseTest |
 | 1.2.3 | 2026-04-02 | BaseDialogFragment, DialogController, FragmentArgumentsDsl, MultiAdapterItem, ActivityStackManager, full code comments, docs update |
 | 1.0.9 | 2026-03-17 | documentation and release metadata aligned with the published 1.0.9 tag |
 | 1.0.8 | 2026-03-17 | compileSdk and targetSdk baseline unified to 34, AndroidX and Compose stack downgraded for 34 compatibility |
@@ -185,6 +205,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.2.4]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.4
 [1.2.3]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.3
 [1.0.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.9
 [1.0.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.8

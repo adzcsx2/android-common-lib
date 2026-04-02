@@ -144,7 +144,7 @@ val bean = ThrowableBean.from(exception)
 
 ```gradle
 dependencies {
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.3")
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.4")
 }
 ```
 
