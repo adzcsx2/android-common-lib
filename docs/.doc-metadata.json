@@ -1,8 +1,8 @@
 {
   "version": "1.3",
   "projectType": "android",
-  "lastUpdate": "2026-04-02T00:00:00Z",
-  "lastCommit": "8a47d875d5d88a0d42c87077fd48c7523a5ed14f",
+  "lastUpdate": "2026-04-02T12:00:00Z",
+  "lastCommit": "e3f46a9301b5c0c75fa0efc722fe5fb725829a12",
   "documents": {
     "PROJECT_OVERVIEW.md": {
       "updatedAt": "2026-04-02T00:00:00Z",
@@ -30,6 +30,12 @@
     }
   },
   "updateHistory": [
+    {
+      "date": "2026-04-02",
+      "diffFile": "update-list/update-2026-04-02-2.md",
+      "summary": "版本发布 1.2.8：JitPack CI 配置、Java 17 升级、launchOnlyResult 增强、构建系统简化",
+      "documentsUpdated": ["CHANGELOG.md", "PROJECT_OVERVIEW.md"]
+    },
     {
       "date": "2026-04-02",
       "diffFile": "update-list/update-2026-04-02.md",
