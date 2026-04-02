@@ -10,10 +10,15 @@ plugins {
     alias(libs.plugins.room) apply false
 }
 
-// JitPack injects -Pgroup and -Pversion; map them to project.group/version
-// so that publishToMavenLocal writes to the correct Maven coordinates.
-group = (findProperty("group") as? String) ?: ""
-version = (findProperty("version") as? String) ?: ""
+// JitPack injects -Pgroup and -Pversion via Gradle -P flags.
+// Version is NOT inherited by subprojects in Gradle; group inherits but not reliably.
+// Propagate both to ALL projects so AGP auto-created publications get correct coordinates.
+allprojects {
+    val jitpackGroup = (findProperty("group") as? String)?.takeIf { it.isNotEmpty() }
+    val jitpackVersion = (findProperty("version") as? String)?.takeIf { it.isNotEmpty() }
+    jitpackGroup?.let { group = it }
+    jitpackVersion?.let { version = it }
+}
 
 allprojects {
     configurations.configureEach {
