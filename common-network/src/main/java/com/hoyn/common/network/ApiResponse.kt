@@ -1,5 +1,6 @@
 package com.hoyn.common.network
 
+import com.google.gson.annotations.SerializedName
 import com.hoyn.common.core.IBaseResponse
 
 /**
@@ -14,8 +15,11 @@ import com.hoyn.common.core.IBaseResponse
  * @property data 响应数据，可能为 null
  */
 data class ApiResponse<T>(
+    @SerializedName("code")
     val code: Int = 0,
+    @SerializedName(value = "message", alternate = ["msg"])
     val message: String = "",
+    @SerializedName("data")
     val data: T? = null
 ) : IBaseResponse<T> {
 

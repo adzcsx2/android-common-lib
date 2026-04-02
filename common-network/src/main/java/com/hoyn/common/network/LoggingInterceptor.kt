@@ -1,6 +1,7 @@
 package com.hoyn.common.network
 
 import com.blankj.utilcode.util.JsonUtils
+import com.hoyn.common.utils.Logger as CommonLogger
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.MediaType
@@ -10,6 +11,9 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.internal.platform.Platform
 import okhttp3.internal.platform.Platform.Companion.INFO
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONException
+import org.json.JSONObject
+import org.json.JSONTokener
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -155,6 +159,7 @@ class LoggingInterceptor : Interceptor {
             ) || subtype.contains("html"))
         ) {
             val bodyString = responseBody.string()
+            logUnexpectedResponseFormat(request.url.toString(), code, bodyString)
             val bodyJson = JsonUtils.formatJson(bodyString)
             Printer.printJsonResponse(
                 this, chainMs, isSuccessful, code, header, bodyJson, segmentList
@@ -173,4 +178,45 @@ class LoggingInterceptor : Interceptor {
      * @return 请求头 Headers 实例
      */
     private fun getHeaders(): Headers = headers.build()
+
+    private fun logUnexpectedResponseFormat(url: String, code: Int, bodyString: String) {
+        if (!isBaseResponseFormat(bodyString)) {
+            val safeBody = sanitizeForLog(bodyString)
+            CommonLogger.e("Response format is not BaseResponse, url=$url, code=$code, bodyPreview=$safeBody")
+        }
+    }
+
+    private fun isBaseResponseFormat(bodyString: String): Boolean {
+        val trimmed = bodyString.trim()
+        if (trimmed.isEmpty()) return false
+
+        return try {
+            val jsonValue = JSONTokener(trimmed).nextValue()
+            if (jsonValue !is JSONObject) {
+                false
+            } else {
+                val hasCode = jsonValue.has("code")
+                val hasMessage = jsonValue.has("message") || jsonValue.has("msg")
+                hasCode && hasMessage
+            }
+        } catch (_: JSONException) {
+            false
+        }
+    }
+
+    private fun sanitizeForLog(bodyString: String): String {
+        val masked = bodyString
+            .replace(
+                Regex("\"(token|access_token|refresh_token|authorization|password|pwd|mobile|phone)\"\\s*:\\s*\".*?\"", RegexOption.IGNORE_CASE),
+                "\"$1\":\"***\""
+            )
+            .replace(Regex("\\s+"), " ")
+            .trim()
+
+        return if (masked.length > 500) {
+            masked.substring(0, 500) + "...(truncated)"
+        } else {
+            masked
+        }
+    }
 }

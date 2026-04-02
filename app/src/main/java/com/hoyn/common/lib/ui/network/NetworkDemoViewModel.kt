@@ -6,7 +6,6 @@ import com.hoyn.common.lib.data.model.Comment
 import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.data.remote.api.CommentApi
 import com.hoyn.common.lib.data.repository.PostRepository
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -76,26 +75,20 @@ class NetworkDemoViewModel : BaseViewModel<PostRepository>() {
      * 加载评论列表
      */
     fun loadComments() {
-        launchIO {
-            _commentsState.value = UIState.Loading
+        _commentsState.value = UIState.Loading
 
-            try {
-                val comments = commentApi.getComments().take(20)
-                _commentsState.value = if (comments.isEmpty()) {
-                    UIState.Empty
-                } else {
-                    UIState.Success(comments)
-                }
-            } catch (throwable: Throwable) {
-                if (throwable is CancellationException) {
-                    throw throwable
-                }
-                _commentsState.value = UIState.Error(
-                    code = -1,
-                    message = throwable.message ?: "Unknown error"
-                )
-            }
-        }
+        launchOnlyResult(
+            { commentApi.getComments_test() },
+            success = { comments ->
+                val limitedComments = comments.take(20)
+                _commentsState.value = UIState.Success(limitedComments)
+            },
+            error = { code, message ->
+                _commentsState.value = UIState.Error(code, message)
+            },
+            showDialog = false,
+            toastError = true
+        )
     }
 
     /**

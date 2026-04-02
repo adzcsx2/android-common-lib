@@ -7,6 +7,8 @@ import com.hoyn.common.base.event.Message
 import com.hoyn.common.base.event.SingleLiveEvent
 import com.hoyn.common.core.IBaseResponse
 import com.hoyn.common.core.ThrowableBean
+import com.hoyn.common.core.UIState
+import com.hoyn.common.utils.Logger
 import kotlinx.coroutines.CancellationException
 import org.koin.core.component.KoinComponent
 import kotlinx.coroutines.CoroutineScope
@@ -33,6 +35,11 @@ import kotlinx.coroutines.withContext
  */
 abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
 
+    protected class ResponseCodeException(val errorCode: Int, errorMessage: String) :
+        RuntimeException(errorMessage)
+
+    protected class EmptyResponseDataException(errorMessage: String) : RuntimeException(errorMessage)
+
     /**
      * UI 变化事件
      */
@@ -51,7 +58,59 @@ abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
      * 默认实现返回简单的错误信息
      */
     protected open fun handleException(throwable: Throwable): ThrowableBean {
-        return ThrowableBean(errMsg = throwable.message ?: "Unknown error")
+        return when (throwable) {
+            is ResponseCodeException -> ThrowableBean(
+                code = throwable.errorCode,
+                errMsg = throwable.message ?: "Unknown error"
+            )
+
+            else -> ThrowableBean(errMsg = throwable.message ?: "Unknown error")
+        }
+    }
+
+    /**
+     * 处理通用业务错误码。
+     *
+     * @return true 表示错误码已被处理（将不会再 toast），false 表示继续默认错误处理。
+     */
+    protected open fun onApiErrorCode(code: Int, message: String): Boolean = false
+
+    /**
+     * 将异常转换为 UIState.Error。
+     *
+     * 优先使用 BaseResponse 解析出的错误码/消息；如果没有，则回退 throwable 本身信息。
+     * CancellationException 返回 null，由调用方直接忽略。
+     */
+    protected fun Throwable.toUiErrorStateOrNull(): UIState.Error? {
+        if (this is CancellationException) {
+            return null
+        }
+
+        val codeFromThrowable = when (this) {
+            is ResponseCodeException -> this.errorCode
+            else -> extractCodeByReflection(this)
+        }
+
+        return UIState.Error(
+            code = codeFromThrowable ?: -1,
+            message = this.message ?: "Unknown error"
+        )
+    }
+
+    private fun extractCodeByReflection(throwable: Throwable): Int? {
+        return runCatching {
+            val field = throwable.javaClass.declaredFields.firstOrNull { it.name == "code" }
+            if (field != null) {
+                field.isAccessible = true
+                when (val codeValue = field.get(throwable)) {
+                    is Int -> codeValue
+                    is Number -> codeValue.toInt()
+                    else -> null
+                }
+            } else {
+                null
+            }
+        }.getOrNull()
     }
 
     /**
@@ -99,18 +158,15 @@ abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
     }
 
     /**
-     * 执行网络请求并处理结果
+     * 执行网络请求并处理结果。
      *
-     * @param block 请求体
-     * @param success 成功回调
-     * @param error 失败回调
-     * @param showDialog 是否显示加载框
-     * @param toastError 是否显示错误 Toast
+     * error 回调直接给出服务端 code 和 message，无需在页面处理 Throwable 解析。
+     * CancellationException 会被静默忽略，不会触发 error 回调。
      */
     fun <T> launchOnlyResult(
         block: suspend CoroutineScope.() -> IBaseResponse<T>,
         success: (T) -> Unit,
-        error: (Throwable) -> Unit = {},
+        error: (code: Int, message: String) -> Unit = { _, _ -> },
         showDialog: Boolean = true,
         toastError: Boolean = true
     ) {
@@ -121,7 +177,13 @@ abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
                 success = { response ->
                     executeResponse(response, success)
                 },
-                error = { handleError(it, error, toastError) }
+                error = { throwable ->
+                    handleError(
+                        throwable,
+                        { t -> t.toUiErrorStateOrNull()?.let { error(it.code, it.message) } },
+                        toastError
+                    )
+                }
             )
         }
     }
@@ -156,18 +218,13 @@ abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
     ) {
         if (response.isSuccess()) {
             val data = response.data()
-            if (data == null) {
-                @Suppress("UNCHECKED_CAST")
-                try {
-                    success(Any() as T)
-                } catch (e: Exception) {
-                    throw RuntimeException("DATA_ERROR: Response data is null")
-                }
-            } else {
-                success(data)
+            if (data == null || (data is String && data.isEmpty())) {
+                Logger.e("Response data is empty, code=${response.code()}, message=${response.msg()}")
+                throw EmptyResponseDataException("Response data is null or empty")
             }
+            success(data)
         } else {
-            throw RuntimeException("${response.code()}: ${response.msg()}")
+            throw ResponseCodeException(response.code(), response.msg())
         }
     }
 
@@ -178,17 +235,18 @@ abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
     fun <T> IBaseResponse<T>.executeResponseSync(): T {
         return if (isSuccess()) {
             val data = data()
-            if (data == null) {
+            if (data == null || (data is String && data.isEmpty())) {
+                Logger.e("Response data is empty, code=${code()}, message=${msg()}")
                 try {
                     Any() as T
                 } catch (e: Exception) {
-                    throw RuntimeException("DATA_ERROR: Response data is null")
+                    throw RuntimeException("DATA_ERROR: Response data is null or empty")
                 }
             } else {
                 data
             }
         } else {
-            throw RuntimeException("${code()}: ${msg()}")
+            throw ResponseCodeException(code(), msg())
         }
     }
 
@@ -239,10 +297,18 @@ abstract class BaseViewModel<R> : ViewModel(), KoinComponent {
         // 处理异常
         val errorBean = handleException(throwable)
 
+        val isEmptyDataError = throwable is EmptyResponseDataException
+        val isResponseCodeError = throwable is ResponseCodeException
+        val isHandledByCode = if (isResponseCodeError) {
+            onApiErrorCode(errorBean.code, errorBean.errMsg)
+        } else {
+            false
+        }
+
         // 发送到全局事件总线
         GlobalLiveEvent.sendMessage(Message(code = errorBean.code, msg = errorBean.errMsg))
 
-        if (toastError) {
+        if (toastError && !isHandledByCode && !isEmptyDataError) {
             defUI.toastEvent.emit(errorBean.errMsg)
         }
         defUI.errorEvent.emit(errorBean)

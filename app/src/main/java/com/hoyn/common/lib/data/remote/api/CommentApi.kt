@@ -1,6 +1,7 @@
 ﻿package com.hoyn.common.lib.data.remote.api
 
 import com.hoyn.common.lib.data.model.Comment
+import com.hoyn.common.network.BaseResponse
 import retrofit2.http.GET
 
 /**
@@ -15,4 +16,7 @@ interface CommentApi {
      */
     @GET("comments")
     suspend fun getComments(): List<Comment>
+
+    @GET("comments_test")
+    suspend fun getComments_test(): BaseResponse<List<Comment>>
 }
