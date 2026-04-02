@@ -73,6 +73,19 @@ class ViewModelFactory<VM : ViewModel>(
             )[VM::class.java]
         }
 
+        /**
+         * 自动创建 ViewModel 实例
+         *
+         * 优先尝试从 Koin 容器获取，失败后回退到反射创建。
+         * 支持以下构造函数签名: (), (Application), (SavedStateHandle), (Application, SavedStateHandle)
+         *
+         * @param owner ViewModelStoreOwner
+         * @param savedStateOwner SavedStateRegistryOwner，用于恢复状态
+         * @param application Application 实例
+         * @param modelClass ViewModel 的 Class 对象
+         * @param defaultArgs 默认参数 Bundle
+         * @return ViewModel 实例
+         */
         fun <VM : ViewModel> createAuto(
             owner: ViewModelStoreOwner,
             savedStateOwner: SavedStateRegistryOwner,
@@ -95,6 +108,22 @@ class ViewModelFactory<VM : ViewModel>(
             )[modelClass]
         }
 
+        /**
+         * 实例化 ViewModel
+         *
+         * 按优先级尝试以下方式创建实例:
+         * 1. 从 Koin 容器获取（传入 Application 和 SavedStateHandle 作为参数）
+         * 2. 反射调用 (Application, SavedStateHandle) 构造函数
+         * 3. 反射调用 (SavedStateHandle) 构造函数
+         * 4. 反射调用无参构造函数
+         * 5. 反射调用 (Application) 构造函数
+         *
+         * @param modelClass ViewModel 的 Class 对象
+         * @param application Application 实例
+         * @param savedStateHandle SavedStateHandle 实例
+         * @return ViewModel 实例
+         * @throws IllegalArgumentException 如果没有找到匹配的构造函数
+         */
         @Suppress("UNCHECKED_CAST")
         private fun <VM : ViewModel> instantiate(
             modelClass: Class<VM>,

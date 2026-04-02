@@ -2,8 +2,11 @@ package com.hoyn.common.lib.ui.network
 
 import com.hoyn.common.base.BaseViewModel
 import com.hoyn.common.core.UIState
+import com.hoyn.common.lib.data.model.Comment
 import com.hoyn.common.lib.data.model.Post
+import com.hoyn.common.lib.data.remote.api.CommentApi
 import com.hoyn.common.lib.data.repository.PostRepository
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,13 +25,22 @@ import org.koin.core.component.inject
 class NetworkDemoViewModel : BaseViewModel<PostRepository>() {
 
     override val repository: PostRepository by inject()
+    /** 评论 API 接口 */
+    private val commentApi: CommentApi by inject()
 
     // UI 状态流
     private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)
+    /** 帖子列表的 UI 状态流（公开只读） */
     val uiState: StateFlow<UIState<List<Post>>> = _uiState.asStateFlow()
+
+    // 评论列表状态流
+    private val _commentsState = MutableStateFlow<UIState<List<Comment>>>(UIState.Loading)
+    /** 评论列表的 UI 状态流（公开只读） */
+    val commentsState: StateFlow<UIState<List<Comment>>> = _commentsState.asStateFlow()
 
     // 是否来自缓存
     private val _isFromCache = MutableStateFlow(false)
+    /** 是否来自本地缓存的状态流（公开只读） */
     val isFromCache: StateFlow<Boolean> = _isFromCache.asStateFlow()
 
     /**
@@ -57,6 +69,32 @@ class NetworkDemoViewModel : BaseViewModel<PostRepository>() {
                     _uiState.value = UIState.Error(-1, error.message ?: "Unknown error")
                 }
             )
+        }
+    }
+
+    /**
+     * 加载评论列表
+     */
+    fun loadComments() {
+        launchIO {
+            _commentsState.value = UIState.Loading
+
+            try {
+                val comments = commentApi.getComments().take(20)
+                _commentsState.value = if (comments.isEmpty()) {
+                    UIState.Empty
+                } else {
+                    UIState.Success(comments)
+                }
+            } catch (throwable: Throwable) {
+                if (throwable is CancellationException) {
+                    throw throwable
+                }
+                _commentsState.value = UIState.Error(
+                    code = -1,
+                    message = throwable.message ?: "Unknown error"
+                )
+            }
         }
     }
 

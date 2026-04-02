@@ -39,7 +39,9 @@ dependencies {
     api(project(":common-core"))
 
     // Utils
-    api(libs.utilcodex)
+    api(libs.utilcodex) {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+    }
 
     // MMKV
     api(libs.mmkv)

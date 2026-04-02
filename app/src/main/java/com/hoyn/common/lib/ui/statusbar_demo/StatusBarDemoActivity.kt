@@ -2,8 +2,10 @@ package com.hoyn.common.lib.ui.statusbar_demo
 
 import android.graphics.Color
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
+import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityStatusBarDemoBinding
 import com.hoyn.common.ui.ext.click
 import com.hoyn.common.ui.toast.ToastUtil
@@ -37,7 +39,7 @@ class StatusBarDemoActivity : BaseActivity<ActivityStatusBarDemoBinding, NoViewM
 
         // 默认状态
         binding.btnDefault.click {
-            StatusBarHelper.setStatusBarColor(this, Color.parseColor("#6200EE"), exitEdgeToEdge = true)
+            StatusBarHelper.setStatusBarColor(this, ContextCompat.getColor(this, R.color.purple_500), exitEdgeToEdge = true)
             ToastUtil.show("已设置为默认紫色")
         }
 

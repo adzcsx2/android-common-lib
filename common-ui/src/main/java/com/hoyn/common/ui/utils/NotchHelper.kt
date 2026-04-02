@@ -35,14 +35,23 @@ import com.hoyn.common.utils.device.DisplayUtils
  */
 object NotchHelper {
     private const val TAG = "NotchHelper"
+    /** vivo 刘海屏检测标志位 */
     private const val NOTCH_IN_SCREEN_VOIO = 0x00000020
+    /** 小米刘海屏系统属性键名 */
     private const val MIUI_NOTCH = "ro.miui.notch"
+    /** 刘海屏检测结果缓存 */
     private var sHasNotch: Boolean? = null
+    /** 0 度旋转（竖屏）安全区域缓存 */
     private var sRotation0SafeInset: Rect? = null
+    /** 90 度旋转（横屏，刘海在左侧）安全区域缓存 */
     private var sRotation90SafeInset: Rect? = null
+    /** 180 度旋转（反向竖屏）安全区域缓存 */
     private var sRotation180SafeInset: Rect? = null
+    /** 270 度旋转（横屏，刘海在右侧）安全区域缓存 */
     private var sRotation270SafeInset: Rect? = null
+    /** 华为刘海尺寸缓存，index 0 为宽度，index 1 为高度 */
     private var sNotchSizeInHawei: IntArray? = null
+    /** 华为刘海是否设置为显示的缓存 */
     private var sHuaweiIsNotchSetToShow: Boolean? = null
 
     /**

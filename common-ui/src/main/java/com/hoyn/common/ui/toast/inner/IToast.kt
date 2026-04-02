@@ -5,9 +5,6 @@ import com.hoyn.common.ui.toast.ToastDuration
 
 /**
  * Toast 接口
- */
-/**
- * Toast 接口
  *
  * 定义 Toast 的基本操作接口，包括显示、隐藏、设置属性等
  */

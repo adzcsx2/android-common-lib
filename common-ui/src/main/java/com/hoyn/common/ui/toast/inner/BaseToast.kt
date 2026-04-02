@@ -31,17 +31,28 @@ import java.lang.ref.WeakReference
  */
 open class BaseToast(var mContext: Context) : IToast, Cloneable {
 
+    /** Toast 显示的内容视图 */
     private var contentView: View
+    /** Toast 显示/消失的动画资源 ID */
     private var animation = android.R.style.Animation_Toast
+    /** Toast 在屏幕上的显示位置，默认底部居中 */
     private var gravity = Gravity.BOTTOM or Gravity.CENTER
+    /** Toast X 轴偏移量（像素） */
     private var xOffset: Int = 0
+    /** Toast Y 轴偏移量（像素） */
     private var yOffset: Int = 0
+    /** Toast 宽度，默认自适应内容 */
     private var width = WindowManager.LayoutParams.WRAP_CONTENT
+    /** Toast 高度，默认自适应内容 */
     private var height = WindowManager.LayoutParams.WRAP_CONTENT
+    /** Toast 优先级，数值越高优先级越高 */
     private var priority: Int = 0
+    /** Toast 创建时间戳 */
     private var timestamp: Long = 0
+    /** Toast 显示时长（毫秒） */
     @ToastDuration
     private var duration = DURATION_SHORT
+    /** Toast 是否正在显示 */
     private var isShowing: Boolean = false
 
     init {
@@ -276,6 +287,7 @@ open class BaseToast(var mContext: Context) : IToast, Cloneable {
     }
 
     companion object {
+        /** BadTokenException 异常计数器 */
         var Count4BadTokenException: Long = 0
 
         /**

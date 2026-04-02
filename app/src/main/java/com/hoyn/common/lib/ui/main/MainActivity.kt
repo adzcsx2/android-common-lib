@@ -7,11 +7,13 @@ import com.hoyn.common.base.startActivity
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityMainBinding
 import com.hoyn.common.lib.ui.compose.ComposeDemoActivity
+import com.hoyn.common.lib.ui.dialog_demo.DialogSafetyDemoActivity
 import com.hoyn.common.lib.ui.fragment_demo.FragmentDemoActivity
 import com.hoyn.common.lib.ui.log_demo.LogDemoActivity
 import com.hoyn.common.lib.ui.mmkv_demo.MmkvDemoActivity
 import com.hoyn.common.lib.ui.network.NetworkDemoActivity
 import com.hoyn.common.lib.ui.statusbar_demo.StatusBarDemoActivity
+import com.hoyn.common.lib.ui.stack_demo.StackManagerDemoActivity
 import com.hoyn.common.lib.ui.toast_demo.ToastDemoActivity
 import com.hoyn.common.lib.ui.liveevent.LiveEventDemoActivity
 
@@ -54,6 +56,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, NoViewModel>() {
                 badge = getString(R.string.recommended)
             ) {
                 startActivity<FragmentDemoActivity>()
+            },
+            DemoItem(
+                title = getString(R.string.dialog_demo),
+                description = getString(R.string.dialog_demo_desc),
+                badge = getString(R.string.recommended)
+            ) {
+                startActivity<DialogSafetyDemoActivity>()
+            },
+            DemoItem(
+                title = getString(R.string.stack_demo),
+                description = getString(R.string.stack_demo_desc)
+            ) {
+                startActivity<StackManagerDemoActivity>()
             },
             DemoItem(
                 title = getString(R.string.mmkv_demo),

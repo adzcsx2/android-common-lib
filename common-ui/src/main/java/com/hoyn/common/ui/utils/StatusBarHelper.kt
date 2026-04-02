@@ -41,18 +41,28 @@ import java.lang.reflect.Field
  * 兼容 MIUI、Flyme 和 Android 6.0+ 原生方案
  */
 object StatusBarHelper {
+    /** 默认状态栏类型 */
     private const val STATUS_BAR_TYPE_DEFAULT = 0
+    /** MIUI 状态栏类型 */
     private const val STATUS_BAR_TYPE_MI = 1
+    /** Flyme 状态栏类型 */
     private const val STATUS_BAR_TYPE_FL = 2
+    /** Android 6.0+ 原生状态栏类型 */
     private const val STATUS_BAR_TYPE_ANDROID6 = 3
+    /** 状态栏默认高度（dp） */
     private const val STATUS_BAR_DEFAULT_HEIGHT_DP = 25
 
+    /** 自定义虚拟屏幕密度，用于计算状态栏高度 */
     private var sVirtualDensity = -1f
+    /** 自定义虚拟屏幕 DPI，用于计算状态栏高度 */
     private var sVirtualDensityDpi = -1f
+    /** 状态栏高度缓存（px） */
     private var mStatusBarHeight = -1
 
+    /** 当前状态栏类型 */
     @StatusBarType
     private var mStatusBarType = STATUS_BAR_TYPE_DEFAULT
+    /** 系统 Toast 透明 API 标志值缓存 */
     private var sTransparentValue: Int? = null
 
     /**
@@ -457,6 +467,7 @@ object StatusBarHelper {
         return result
     }
 
+    /** 判断当前 MIUI 版本是否使用自定义状态栏亮色模式实现（MIUI V5-V8） */
     private val isMIUICustomStatusBarLightModeImpl: Boolean =
         DeviceHelper.isMIUIV5 || DeviceHelper.isMIUIV6 || DeviceHelper.isMIUIV7 || DeviceHelper.isMIUIV8
 
@@ -626,6 +637,12 @@ object StatusBarHelper {
         sVirtualDensityDpi = densityDpi
     }
 
+    /**
+     * 状态栏类型注解
+     *
+     * 限定值为 [STATUS_BAR_TYPE_DEFAULT]、[STATUS_BAR_TYPE_MI]、
+     * [STATUS_BAR_TYPE_FL] 或 [STATUS_BAR_TYPE_ANDROID6]
+     */
     @IntDef(STATUS_BAR_TYPE_DEFAULT, STATUS_BAR_TYPE_MI, STATUS_BAR_TYPE_FL, STATUS_BAR_TYPE_ANDROID6)
     @kotlin.annotation.Retention(AnnotationRetention.SOURCE)
     private annotation class StatusBarType

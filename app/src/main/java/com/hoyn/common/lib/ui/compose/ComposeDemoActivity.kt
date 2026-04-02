@@ -81,6 +81,13 @@ class ComposeDemoActivity : BaseComposeActivity<ComposeDemoViewModel>() {
 
 /**
  * Compose Demo 主屏幕
+ *
+ * 包含顶部导航栏、功能按钮区域和根据状态切换的内容区域
+ *
+ * @param uiState 帖子列表的 UI 状态
+ * @param onBack 返回按钮点击回调
+ * @param onRefresh 刷新数据点击回调
+ * @param onShowToast 测试 Toast 点击回调
  */
 @Composable
 fun ComposeDemoScreen(
@@ -148,7 +155,12 @@ fun ComposeDemoScreen(
 }
 
 /**
- * 功能按钮
+ * 功能按钮行
+ *
+ * 包含"加载数据"和"测试 Toast"两个按钮，各占一半宽度
+ *
+ * @param onRefresh 刷新数据点击回调
+ * @param onShowToast 测试 Toast 点击回调
  */
 @Composable
 fun FeatureButtons(
@@ -180,7 +192,9 @@ fun FeatureButtons(
 }
 
 /**
- * 加载中
+ * 加载中内容组件
+ *
+ * 居中显示圆形进度指示器
  */
 @Composable
 fun LoadingContent() {
@@ -193,7 +207,12 @@ fun LoadingContent() {
 }
 
 /**
- * 错误页面
+ * 错误内容组件
+ *
+ * 居中显示错误标题、错误消息和重试按钮
+ *
+ * @param message 错误消息文本
+ * @param onRetry 重试按钮点击回调
  */
 @Composable
 fun ErrorContent(
@@ -224,7 +243,9 @@ fun ErrorContent(
 }
 
 /**
- * 空页面
+ * 空数据内容组件
+ *
+ * 居中显示心形图标和"暂无数据"提示
  */
 @Composable
 fun EmptyContent() {
@@ -249,7 +270,11 @@ fun EmptyContent() {
 }
 
 /**
- * 帖子列表
+ * 帖子列表组件
+ *
+ * 使用 LazyColumn 垂直排列帖子卡片，每项间距 8dp
+ *
+ * @param posts 帖子数据列表
  */
 @Composable
 fun PostList(posts: List<Post>) {
@@ -263,7 +288,11 @@ fun PostList(posts: List<Post>) {
 }
 
 /**
- * 帖子项
+ * 帖子卡片项组件
+ *
+ * 显示帖子 ID 标签、标题和正文内容，使用 Material3 Card 样式
+ *
+ * @param post 帖子数据
  */
 @Composable
 fun PostItem(post: Post) {

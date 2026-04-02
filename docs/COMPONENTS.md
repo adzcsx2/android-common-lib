@@ -21,6 +21,8 @@
 | LogDemoActivity | false | - | Logger 日志示例 |
 | StatusBarDemoActivity | false | - | 状态栏示例 |
 | LiveEventDemoActivity | false | - | GlobalLiveEvent 示例 |
+| DialogSafetyDemoActivity | false | - | Dialog 安全示例 |
+| StackManagerDemoActivity | false | - | ActivityStackManager 示例 |
 
 ### 权限
 

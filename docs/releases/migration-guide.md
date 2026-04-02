@@ -1,38 +1,5 @@
 # Migration Guide
 
-## Version 1.2.2 Migration
-
-Update your dependency version to `1.2.2`:
-
-```gradle
-dependencies {
-   implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.2")
-}
-```
-
-### Changes
-
-- Documentation and dependency snippets updated to 1.2.2
-
-## Version 1.2.1 Migration
-
-Update your dependency version to `1.2.1`:
-
-```gradle
-dependencies {
-   implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.1")
-}
-```
-
-### Breaking Changes
-
-- **`ToastUtils` removed**: Replace all `ToastUtils.show()` calls with `ToastUtil.show()` / `ToastUtil.showLong()` / `ToastUtil.showCenter()`.
-
-### Recommended
-
-- Replace raw `setOnClickListener` with `ViewExtensions.click { }` for built-in 600ms debounce.
-- Use `StatusBarHelper.setTransparent()` / `setLightMode()` / `setDarkMode()` for status bar control.
-
 ## Version 1.0.9 Migration
 
 Update your dependency version to `1.0.9` to stay aligned with the latest published tag:
@@ -201,9 +168,6 @@ If you encounter issues during migration:
 
 | Library Version | Min SDK | Compile SDK | Kotlin |
 |----------------|---------|-------------|---------|
-| 1.2.2 | 24 | 34 | 2.3.10 |
-| 1.2.1 | 24 | 34 | 2.3.10 |
-| 1.2.0 | 24 | 34 | 2.3.10 |
 | 1.0.9 | 24 | 34 | 2.3.10 |
 | 1.0.8 | 24 | 34 | 2.3.10 |
 | 1.0.7 | 24 | 35 | 2.3.10 |

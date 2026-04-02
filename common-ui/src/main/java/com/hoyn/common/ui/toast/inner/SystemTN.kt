@@ -8,17 +8,34 @@ import java.util.*
 /**
  * 系统 Toast 管理类
  */
+/**
+ * 系统 Toast 管理类
+ *
+ * 负责管理系统 Toast 的显示队列，确保同一时刻只有一个系统 Toast 显示
+ * 支持新 Toast 替换当前 Toast 的原子操作
+ */
 class SystemTN private constructor() {
 
+    /** 系统 Toast 显示队列 */
     private val mQueue: LinkedList<SystemToast> = LinkedList()
+    /** 主线程 Handler，用于延迟调度和线程切换 */
     private val mHandler = Handler(Looper.getMainLooper())
+    /** 当前正在显示的系统 Toast */
     private var mCurrentToast: SystemToast? = null
+    /** 取消操作锁，防止并发取消导致的递归问题 */
     private var isCancelling = false
 
     companion object {
         @Volatile
         private var instance: SystemTN? = null
 
+        /**
+         * 获取 SystemTN 单例实例
+         *
+         * 使用双重检查锁定确保线程安全
+         *
+         * @return SystemTN 实例
+         */
         fun instance(): SystemTN {
             return instance ?: synchronized(this) {
                 instance ?: SystemTN().also { instance = it }
@@ -91,6 +108,9 @@ class SystemTN private constructor() {
         }
     }
 
+    /**
+     * 取消当前正在显示的系统 Toast
+     */
     private fun cancelCurrentToast() {
         mCurrentToast?.cancelInternal()
         mCurrentToast = null

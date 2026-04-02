@@ -1,5 +1,6 @@
 package com.hoyn.common.base
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +27,10 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
     AppCompatActivity(),
     CoroutineScope by MainScope() {
 
+    private val dialogController by lazy(LazyThreadSafetyMode.NONE) {
+        DialogController(::canShowManagedDialogs)
+    }
+
     protected lateinit var binding: VB
     protected val viewModel: VM by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelFactory.createAuto(
@@ -46,6 +51,14 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
     // 保存 MyTouchListener 接口的列表
     private val myTouchListeners = mutableListOf<OnTouchListener>()
 
+    private val cleanupActions = mutableListOf<() -> Unit>()
+
+    init {
+        registerCleanupAction {
+            dialogController.dismissAll()
+        }
+    }
+
     /**
      * 记录是否需要跳转
      */
@@ -65,7 +78,7 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ActivityStackManager.push(this)
+        ActivityStackManager.registerActivity(this)
         onCreateBefore()
         super.onCreate(savedInstanceState)
         binding = ViewBindingClassResolver.inflateActivityBinding(this, BaseActivity::class.java)
@@ -92,8 +105,20 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
      */
     protected open fun onRestartNavigate() {}
 
+    /**
+     * 初始化视图
+     *
+     * 在 setContentView 之后调用，用于设置视图的初始状态、绑定适配器等
+     *
+     * @param savedInstanceState 保存的实例状态 Bundle
+     */
     protected open fun initView(savedInstanceState: Bundle?) {}
 
+    /**
+     * 初始化数据
+     *
+     * 在 initView 之后调用，用于加载数据、发起网络请求等
+     */
     protected open fun initData() {}
 
     /**
@@ -133,11 +158,14 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
     }
 
     override fun onDestroy() {
-        ActivityStackManager.pop(this)
-        cancel()
-        // 子类可以重写 onCleanUp 来执行清理操作
-        onCleanUp()
-        super.onDestroy()
+        ActivityStackManager.unregisterActivity(this)
+        try {
+            onCleanUp()
+        } finally {
+            runCleanupActions()
+            cancel()
+            super.onDestroy()
+        }
     }
 
     /**
@@ -146,6 +174,61 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
      */
     protected open fun onCleanUp() {
         // 默认实现为空，子类可以重写
+    }
+
+    /**
+     * 注册 Activity 销毁时的清理动作。
+     */
+    protected fun registerCleanupAction(action: () -> Unit) {
+        cleanupActions.add(action)
+    }
+
+    /**
+     * 注册一个 Dialog，在 Activity 销毁时自动 dismiss。
+     */
+    protected fun registerDialogForCleanup(dialogProvider: () -> Dialog?) {
+        registerCleanupAction {
+            dialogProvider()?.takeIf { it.isShowing }?.dismiss()
+        }
+    }
+
+    /**
+     * 将普通 Dialog 纳入 BaseActivity 生命周期管理。
+     */
+    protected fun <T : Dialog> manageDialog(dialog: T): T {
+        return dialogController.manage(dialog)
+    }
+
+    /**
+     * 安全显示已托管的 Dialog；若宿主已结束则直接返回 false。
+     */
+    protected fun showManagedDialog(dialog: Dialog): Boolean {
+        return dialogController.show(dialog)
+    }
+
+    /**
+     * 安全关闭已托管的 Dialog。
+     */
+    protected fun dismissManagedDialog(dialog: Dialog?) {
+        dialogController.dismiss(dialog)
+    }
+
+    /**
+     * 关闭当前 Activity 管理的全部普通 Dialog。
+     */
+    protected fun dismissAllManagedDialogs() {
+        dialogController.dismissAll()
+    }
+
+    private fun canShowManagedDialogs(): Boolean {
+        return !isFinishing && !isDestroyed
+    }
+
+    private fun runCleanupActions() {
+        cleanupActions.asReversed().forEach { action ->
+            runCatching(action)
+        }
+        cleanupActions.clear()
     }
 
     /**

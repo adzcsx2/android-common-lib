@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="点击按钮输出不同级别的日志（请查看 Logcat）"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@color/text_secondary" />
 
     <Button
         android:id="@+id/btnDebug"

@@ -17,7 +17,9 @@ import com.hoyn.common.ui.ext.click
 class FragmentDemoActivity : BaseActivity<ActivityFragmentDemoBinding, NoViewModel>() {
 
     companion object {
+        /** Intent 传递的初始会话 ID 键名 */
         private const val EXTRA_INITIAL_SESSION_ID = "extra_initial_session_id"
+        /** Intent 传递的初始计数值键名 */
         private const val EXTRA_INITIAL_COUNT = "extra_initial_count"
 
         /**

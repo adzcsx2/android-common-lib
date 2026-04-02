@@ -1,14 +1,19 @@
 package com.hoyn.common.lib.ui.network
 
 import android.os.Bundle
-import android.view.View
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hoyn.common.base.BaseActivity
+import com.hoyn.common.base.MultiAdapterItem
 import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.R
+import com.hoyn.common.lib.data.model.Comment
+import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.databinding.ActivityNetworkDemoBinding
 import com.hoyn.common.ui.ext.click
 import com.hoyn.common.ui.toast.ToastUtil
@@ -28,7 +33,10 @@ import kotlinx.coroutines.launch
  */
 class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemoViewModel>() {
 
-    private val adapter = PostAdapter()
+    /** 帖子列表适配器 */
+    private val postAdapter = PostAdapter()
+    /** 评论多类型列表适配器 */
+    private val multiPostAdapter = MultiPostAdapter()
 
     /**
      * 初始化视图
@@ -46,6 +54,7 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
     override fun initData() {
         Logger.d("initData: 开始加载数据")
         viewModel.loadPosts()
+        viewModel.loadComments()
     }
 
     /**
@@ -53,10 +62,18 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
      */
     private fun setupViews() {
         binding.rvPosts.layoutManager = LinearLayoutManager(this)
-        binding.rvPosts.adapter = adapter
+        binding.rvPosts.adapter = postAdapter
+        postAdapter.isStateViewEnable = true
+        postAdapter.setStateViewLayout(this, R.layout.layout_state_loading)
+
+        binding.rvMultiPosts.layoutManager = LinearLayoutManager(this)
+        binding.rvMultiPosts.adapter = multiPostAdapter
+        multiPostAdapter.isStateViewEnable = true
+        multiPostAdapter.setStateViewLayout(this, R.layout.layout_state_loading)
 
         binding.btnRefresh.click {
             viewModel.loadPosts()
+            viewModel.loadComments()
         }
 
         binding.btnBack.click {
@@ -68,11 +85,18 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
      * 观察数据变化
      */
     private fun observeData() {
-        // 观察 UI 状态
+        // 观察帖子状态
         lifecycleScope.launch {
             viewModel.uiState
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-                .collect { state -> renderState(state) }
+                .collect { state -> renderPostsState(state) }
+        }
+
+        // 观察评论状态
+        lifecycleScope.launch {
+            viewModel.commentsState
+                .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+                .collect { state -> renderCommentsState(state) }
         }
 
         // 观察缓存状态
@@ -88,41 +112,98 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
     }
 
     /**
-     * 渲染 UI 状态
+     * 渲染帖子列表的 UI 状态
      *
-     * @param state UI 状态
+     * 根据状态切换加载中、空数据、错误和成功四种界面
+     *
+     * @param state 帖子列表的 UI 状态
      */
-    private fun renderState(state: UIState<List<com.hoyn.common.lib.data.model.Post>>) {
+    private fun renderPostsState(state: UIState<List<Post>>) {
         when (state) {
-            is UIState.Loading -> {
-                binding.progressBar.visibility = View.VISIBLE
-                binding.rvPosts.visibility = View.GONE
-                binding.tvEmpty.visibility = View.GONE
-                binding.tvError.visibility = View.GONE
-            }
-
             is UIState.Success -> {
-                binding.progressBar.visibility = View.GONE
-                binding.rvPosts.visibility = View.VISIBLE
-                binding.tvEmpty.visibility = View.GONE
-                binding.tvError.visibility = View.GONE
-                adapter.submitList(state.data)
-            }
-
-            is UIState.Error -> {
-                binding.progressBar.visibility = View.GONE
-                binding.rvPosts.visibility = View.GONE
-                binding.tvEmpty.visibility = View.GONE
-                binding.tvError.visibility = View.VISIBLE
-                binding.tvError.text = state.message
+                postAdapter.setStateViewLayout(this, R.layout.layout_state_empty)
+                postAdapter.submitList(state.data)
             }
 
             is UIState.Empty -> {
-                binding.progressBar.visibility = View.GONE
-                binding.rvPosts.visibility = View.GONE
-                binding.tvEmpty.visibility = View.VISIBLE
-                binding.tvError.visibility = View.GONE
+                postAdapter.setStateViewLayout(this, R.layout.layout_state_empty)
+                postAdapter.submitList(emptyList())
             }
+
+            is UIState.Error -> {
+                postAdapter.stateView = createErrorStateView(binding.rvPosts, state.message)
+                postAdapter.submitList(emptyList())
+            }
+
+            is UIState.Loading -> {
+                postAdapter.setStateViewLayout(this, R.layout.layout_state_loading)
+                postAdapter.submitList(emptyList())
+            }
+        }
+    }
+
+    /**
+     * 渲染评论列表的 UI 状态
+     *
+     * 根据状态切换加载中、空数据、错误和成功四种界面
+     *
+     * @param state 评论列表的 UI 状态
+     */
+    private fun renderCommentsState(state: UIState<List<Comment>>) {
+        when (state) {
+            is UIState.Success -> {
+                multiPostAdapter.setStateViewLayout(this, R.layout.layout_state_empty)
+                multiPostAdapter.submitList(buildMultiItems(state.data))
+            }
+
+            is UIState.Empty -> {
+                multiPostAdapter.setStateViewLayout(this, R.layout.layout_state_empty)
+                multiPostAdapter.submitList(emptyList())
+            }
+
+            is UIState.Error -> {
+                multiPostAdapter.stateView =
+                    createErrorStateView(binding.rvMultiPosts, state.message)
+                multiPostAdapter.submitList(emptyList())
+            }
+
+            is UIState.Loading -> {
+                multiPostAdapter.setStateViewLayout(this, R.layout.layout_state_loading)
+                multiPostAdapter.submitList(emptyList())
+            }
+        }
+    }
+
+    /**
+     * 创建错误状态视图
+     *
+     * 加载错误布局并设置错误消息文本
+     *
+     * @param parent 父布局
+     * @param message 错误消息文本
+     * @return 填充后的错误状态视图
+     */
+    private fun createErrorStateView(parent: ViewGroup, message: String) =
+        LayoutInflater.from(this).inflate(R.layout.layout_state_error, parent, false).apply {
+            findViewById<TextView>(R.id.tvStateMessage)?.text = message
+        }
+
+    /**
+     * 构建多类型评论列表数据
+     *
+     * 每 3 条评论中第 1 条使用精选样式（VIEW_TYPE_FEATURED），其余使用紧凑样式（VIEW_TYPE_COMPACT）
+     *
+     * @param comments 评论列表
+     * @return 多类型适配器项列表
+     */
+    private fun buildMultiItems(comments: List<Comment>): List<MultiAdapterItem<Comment>> {
+        return comments.mapIndexed { index, comment ->
+            val viewType = if (index % 3 == 0) {
+                MultiPostAdapter.VIEW_TYPE_FEATURED
+            } else {
+                MultiPostAdapter.VIEW_TYPE_COMPACT
+            }
+            MultiAdapterItem(data = listOf(comment), viewType = viewType)
         }
     }
 }

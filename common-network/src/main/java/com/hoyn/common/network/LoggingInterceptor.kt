@@ -19,29 +19,77 @@ import java.util.concurrent.TimeUnit
  */
 class LoggingInterceptor : Interceptor {
 
+    /** 日志标签 */
     private var tag: String = "HttpLogging"
+
+    /** 是否开启调试模式，默认跟随 NetworkConfig.isDebug */
     var isDebug: Boolean = NetworkConfig.isDebug
+
+    /** 日志输出级别 */
     var type = INFO
+
+    /** 请求日志标签 */
     var requestTag: String = tag
+
+    /** 响应日志标签 */
     var responseTag: String = tag
+
+    /** 日志记录级别 */
     var level = HttpLoggingInterceptor.Level.BASIC
+
+    /** 请求头构建器 */
     private val headers = Headers.Builder()
+
+    /** 自定义日志输出器，为 null 时使用默认输出器 */
     var logger: Logger? = null
 
+    /** 默认日志输出器，使用 OkHttp 平台原生日志输出 */
     private val defaultLogger: Logger = object : Logger {
         override fun log(level: Int, tag: String, msg: String) {
             Platform.get().log(msg, level, null)
         }
     }
 
+    /**
+     * 日志输出器接口
+     *
+     * 用于自定义日志的输出行为，使用者可实现此接口来接管日志输出
+     */
     interface Logger {
+        /**
+         * 输出日志
+         *
+         * @param level 日志级别
+         * @param tag 日志标签
+         * @param msg 日志内容
+         */
         fun log(level: Int, tag: String, msg: String)
     }
 
+    /**
+     * 输出日志
+     *
+     * 优先使用自定义 Logger，未设置时使用默认日志输出器
+     *
+     * @param level 日志级别
+     * @param tag 日志标签
+     * @param msg 日志内容
+     */
     internal fun log(level: Int, tag: String, msg: String) {
         (logger ?: defaultLogger).log(level, tag, msg)
     }
 
+    /**
+     * 拦截网络请求并打印日志
+     *
+     * 请求阶段：根据 Content-Type 决定打印 JSON 请求体还是文件请求信息
+     * 响应阶段：根据 Content-Type 决定打印 JSON 响应体还是文件响应信息
+     * 非调试模式或日志级别为 NONE 时直接放行
+     *
+     * @param chain 拦截器链
+     * @return 响应结果
+     * @throws IOException 网络 IO 异常
+     */
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
@@ -119,5 +167,10 @@ class LoggingInterceptor : Interceptor {
         return response.newBuilder().body(body).build()
     }
 
+    /**
+     * 获取构建好的请求头
+     *
+     * @return 请求头 Headers 实例
+     */
     private fun getHeaders(): Headers = headers.build()
 }

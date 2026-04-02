@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="删除数据"
-        android:textColor="@android:color/holo_red_dark" />
+        android:textColor="@color/text_destructive" />
 
     <TextView
         android:id="@+id/tvResult"

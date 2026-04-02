@@ -6,10 +6,15 @@ package com.hoyn.common.base.event
  * 用于在应用内传递消息事件，支持携带多个参数和任意对象
  */
 data class Message(
+    /** 消息码，用于区分消息类型 */
     val code: Int = 0,
+    /** 消息内容文本 */
     val msg: String = "",
+    /** 额外整型参数 1 */
     val arg1: Int = 0,
+    /** 额外整型参数 2 */
     val arg2: Int = 0,
+    /** 额外携带的任意对象 */
     val obj: Any? = null
 ) {
     companion object {

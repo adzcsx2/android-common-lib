@@ -55,6 +55,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
+    // BRVAH 4
+    api(libs.base.recycler.view.adapter.helper)
+
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)

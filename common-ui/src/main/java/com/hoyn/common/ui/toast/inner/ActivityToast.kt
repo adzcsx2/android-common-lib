@@ -16,8 +16,11 @@ import com.hoyn.common.ui.toast.ToastDuration
  */
 class ActivityToast(private val mActivity: Activity) : BaseToast(mActivity) {
 
+    /** WindowManager 布局参数，懒加载 */
     private var mParams: WindowManager.LayoutParams? = null
+    /** Activity 的 WindowManager 实例，懒加载 */
     private var mWindowManager: WindowManager? = null
+    /** Toast 视图是否已添加到 WindowManager */
     private var isAdded: Boolean = false
 
     /**

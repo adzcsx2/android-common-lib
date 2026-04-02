@@ -26,6 +26,12 @@ object LanguageHelper {
         CHINESE_TRADITIONAL("zh-TW", "繁體中文");
 
         companion object {
+            /**
+             * 根据语言代码查找对应的 AppLanguage 枚举值
+             *
+             * @param code 语言代码字符串
+             * @return 对应的 AppLanguage 枚举值，未找到则返回 SYSTEM
+             */
             fun fromCode(code: String): AppLanguage {
                 return entries.find { it.code == code } ?: SYSTEM
             }
@@ -79,6 +85,15 @@ object LanguageHelper {
         saveLanguage(language)
     }
 
+    /**
+     * 更新资源配置
+     *
+     * 根据目标 Locale 更新 Context 的配置信息，兼容 Android N 及以上版本
+     *
+     * @param context 原始 Context
+     * @param locale 目标 Locale
+     * @return 更新配置后的 Context
+     */
     private fun updateResources(context: Context, locale: Locale): Context {
         Locale.setDefault(locale)
 

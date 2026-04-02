@@ -15,4 +15,19 @@
     <color name="error">#FFCF6679</color>
     <color name="on_background">#FFE1E1E1</color>
     <color name="on_surface">#FFE1E1E1</color>
+
+    <!-- Semantic Colors (Dark) -->
+    <color name="text_primary">#FFE1E1E1</color>
+    <color name="text_secondary">#FFB0B0B0</color>
+    <color name="text_on_primary">#FF000000</color>
+    <color name="text_error">#FFCF6679</color>
+    <color name="text_section_header">#FF90CAF9</color>
+    <color name="text_destructive">#FFCF6679</color>
+    <color name="divider_color">#FF424242</color>
+    <color name="toolbar_background">#FFBB86FC</color>
+    <color name="badge_background">#FFBB86FC</color>
+    <color name="badge_text">#FF000000</color>
+    <color name="log_background">#FF2C2C2C</color>
+    <color name="log_text">#FFE1E1E1</color>
+    <color name="dialog_background">#FF2C2C2C</color>
 </resources>

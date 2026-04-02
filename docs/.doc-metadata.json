@@ -1,23 +1,23 @@
 {
   "version": "1.3",
   "projectType": "android",
-  "lastUpdate": "2026-03-30T00:00:00Z",
-  "lastCommit": "637af536112847505503286c8ebbf0d245a1478a",
+  "lastUpdate": "2026-04-02T00:00:00Z",
+  "lastCommit": "8a47d875d5d88a0d42c87077fd48c7523a5ed14f",
   "documents": {
     "PROJECT_OVERVIEW.md": {
-      "updatedAt": "2026-03-30T00:00:00Z",
+      "updatedAt": "2026-04-02T00:00:00Z",
       "sourceFiles": ["settings.gradle.kts", "gradle.properties", "gradle/libs.versions.toml"]
     },
     "INTERFACES.md": {
-      "updatedAt": "2026-03-30T00:00:00Z",
+      "updatedAt": "2026-04-02T00:00:00Z",
       "sourceFiles": ["app/src/main/java/**/*.kt", "app/src/main/res/layout/*.xml"]
     },
     "NAVIGATION.md": {
-      "updatedAt": "2026-03-30T00:00:00Z",
+      "updatedAt": "2026-04-02T00:00:00Z",
       "sourceFiles": ["app/src/main/java/**/*.kt", "app/src/main/AndroidManifest.xml"]
     },
     "COMPONENTS.md": {
-      "updatedAt": "2026-03-30T00:00:00Z",
+      "updatedAt": "2026-04-02T00:00:00Z",
       "sourceFiles": ["app/src/main/AndroidManifest.xml", "app/src/main/java/**/*Service.kt", "app/src/main/java/**/*Receiver.kt"]
     },
     "DEPENDENCIES.md": {
@@ -25,11 +25,17 @@
       "sourceFiles": ["gradle/libs.versions.toml", "app/build.gradle.kts"]
     },
     "API.md": {
-      "updatedAt": "2026-03-30T00:00:00Z",
+      "updatedAt": "2026-04-02T00:00:00Z",
       "sourceFiles": ["app/src/main/java/**/api/*.kt"]
     }
   },
   "updateHistory": [
+    {
+      "date": "2026-04-02",
+      "diffFile": "update-list/update-2026-04-02.md",
+      "summary": "新增 DialogSafetyDemoActivity、StackManagerDemoActivity、CommentApi 文档；补充代码注释",
+      "documentsUpdated": ["INTERFACES.md", "NAVIGATION.md", "COMPONENTS.md", "API.md", "DOC_CHANGELOG.md"]
+    },
     {
       "date": "2026-03-30",
       "diffFile": "update-list/update-2026-03-30.md",

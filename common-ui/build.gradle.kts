@@ -59,9 +59,6 @@ dependencies {
     api(libs.smart.refresh)
     api(libs.smart.refresh.header)
 
-    // BaseRecyclerViewAdapterHelper
-    api(libs.base.recycler.view.adapter.helper)
-
     // Navigation
     api(libs.navigation.fragment)
     api(libs.navigation.ui)

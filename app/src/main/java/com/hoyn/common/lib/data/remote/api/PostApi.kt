@@ -12,6 +12,8 @@ interface PostApi {
 
     /**
      * 获取帖子列表
+     *
+     * @return 帖子列表
      */
     @GET("posts")
     suspend fun getPosts(): List<Post>

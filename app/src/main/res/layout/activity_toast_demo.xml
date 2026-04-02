@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="ToastUtil (无需 Context)"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@color/text_section_header"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="队列优先级测试"
-        android:textColor="@android:color/holo_blue_dark"
+        android:textColor="@color/text_section_header"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -90,6 +90,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="取消当前 Toast"
-        android:textColor="@android:color/holo_red_dark" />
+        android:textColor="@color/text_destructive" />
 
 </LinearLayout>

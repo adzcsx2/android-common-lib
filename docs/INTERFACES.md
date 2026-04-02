@@ -224,6 +224,33 @@
 
 ---
 
+### DialogSafetyDemoActivity
+
+- **类名**: `com.hoyn.common.lib.ui.dialog_demo.DialogSafetyDemoActivity`
+- **基类**: `BaseActivity<ActivityDialogSafetyDemoBinding, NoViewModel>`
+- **布局**: `activity_dialog_safety_demo.xml`
+- **功能**: Dialog 安全示例，展示 DialogController、BaseDialogFragment、FragmentArgumentsDsl 的用法
+
+**包含组件**:
+
+| 组件 | 功能 |
+|------|------|
+| DialogSafetyDemoFragment | DialogFragment 容器，展示 Fragment 内嵌 Dialog |
+| ConfirmSampleDialog | 确认对话框示例 (BaseDialogFragment) |
+| ObjectArgumentDemoDialog | 对象参数传递对话框示例 (FragmentArgumentsDsl) |
+| FullscreenSampleDialog | 全屏对话框示例 |
+
+---
+
+### StackManagerDemoActivity
+
+- **类名**: `com.hoyn.common.lib.ui.stack_demo.StackManagerDemoActivity`
+- **基类**: `BaseActivity<ActivityStackManagerDemoBinding, NoViewModel>`
+- **布局**: `activity_stack_manager_demo.xml`
+- **功能**: ActivityStackManager 示例，展示 Activity 栈管理功能
+
+---
+
 ## 列表项布局
 
 ### item_demo.xml
@@ -240,6 +267,37 @@
 |---------|------|------|
 | `tvTitle` | TextView | 帖子标题 |
 | `tvBody` | TextView | 帖子内容 |
+
+### item_post_compact.xml
+
+| 控件 ID | 类型 | 功能 |
+|---------|------|------|
+| `tvTitle` | TextView | 帖子标题 (紧凑模式) |
+| `tvBody` | TextView | 帖子内容 (紧凑模式) |
+
+### item_post_featured.xml
+
+| 控件 ID | 类型 | 功能 |
+|---------|------|------|
+| `tvTitle` | TextView | 帖子标题 (推荐模式) |
+| `tvBody` | TextView | 帖子内容 (推荐模式) |
+
+### layout_state_empty.xml / layout_state_error.xml / layout_state_loading.xml
+
+| 布局 | 功能 |
+|------|------|
+| layout_state_empty.xml | 空数据状态布局 |
+| layout_state_error.xml | 错误状态布局 |
+| layout_state_loading.xml | 加载中状态布局 |
+
+### dialog_confirm_sample.xml
+
+| 控件 ID | 类型 | 功能 |
+|---------|------|------|
+| `tvTitle` | TextView | 对话框标题 |
+| `tvMessage` | TextView | 对话框消息 |
+| `btnConfirm` | Button | 确认按钮 |
+| `btnCancel` | Button | 取消按钮 |
 
 ## 库模块布局
 

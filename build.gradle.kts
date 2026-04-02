@@ -10,6 +10,12 @@ plugins {
     alias(libs.plugins.room) apply false
 }
 
+allprojects {
+    configurations.configureEach {
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+    }
+}
+
 val androidModules = listOf(
     "app",
     "common-all",

@@ -309,7 +309,9 @@ fun Context.getDimension(@DimenRes resId: Int): Float {
 
 // ==================== 选中态资源绑定 ====================
 
+/** 选中态渲染模式：背景资源 */
 private const val SELECT_STATE_MODE_BACKGROUND = 0
+/** 选中态渲染模式：图片资源 */
 private const val SELECT_STATE_MODE_IMAGE = 1
 
 /**
@@ -369,26 +371,36 @@ var View.selectState: Boolean
 
 // ==================== 属性扩展 ====================
 
+/** 设置 View 背景颜色 */
 var View.backgroundColor: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setBackgroundColor(v)
 
+/** 设置 View 背景资源 */
 var View.backgroundResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setBackgroundResource(v)
 
+/** 设置 ImageView 图片资源 */
 var android.widget.ImageView.imageResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setImageResource(v)
 
+/** 设置 ImageView 图片 URI */
 var android.widget.ImageView.imageURI: android.net.Uri?
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setImageURI(v)
 
+/** 设置 ImageView 图片 Bitmap */
 var android.widget.ImageView.imageBitmap: android.graphics.Bitmap?
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setImageBitmap(v)
 
+/**
+ * 设置 TextView 文本颜色
+ *
+ * 支持传入颜色字符串（如 "#FF0000"）或颜色值 Int
+ */
 var android.widget.TextView.textColor: Any
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) {
@@ -441,86 +453,107 @@ private fun Context.colorOf(@ColorRes colorResId: Int): Int {
     return ContextCompat.getColor(this, colorResId)
 }
 
+/** 设置 TextView 提示文字颜色 */
 var android.widget.TextView.hintTextColor: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setHintTextColor(v)
 
+/** 设置 TextView 链接文字颜色 */
 var android.widget.TextView.linkTextColor: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setLinkTextColor(v)
 
+/** 设置 TextView 行数 */
 var android.widget.TextView.lines: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setLines(v)
 
+/** 设置 TextView 是否单行显示 */
 var android.widget.TextView.singleLine: Boolean
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setSingleLine(v)
 
+/** 设置 TextView 提示文字资源 */
 var android.widget.TextView.hintResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setHint(v)
 
+/** 设置 TextView 文本资源 */
 var android.widget.TextView.textResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setText(v)
 
+/** 设置 RelativeLayout 水平重力 */
 var android.widget.RelativeLayout.horizontalGravity: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setHorizontalGravity(v)
 
+/** 设置 RelativeLayout 垂直重力 */
 var android.widget.RelativeLayout.verticalGravity: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setVerticalGravity(v)
 
+/** 设置 LinearLayout 水平重力 */
 var android.widget.LinearLayout.horizontalGravity: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setHorizontalGravity(v)
 
+/** 设置 LinearLayout 垂直重力 */
 var android.widget.LinearLayout.verticalGravity: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setVerticalGravity(v)
 
+/** 设置 AbsListView 选择器资源 */
 var android.widget.AbsListView.selectorResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setSelector(v)
 
+/** 设置 CheckedTextView 勾选标记资源 */
 var android.widget.CheckedTextView.checkMarkDrawableResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setCheckMarkDrawable(v)
 
+/** 设置 CompoundButton 按钮资源 */
 var android.widget.CompoundButton.buttonDrawableResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setButtonDrawable(v)
 
+/** 设置 TabWidget 左侧条纹资源 */
 var android.widget.TabWidget.leftStripDrawableResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setLeftStripDrawable(v)
 
+/** 设置 TabWidget 右侧条纹资源 */
 var android.widget.TabWidget.rightStripDrawableResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setRightStripDrawable(v)
 
+/** 设置 Toolbar Logo 资源 */
 var android.widget.Toolbar.logoResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setLogo(v)
 
+/** 设置 Toolbar Logo 描述资源 */
 var android.widget.Toolbar.logoDescriptionResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setLogoDescription(v)
 
+/** 设置 Toolbar 导航按钮内容描述资源 */
 var android.widget.Toolbar.navigationContentDescriptionResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setNavigationContentDescription(v)
 
+/** 设置 Toolbar 导航按钮图标资源 */
 var android.widget.Toolbar.navigationIconResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setNavigationIcon(v)
 
+/** 设置 Toolbar 副标题资源 */
 var android.widget.Toolbar.subtitleResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setSubtitle(v)
 
+/** 设置 Toolbar 标题资源 */
 var android.widget.Toolbar.titleResource: Int
     @Deprecated(NO_GETTER, level = DeprecationLevel.ERROR) get() = noGetter()
     set(v) = setTitle(v)

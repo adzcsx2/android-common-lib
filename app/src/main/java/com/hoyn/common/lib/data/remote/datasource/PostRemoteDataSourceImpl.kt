@@ -14,6 +14,13 @@ class PostRemoteDataSourceImpl(
     private val api: PostApi
 ) : PostRemoteDataSource {
 
+    /**
+     * 从网络获取帖子列表
+     *
+     * 限制最多取前 10 条数据，并记录缓存时间戳
+     *
+     * @return Result 包含 PostLoadResult 或网络异常
+     */
     override suspend fun getPosts(): Result<PostLoadResult> {
         return try {
             val posts = api.getPosts().take(10)

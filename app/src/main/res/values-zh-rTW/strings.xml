@@ -44,6 +44,55 @@
     <string name="fragment_demo_increment">計數加一</string>
     <string name="fragment_demo_reset">重設計數</string>
 
+    <!-- Dialog Demo -->
+    <string name="dialog_demo">Dialog 範例</string>
+    <string name="dialog_demo_desc">展示 BaseActivity、BaseFragment 和 BaseDialogFragment 的安全 Dialog 管理</string>
+    <string name="dialog_demo_title">Dialog 安全範例</string>
+    <string name="dialog_demo_intro">本頁面演示基於 BaseDialogFragment 的自訂對話框，包括 Activity 啟動對話框、Fragment 作用域對話框和物件參數傳遞範例。</string>
+    <string name="dialog_demo_show_managed">顯示 Activity 自訂對話框</string>
+    <string name="dialog_demo_show_reusable">顯示全螢幕自訂對話框</string>
+    <string name="dialog_demo_show_dialog_fragment">顯示 BaseDialogFragment</string>
+    <string name="dialog_demo_show_parcelable">顯示 Parcelable 參數對話框</string>
+    <string name="dialog_demo_show_serializable">顯示 Serializable 參數對話框</string>
+    <string name="dialog_demo_plain_title">Activity 自訂對話框</string>
+    <string name="dialog_demo_plain_message">此對話框由 BaseActivity 透過 BaseDialogFragment 啟動，並透過參數恢復。</string>
+    <string name="dialog_demo_reusable_title">全螢幕自訂對話框</string>
+    <string name="dialog_demo_reusable_message">此自訂對話框演示視窗尺寸配置，不依賴 AlertDialog。</string>
+    <string name="dialog_demo_fragment_intro">Fragment 部分：自訂對話框透過 childFragmentManager 顯示，並跟隨父 Fragment 生命週期。</string>
+    <string name="dialog_demo_fragment_show_managed">顯示 Fragment 自訂對話框</string>
+    <string name="dialog_demo_fragment_show_and_remove">顯示對話框後移除 Fragment</string>
+    <string name="dialog_demo_fragment_managed_title">Fragment 作用域對話框</string>
+    <string name="dialog_demo_fragment_managed_message">移除 Fragment 時也會銷毀其子對話框層級，因此此自訂對話框跟隨 Fragment 生命週期。</string>
+    <string name="dialog_demo_fragment_title">BaseDialogFragment</string>
+    <string name="dialog_demo_fragment_message">此對話框使用 ViewBinding，可擴展為可複用的業務對話框。</string>
+    <string name="dialog_demo_parcelable_title">Parcelable 參數範例</string>
+    <string name="dialog_demo_parcelable_order_id">PO-20260401</string>
+    <string name="dialog_demo_parcelable_remark">此負載透過 Parcel 持久化，並從 Dialog 參數恢復。</string>
+    <string name="dialog_demo_parcelable_format">Parcelable -&gt; orderId=%1$s, amount=%2$d, remark=%3$s</string>
+    <string name="dialog_demo_serializable_title">Serializable 參數範例</string>
+    <string name="dialog_demo_serializable_owner">common-lib</string>
+    <string name="dialog_demo_serializable_scene">Serializable 物件同樣持久化在參數中，用於進程重建。</string>
+    <string name="dialog_demo_serializable_format">Serializable -&gt; owner=%1$s, enabled=%2$s, scene=%3$s</string>
+    <string name="dialog_demo_confirm">確認</string>
+    <string name="dialog_demo_cancel">取消</string>
+
+    <!-- Stack Manager Demo -->
+    <string name="stack_demo">Activity 棧管理範例</string>
+    <string name="stack_demo_desc">手動註冊 Activity 棧並查看快照</string>
+    <string name="stack_demo_title">Activity 棧管理範例</string>
+    <string name="stack_demo_intro">本頁面不繼承 BaseActivity，手動註冊到 ActivityStackManager 並按需刷新棧快照。</string>
+    <string name="stack_demo_open_next">開啟另一個範例頁面</string>
+    <string name="stack_demo_refresh">刷新棧資訊</string>
+    <string name="stack_demo_show_dialog">顯示對話框</string>
+    <string name="stack_demo_finish_with_dialog">顯示對話框並關閉</string>
+    <string name="stack_demo_current_label">當前 Activity</string>
+    <string name="stack_demo_count_label">棧數量</string>
+    <string name="stack_demo_snapshot_label">棧快照</string>
+    <string name="stack_demo_empty">空</string>
+    <string name="stack_demo_dialog_title">自訂對話框範例</string>
+    <string name="stack_demo_dialog_message">本頁面使用 BaseDialogFragment 顯示對話框。關閉 Activity 時，FragmentManager 也會清理對話框生命週期。</string>
+    <string name="stack_demo_dialog_close">關閉</string>
+
     <!-- Theme -->
     <string name="theme_settings">主題設置</string>
     <string name="theme_light">淺色模式</string>

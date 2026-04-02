@@ -40,6 +40,30 @@ data class Post(
 
 ---
 
+### CommentApi
+
+- **文件**: `app/src/main/java/com/hoyn/common/lib/data/remote/api/CommentApi.kt`
+- **用途**: 评论数据接口 (Demo 用)
+- **Base URL**: `https://jsonplaceholder.typicode.com/`
+
+| 方法 | 路径 | 说明 | 返回类型 |
+|------|------|------|----------|
+| GET | `/comments` | 获取评论列表 | `List<Comment>` |
+
+**数据模型**:
+
+```kotlin
+data class Comment(
+    val postId: Int,
+    val id: Int,
+    val name: String,
+    val email: String,
+    val body: String
+)
+```
+
+---
+
 ## 网络框架 API
 
 以下为 `common-network` 模块提供的网络框架 API：

@@ -4,6 +4,21 @@
 
 ---
 
+## 2026-04-02 - 新增组件文档、代码注释补充
+
+**变更概述**: 新增 Dialog 安全示例、ActivityStackManager 示例、CommentApi 文档；补充代码注释
+
+| 文档 | 变更类型 | 简介 |
+|------|----------|------|
+| INTERFACES.md | 新增组件 | 新增 DialogSafetyDemoActivity、StackManagerDemoActivity、新布局文档 |
+| NAVIGATION.md | 更新流程 | 新增 DialogSafetyDemoActivity、StackManagerDemoActivity 导航关系 |
+| COMPONENTS.md | 新增组件 | 新增 2 个 Activity 声明 |
+| API.md | 新增接口 | 新增 CommentApi 评论接口 |
+
+[查看详情](update-list/update-2026-04-02.md)
+
+---
+
 ## 2026-03-30 - 首次生成项目文档 + 版本升级
 
 **变更概述**: 升级 libVersion 至 1.2.1，首次生成完整项目文档

@@ -22,9 +22,18 @@ MainActivity (LAUNCHER)
     +-- startActivity<LogDemoActivity>
     +-- startActivity<StatusBarDemoActivity>
     +-- startActivity<LiveEventDemoActivity>
-            |
-            +-- startService<LiveEventDemoService>
-            +-- sendBroadcast -> LiveEventDemoReceiver
+    |       |
+    |       +-- startService<LiveEventDemoService>
+    |       +-- sendBroadcast -> LiveEventDemoReceiver
+    |
+    +-- startActivity<DialogSafetyDemoActivity>
+    |       |
+    |       +-- DialogSafetyDemoFragment (replace)
+    |       +-- ConfirmSampleDialog (show)
+    |       +-- ObjectArgumentDemoDialog (show)
+    |       +-- FullscreenSampleDialog (show)
+    |
+    +-- startActivity<StackManagerDemoActivity>
 ```
 
 ---
@@ -47,6 +56,8 @@ MainActivity (LAUNCHER)
 | LogDemoActivity | 列表点击 "Log Demo" |
 | StatusBarDemoActivity | 列表点击 "Status Bar Demo" |
 | LiveEventDemoActivity | 列表点击 "LiveEvent Demo" |
+| DialogSafetyDemoActivity | 列表点击 "Dialog Safety Demo" |
+| StackManagerDemoActivity | 列表点击 "Stack Manager Demo" |
 
 ---
 

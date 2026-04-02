@@ -1,57 +1,43 @@
 package com.hoyn.common.lib.ui.network
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import com.chad.library.adapter4.BaseQuickAdapter
+import com.chad.library.adapter4.viewholder.QuickViewHolder
+import com.hoyn.common.lib.R
 import com.hoyn.common.lib.data.model.Post
-import com.hoyn.common.lib.databinding.ItemPostBinding
 
 /**
  * 帖子列表适配器
  *
  * 用于展示帖子列表数据
  */
-class PostAdapter : RecyclerView.Adapter<PostViewHolder>() {
-
-    private val items = mutableListOf<Post>()
+class PostAdapter : BaseQuickAdapter<Post, QuickViewHolder>() {
 
     /**
-     * 提交新数据
+     * 创建 ViewHolder
+     *
+     * @param context 上下文
+     * @param parent 父布局
+     * @param viewType 视图类型
+     * @return QuickViewHolder 实例
      */
-    fun submitList(newItems: List<Post>) {
-        items.clear()
-        items.addAll(newItems)
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(
+        context: android.content.Context,
+        parent: android.view.ViewGroup,
+        viewType: Int
+    ): QuickViewHolder {
+        return QuickViewHolder(R.layout.item_post, parent)
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-        val binding = ItemPostBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
-        return PostViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
-
-    override fun getItemCount(): Int = items.size
-}
-
-/**
- * 帖子 ViewHolder
- */
-class PostViewHolder(
-    private val binding: ItemPostBinding
-) : RecyclerView.ViewHolder(binding.root) {
 
     /**
-     * 绑定数据
+     * 绑定数据到 ViewHolder
+     *
+     * @param holder ViewHolder 实例
+     * @param position 位置索引
+     * @param item 帖子数据，为 null 时跳过绑定
      */
-    fun bind(post: Post) {
-        binding.tvTitle.text = post.title
-        binding.tvBody.text = post.body
+    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: Post?) {
+        if (item == null) return
+        holder.setText(R.id.tvTitle, item.title)
+        holder.setText(R.id.tvBody, item.body)
     }
 }

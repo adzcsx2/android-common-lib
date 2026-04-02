@@ -13,32 +13,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
-## [1.2.2] - 2026-03-31
-
-### Changed
-- Updated documentation to version 1.2.2
-- Aligned `libVersion` and all dependency snippets to `1.2.2`
-
-## [1.2.1] - 2026-03-30
+## [1.2.3] - 2026-04-02
 
 ### Added
-- ViewExtensions: `selectState` binding, `pressEffectBgColor`/`pressEffectAlpha`/`pressEffectDisable`, `isDoubleClick`, `continuousClick`, `holdClick`/`releaseClick`, `setClickNotNull`, and property extensions (`backgroundColor`, `textColor`, `imageResource`, `textResource`, etc.)
-- StatusBarHelper: `setTransparent()`, `setLightMode()`/`setDarkMode()`, `setGradientColor()`, `getHeight()`
-- ViewModelExt: new ViewModel extension functions
-- StateExtensions: `collectAsStateWithLifecycle` and UIState observation for Compose
-- App: DataSource pattern (`PostLocalDataSource`, `PostRemoteDataSource`), Koin DI module (`AppModule`)
+- `BaseDialogFragment` DialogFragment 基类，支持 ViewBinding 和协程生命周期管理
+- `DialogController` Dialog 生命周期安全管理器
+- `FragmentArgumentsDsl` Fragment 参数传递 DSL
+- `MultiAdapterItem` 多类型适配器项抽象
+- `ActivityStackManager` Activity 栈管理工具
+- `CommentApi` 评论数据接口 (Demo)
+- `Comment` 评论数据模型
+- `DialogSafetyDemoActivity` Dialog 安全示例页面
+- `StackManagerDemoActivity` Activity 栈管理示例页面
+- `MultiPostAdapter` 多类型帖子适配器
+- `Logger` 日志工具类 (基于 LogUtils)
+- `ScreenUtils` 折叠屏设备检测工具
+- `LanguageHelper` 应用语言管理工具
+- `ThemeManager` 应用主题管理工具
 
 ### Changed
-- Removed deprecated `ToastUtils`, unified to `ToastUtil`
-- Improved system toast handling with ROM-specific fallback (Huawei/Meizu/Xiaomi)
-- Refactored PressEffectHelper long press detection and touch boundary handling
-- Enhanced ViewModelFactory and ViewModelClassResolver
-- Updated all demo screens to use `ViewExtensions.click`
-- Updated `claude.md` with ViewExtensions reuse rules
-- Aligned `libVersion` and all dependency snippets to `1.2.1`
-
-### Deprecated
-- `ToastUtils` (removed) - use `ToastUtil` instead
+- 全面补充中文 KDoc 注释（覆盖所有模块源文件）
+- 更新项目文档（INTERFACES/NAVIGATION/COMPONENTS/API）
+- `libVersion` 统一为 1.2.3
 
 ## [1.0.9] - 2026-03-17
 
@@ -161,8 +157,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.2.2 | 2026-03-31 | Documentation update to 1.2.2 |
-| 1.2.1 | 2026-03-30 | ViewExtensions enhancements, ToastUtils removed, StatusBarHelper expanded, DataSource pattern, Koin DI |
+| 1.2.3 | 2026-04-02 | BaseDialogFragment, DialogController, FragmentArgumentsDsl, MultiAdapterItem, ActivityStackManager, full code comments, docs update |
 | 1.0.9 | 2026-03-17 | documentation and release metadata aligned with the published 1.0.9 tag |
 | 1.0.8 | 2026-03-17 | compileSdk and targetSdk baseline unified to 34, AndroidX and Compose stack downgraded for 34 compatibility |
 | 1.0.7 | 2026-03-17 | compileSdk and targetSdk baseline unified to 35, androidx.core downgraded to 1.16.0 |
@@ -191,8 +186,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
-[1.2.2]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.2
-[1.2.1]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.1
+[1.2.3]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.3
 [1.0.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.9
 [1.0.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.8
 [1.0.7]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.0.7

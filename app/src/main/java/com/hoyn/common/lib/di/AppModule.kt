@@ -4,6 +4,7 @@ import com.hoyn.common.lib.MainApplication
 import com.hoyn.common.lib.data.local.datasource.PostLocalDataSource
 import com.hoyn.common.lib.data.local.datasource.PostLocalDataSourceImpl
 import com.hoyn.common.lib.data.local.db.AppDatabase
+import com.hoyn.common.lib.data.remote.api.CommentApi
 import com.hoyn.common.lib.data.remote.api.PostApi
 import com.hoyn.common.lib.data.remote.datasource.PostRemoteDataSource
 import com.hoyn.common.lib.data.remote.datasource.PostRemoteDataSourceImpl
@@ -14,6 +15,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
+/** API 基础地址（JSONPlaceholder 模拟接口） */
 private const val BASE_URL = "https://jsonplaceholder.typicode.com/"
 
 /**
@@ -24,6 +26,7 @@ private const val BASE_URL = "https://jsonplaceholder.typicode.com/"
 val appModule = module {
     // API
     single<PostApi> { RetrofitFactory.createService(BASE_URL) }
+    single<CommentApi> { RetrofitFactory.createService(BASE_URL) }
 
     // Remote DataSource
     single<PostRemoteDataSource> { PostRemoteDataSourceImpl(get()) }
@@ -42,7 +45,9 @@ val appModule = module {
 }
 
 /**
- * 初始化 Koin
+ * 初始化 Koin 依赖注入框架
+ *
+ * @param application Application 实例
  */
 fun initKoin(application: MainApplication) {
     org.koin.core.context.startKoin {

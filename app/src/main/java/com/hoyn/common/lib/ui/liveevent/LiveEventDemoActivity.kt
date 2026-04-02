@@ -16,15 +16,30 @@ import com.hoyn.common.ui.ext.click
 
 /**
  * LiveEvent Demo Activity
+ *
+ * 演示 GlobalLiveEvent 的各种使用方式：
+ * - 普通消息发送与订阅
+ * - 粘性消息发送与订阅
+ * - 延迟消息发送
+ * - Service 中使用 LiveEvent
+ * - BroadcastReceiver 转发 LiveEvent 消息
+ * - 手动订阅（Forever 模式）
  */
 class LiveEventDemoActivity : BaseActivity<ActivityLiveEventDemoBinding, NoViewModel>() {
 
+    /** 时间格式化器，精确到毫秒 */
     private val timeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault())
+    /** 日志内容构建器 */
     private val logBuilder = StringBuilder()
+    /** 普通消息订阅观察者 */
     private var normalObserver: Observer<Message>? = null
+    /** 粘性消息订阅观察者 */
     private var stickyObserver: Observer<Message>? = null
+    /** 手动订阅观察者（Forever 模式） */
     private var manualObserver: Observer<Message>? = null
+    /** 组件生命周期观察者（接收 Service/Receiver 的响应） */
     private var componentObserver: Observer<Message>? = null
+    /** Service 是否已启动 */
     private var serviceStarted = false
 
     /**

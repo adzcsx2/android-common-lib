@@ -1,5 +1,6 @@
 package com.hoyn.common.base
 
+import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
@@ -8,13 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.viewbinding.ViewBinding
 import androidx.savedstate.SavedStateRegistryOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlin.coroutines.CoroutineContext
 
 /**
  * BaseFragment
@@ -27,9 +31,25 @@ import kotlinx.coroutines.cancel
  */
 abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
     Fragment(),
-    CoroutineScope by MainScope() {
+    CoroutineScope {
 
-    protected lateinit var binding: VB
+    private val dialogController by lazy(LazyThreadSafetyMode.NONE) {
+        DialogController(::canShowManagedDialogs)
+    }
+
+    private var fragmentScope: CoroutineScope? = null
+
+    override val coroutineContext: CoroutineContext
+        get() = requireNotNull(fragmentScope) {
+            "CoroutineScope is only available between onAttach and onDestroy."
+        }.coroutineContext
+
+    private var _binding: VB? = null
+    protected val binding: VB
+        get() = requireNotNull(_binding) {
+            "Binding is only valid between onCreateView and onDestroyView."
+        }
+
     protected val viewModel: VM by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelFactory.createAuto(
             owner = viewModelStoreOwner(),
@@ -43,14 +63,19 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
     // 是否第一次加载
     private var isFirst: Boolean = true
 
-    // 页面基础信息
-    internal lateinit var mActivity: BaseActivity<*, *>
-    internal lateinit var mContext: Context
+    private val viewCleanupActions = mutableListOf<() -> Unit>()
+
+    protected val mActivity: BaseActivity<*, *>?
+        get() = activity as? BaseActivity<*, *>
+
+    protected val mContext: Context
+        get() = requireContext()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mActivity = requireActivity() as BaseActivity<*, *>
-        mContext = context
+        if (fragmentScope == null) {
+            fragmentScope = MainScope()
+        }
     }
 
     override fun onCreateView(
@@ -58,7 +83,10 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = ViewBindingClassResolver.inflateFragmentBinding(
+        registerViewCleanupAction {
+            dialogController.dismissAll()
+        }
+        _binding = ViewBindingClassResolver.inflateFragmentBinding(
             owner = this,
             baseClass = BaseFragment::class.java,
             inflater = inflater,
@@ -69,28 +97,41 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        onVisible()
+        observeFirstVisibleState()
         initView(view, savedInstanceState)
         initData()
     }
 
-    override fun onResume() {
-        super.onResume()
-        onVisible()
-    }
-
+    /**
+     * 提供 ViewModelStoreOwner
+     *
+     * 默认返回 Fragment 自身，子类可重写以支持共享 ViewModel
+     *
+     * @return ViewModelStoreOwner 实例
+     */
     protected open fun viewModelStoreOwner(): ViewModelStoreOwner = this
 
+    /**
+     * 提供 SavedStateRegistryOwner
+     *
+     * 默认返回 Fragment 自身，子类可重写以支持自定义状态保存
+     *
+     * @return SavedStateRegistryOwner 实例
+     */
     protected open fun savedStateRegistryOwner(): SavedStateRegistryOwner = this
 
-    /**
-     * 是否需要懒加载
-     */
-    private fun onVisible() {
-        if (lifecycle.currentState == Lifecycle.State.STARTED && isFirst) {
-            lazyLoadData()
-            isFirst = false
-        }
+    private fun observeFirstVisibleState() {
+        viewLifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                if (!isFirst) {
+                    owner.lifecycle.removeObserver(this)
+                    return
+                }
+                isFirst = false
+                lazyLoadData()
+                owner.lifecycle.removeObserver(this)
+            }
+        })
     }
 
     /**
@@ -98,12 +139,30 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
      */
     protected open fun lazyLoadData() {}
 
+    /**
+     * 解析 ViewModel 的 Class 对象
+     *
+     * @return ViewModel 的 Class 对象
+     */
     private fun resolveViewModelClass(): Class<VM> {
         return ViewModelClassResolver.resolve(this, BaseFragment::class.java)
     }
 
+    /**
+     * 初始化视图
+     *
+     * 在 onViewCreated 中调用，用于设置视图的初始状态、绑定适配器等
+     *
+     * @param view 根视图
+     * @param savedInstanceState 保存的实例状态 Bundle
+     */
     protected open fun initView(view: View, savedInstanceState: Bundle?) {}
 
+    /**
+     * 初始化数据
+     *
+     * 在 initView 之后调用，用于加载数据、发起网络请求等
+     */
     protected open fun initData() {}
     /**
      * 返回键处理
@@ -144,8 +203,74 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
     protected open fun isLightStatusBar(): Boolean = true
 
     override fun onDestroyView() {
-        cancel()
+        runViewCleanupActions()
+        _binding = null
         super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        fragmentScope?.cancel()
+        fragmentScope = null
+        super.onDestroy()
+    }
+
+    /**
+     * 注册 view 销毁时的清理动作。
+     */
+    protected fun registerViewCleanupAction(action: () -> Unit) {
+        viewCleanupActions.add(action)
+    }
+
+    /**
+     * 注册一个 Dialog，在 Fragment 的 View 销毁时自动 dismiss。
+     */
+    protected fun registerDialogForViewCleanup(dialogProvider: () -> Dialog?) {
+        registerViewCleanupAction {
+            dialogProvider()?.takeIf { it.isShowing }?.dismiss()
+        }
+    }
+
+    /**
+     * 将普通 Dialog 纳入 Fragment 的 View 生命周期管理。
+     */
+    protected fun <T : Dialog> manageDialog(dialog: T): T {
+        return dialogController.manage(dialog)
+    }
+
+    /**
+     * 安全显示已托管的 Dialog；若宿主视图已销毁则直接返回 false。
+     */
+    protected fun showManagedDialog(dialog: Dialog): Boolean {
+        return dialogController.show(dialog)
+    }
+
+    /**
+     * 安全关闭已托管的 Dialog。
+     */
+    protected fun dismissManagedDialog(dialog: Dialog?) {
+        dialogController.dismiss(dialog)
+    }
+
+    /**
+     * 关闭当前 Fragment View 管理的全部普通 Dialog。
+     */
+    protected fun dismissAllManagedDialogs() {
+        dialogController.dismissAll()
+    }
+
+    private fun canShowManagedDialogs(): Boolean {
+        val hostActivity = activity ?: return false
+        return isAdded &&
+            view != null &&
+            !hostActivity.isFinishing &&
+            !hostActivity.isDestroyed
+    }
+
+    private fun runViewCleanupActions() {
+        viewCleanupActions.asReversed().forEach { action ->
+            runCatching(action)
+        }
+        viewCleanupActions.clear()
     }
 
     /**
@@ -154,6 +279,6 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
      * 委托给 Activity 处理返回键
      */
     open fun onBackPressed() {
-        mActivity.onBackPressedDispatcher.onBackPressed()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 }

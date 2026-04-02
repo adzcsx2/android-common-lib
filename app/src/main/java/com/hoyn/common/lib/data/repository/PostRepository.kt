@@ -52,6 +52,14 @@ class PostRepository(
         localDataSource.clearPosts()
     }
 
+    /**
+     * 持久化远程获取的帖子到本地缓存
+     *
+     * 将 Post 转换为 PostEntity 后写入数据库，失败时仅打印日志不影响流程
+     *
+     * @param posts 远程获取的帖子列表
+     * @param cachedAt 缓存时间戳
+     */
     private suspend fun persistRemotePosts(posts: List<Post>, cachedAt: Long) {
         try {
             localDataSource.replacePosts(posts.map { post -> post.toEntity(cachedAt) }, cachedAt)

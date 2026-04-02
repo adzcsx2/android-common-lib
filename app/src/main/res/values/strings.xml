@@ -19,6 +19,10 @@
     <string name="network_demo_desc">ViewModel + Repository + Network + Room Cache</string>
     <string name="fragment_demo">Fragment Demo</string>
     <string name="fragment_demo_desc">BaseFragment + generic ViewModel injection + recreation retention</string>
+    <string name="dialog_demo">Dialog Demo</string>
+    <string name="dialog_demo_desc">Safe dialog management for BaseActivity, BaseFragment and BaseDialogFragment</string>
+    <string name="stack_demo">Stack Manager Demo</string>
+    <string name="stack_demo_desc">Manual Activity stack registration and snapshot inspection</string>
     <string name="mmkv_demo">MMKV Demo</string>
     <string name="mmkv_demo_desc">Key-value storage operations</string>
     <string name="log_demo">Log Demo</string>
@@ -43,6 +47,47 @@
     <string name="fragment_demo_count_label">Counter</string>
     <string name="fragment_demo_increment">Increment Counter</string>
     <string name="fragment_demo_reset">Reset Counter</string>
+    <string name="dialog_demo_title">Dialog Safety Demo</string>
+    <string name="dialog_demo_intro">This page demonstrates custom dialogs based on BaseDialogFragment, including Activity launched dialogs, Fragment scoped dialogs, and object argument demos.</string>
+    <string name="dialog_demo_show_managed">Show Activity custom dialog</string>
+    <string name="dialog_demo_show_reusable">Show fullscreen custom dialog</string>
+    <string name="dialog_demo_show_dialog_fragment">Show BaseDialogFragment</string>
+    <string name="dialog_demo_show_parcelable">Show Parcelable argument dialog</string>
+    <string name="dialog_demo_show_serializable">Show Serializable argument dialog</string>
+    <string name="dialog_demo_plain_title">Activity Custom Dialog</string>
+    <string name="dialog_demo_plain_message">This dialog is launched from BaseActivity through BaseDialogFragment and is restored through arguments.</string>
+    <string name="dialog_demo_reusable_title">Fullscreen Custom Dialog</string>
+    <string name="dialog_demo_reusable_message">This custom dialog demonstrates window size configuration without relying on AlertDialog.</string>
+    <string name="dialog_demo_fragment_intro">Fragment section: custom dialogs are shown with childFragmentManager and follow the parent Fragment lifecycle.</string>
+    <string name="dialog_demo_fragment_show_managed">Show Fragment custom dialog</string>
+    <string name="dialog_demo_fragment_show_and_remove">Show dialog then remove Fragment</string>
+    <string name="dialog_demo_fragment_managed_title">Fragment Scoped Dialog</string>
+    <string name="dialog_demo_fragment_managed_message">Removing the Fragment also destroys its child dialog hierarchy, so this custom dialog follows the Fragment lifecycle.</string>
+    <string name="dialog_demo_fragment_title">BaseDialogFragment</string>
+    <string name="dialog_demo_fragment_message">This dialog uses ViewBinding and can be extended for reusable business dialogs.</string>
+    <string name="dialog_demo_parcelable_title">Parcelable Argument Demo</string>
+    <string name="dialog_demo_parcelable_order_id">PO-20260401</string>
+    <string name="dialog_demo_parcelable_remark">This payload is persisted via Parcel and restored from Dialog arguments.</string>
+    <string name="dialog_demo_parcelable_format">Parcelable -&gt; orderId=%1$s, amount=%2$d, remark=%3$s</string>
+    <string name="dialog_demo_serializable_title">Serializable Argument Demo</string>
+    <string name="dialog_demo_serializable_owner">common-lib</string>
+    <string name="dialog_demo_serializable_scene">Serializable object is also persisted in arguments for process recreation.</string>
+    <string name="dialog_demo_serializable_format">Serializable -&gt; owner=%1$s, enabled=%2$s, scene=%3$s</string>
+    <string name="dialog_demo_confirm">Confirm</string>
+    <string name="dialog_demo_cancel">Cancel</string>
+    <string name="stack_demo_title">Stack Manager Demo</string>
+    <string name="stack_demo_intro">This page does not inherit BaseActivity. It registers with ActivityStackManager manually and refreshes the stack snapshot on demand.</string>
+    <string name="stack_demo_open_next">Open another demo activity</string>
+    <string name="stack_demo_refresh">Refresh stack info</string>
+    <string name="stack_demo_show_dialog">Show dialog</string>
+    <string name="stack_demo_finish_with_dialog">Show dialog and finish</string>
+    <string name="stack_demo_current_label">Current Activity</string>
+    <string name="stack_demo_count_label">Stack Count</string>
+    <string name="stack_demo_snapshot_label">Stack Snapshot</string>
+    <string name="stack_demo_empty">Empty</string>
+    <string name="stack_demo_dialog_title">Custom Dialog Demo</string>
+    <string name="stack_demo_dialog_message">This page now uses BaseDialogFragment for dialog display. When the Activity is closed, the FragmentManager also cleans up the dialog lifecycle.</string>
+    <string name="stack_demo_dialog_close">Close</string>
 
     <!-- Theme -->
     <string name="theme_settings">Theme Settings</string>

@@ -27,15 +27,26 @@ import java.util.*
  */
 class YTN private constructor() {
 
+    /** 自定义 Toast 显示队列 */
     private val mQueue: LinkedList<BaseToast> = LinkedList()
+    /** 主线程 Handler，用于延迟调度和线程切换 */
     private val mHandler = Handler(Looper.getMainLooper())
+    /** 当前正在显示的自定义 Toast */
     private var mCurrentToast: BaseToast? = null
+    /** Activity Toast 弱引用集合，用于按 Activity 取消 Toast */
     private val mActivityToasts: MutableSet<WeakReference<ActivityToast>> = Collections.newSetFromMap(WeakHashMap())
 
     companion object {
         @Volatile
         private var instance: YTN? = null
 
+        /**
+         * 获取 YTN 单例实例
+         *
+         * 使用双重检查锁定确保线程安全
+         *
+         * @return YTN 实例
+         */
         fun instance(): YTN {
             return instance ?: synchronized(this) {
                 instance ?: YTN().also { instance = it }

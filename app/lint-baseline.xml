@@ -2,8 +2,19 @@
 <issues format="6" by="lint 9.1.0" type="baseline" client="gradle" dependencies="false" name="AGP (9.1.0)" variant="all" version="9.1.0">
 
     <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        errorLine1="        targetSdk = 34"
+        errorLine2="        ~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle.kts"
+            line="17"
+            column="9"/>
+    </issue>
+
+    <issue
         id="AndroidGradlePluginVersion"
-        message="A newer version of Gradle than 9.3.1 is available: 9.4.0"
+        message="A newer version of Gradle than 9.3.1 is available: 9.4.1"
         errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -14,8 +25,19 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.core:core-ktx than 1.17.0 is available: 1.18.0"
-        errorLine1="coreKtx = &quot;1.17.0&quot;"
+        message="A newer version of `compileSdk` than 34 is available: 36"
+        errorLine1="    compileSdk = 34"
+        errorLine2="    ~~~~~~~~~~~~~~~">
+        <location
+            file="build.gradle.kts"
+            line="12"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core-ktx than 1.13.1 is available: 1.18.0"
+        errorLine1="coreKtx = &quot;1.13.1&quot;"
         errorLine2="          ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
@@ -36,9 +58,9 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.activity:activity-ktx than 1.10.1 is available: 1.13.0"
-        errorLine1="activityKtx = &quot;1.10.1&quot;"
-        errorLine2="              ~~~~~~~~">
+        message="A newer version of androidx.activity:activity-ktx than 1.8.2 is available: 1.13.0"
+        errorLine1="activityKtx = &quot;1.8.2&quot;"
+        errorLine2="              ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
             line="16"
@@ -58,8 +80,8 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.9.2 is available: 2.10.0"
-        errorLine1="lifecycle = &quot;2.9.2&quot;"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.8.7 is available: 2.10.0"
+        errorLine1="lifecycle = &quot;2.8.7&quot;"
         errorLine2="            ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
@@ -69,8 +91,8 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.2 is available: 2.10.0"
-        errorLine1="lifecycle = &quot;2.9.2&quot;"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.8.7 is available: 2.10.0"
+        errorLine1="lifecycle = &quot;2.8.7&quot;"
         errorLine2="            ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
@@ -80,13 +102,46 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.9.2 is available: 2.10.0"
-        errorLine1="lifecycle = &quot;2.9.2&quot;"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.8.7 is available: 2.10.0"
+        errorLine1="lifecycle = &quot;2.8.7&quot;"
         errorLine2="            ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
             line="18"
             column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-savedstate than 2.8.7 is available: 2.10.0"
+        errorLine1="lifecycle = &quot;2.8.7&quot;"
+        errorLine2="            ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="18"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.navigation:navigation-fragment-ktx than 2.8.9 is available: 2.9.7"
+        errorLine1="navigation = &quot;2.8.9&quot;"
+        errorLine2="             ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="19"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.navigation:navigation-ui-ktx than 2.8.9 is available: 2.9.7"
+        errorLine1="navigation = &quot;2.8.9&quot;"
+        errorLine2="             ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="19"
+            column="14"/>
     </issue>
 
     <issue
@@ -96,40 +151,40 @@
         errorLine2="         ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="40"
+            line="44"
             column="10"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.compose:compose-bom than 2025.02.00 is available: 2026.03.00"
-        errorLine1="composeBom = &quot;2025.02.00&quot;"
+        message="A newer version of androidx.compose:compose-bom than 2024.04.01 is available: 2026.03.01"
+        errorLine1="composeBom = &quot;2024.04.01&quot;"
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="47"
+            line="51"
             column="14"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.13.0"
-        errorLine1="activityCompose = &quot;1.10.1&quot;"
-        errorLine2="                  ~~~~~~~~">
+        message="A newer version of androidx.activity:activity-compose than 1.8.2 is available: 1.13.0"
+        errorLine1="activityCompose = &quot;1.8.2&quot;"
+        errorLine2="                  ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="48"
+            line="52"
             column="19"/>
     </issue>
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.2 is available: 2.10.0"
-        errorLine1="lifecycleCompose = &quot;2.9.2&quot;"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.8.7 is available: 2.10.0"
+        errorLine1="lifecycleCompose = &quot;2.8.7&quot;"
         errorLine2="                   ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="49"
+            line="53"
             column="20"/>
     </issue>
 
@@ -168,7 +223,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.mockito.kotlin:mockito-kotlin than 5.1.0 is available: 6.2.3"
+        message="A newer version of org.mockito.kotlin:mockito-kotlin than 5.1.0 is available: 6.3.0"
         errorLine1="mockitoKotlin = &quot;5.1.0&quot;"
         errorLine2="                ~~~~~~~">
         <location
@@ -179,12 +234,78 @@
 
     <issue
         id="NewerVersionAvailable"
+        message="A newer version of org.robolectric:robolectric than 4.11.1 is available: 4.16.1"
+        errorLine1="robolectric = &quot;4.11.1&quot;"
+        errorLine2="              ~~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="23"
+            column="15"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of io.insert-koin:koin-android than 3.5.6 is available: 4.2.0"
+        errorLine1="koin = &quot;3.5.6&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="26"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of io.insert-koin:koin-androidx-compose than 3.5.6 is available: 4.2.0"
+        errorLine1="koin = &quot;3.5.6&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="26"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of io.insert-koin:koin-core than 3.5.6 is available: 4.2.0"
+        errorLine1="koin = &quot;3.5.6&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="26"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of io.insert-koin:koin-test than 3.5.6 is available: 4.2.0"
+        errorLine1="koin = &quot;3.5.6&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="26"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of io.insert-koin:koin-test-junit4 than 3.5.6 is available: 4.2.0"
+        errorLine1="koin = &quot;3.5.6&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="26"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
         message="A newer version of com.squareup.retrofit2:converter-gson than 2.11.0 is available: 3.0.0"
         errorLine1="retrofit = &quot;2.11.0&quot;"
         errorLine2="           ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="25"
+            line="29"
             column="12"/>
     </issue>
 
@@ -195,7 +316,7 @@
         errorLine2="           ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="25"
+            line="29"
             column="12"/>
     </issue>
 
@@ -206,7 +327,7 @@
         errorLine2="         ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="26"
+            line="30"
             column="10"/>
     </issue>
 
@@ -217,7 +338,7 @@
         errorLine2="         ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="26"
+            line="30"
             column="10"/>
     </issue>
 
@@ -228,7 +349,7 @@
         errorLine2="       ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="27"
+            line="31"
             column="8"/>
     </issue>
 
@@ -239,7 +360,7 @@
         errorLine2="        ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="30"
+            line="34"
             column="9"/>
     </issue>
 
@@ -250,7 +371,7 @@
         errorLine2="             ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="34"
+            line="38"
             column="14"/>
     </issue>
 
@@ -261,7 +382,7 @@
         errorLine2="             ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="34"
+            line="38"
             column="14"/>
     </issue>
 
@@ -272,7 +393,7 @@
         errorLine2="                 ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="35"
+            line="39"
             column="18"/>
     </issue>
 
@@ -283,8 +404,19 @@
         errorLine2="            ~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="38"
+            line="42"
             column="13"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of com.tencent:mmkv than 2.3.0 is available: 2.4.0"
+        errorLine1="mmkv = &quot;2.3.0&quot;"
+        errorLine2="       ~~~~~~~">
+        <location
+            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
+            line="43"
+            column="8"/>
     </issue>
 
     <issue
@@ -294,7 +426,7 @@
         errorLine2="               ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="43"
+            line="47"
             column="16"/>
     </issue>
 
@@ -305,30 +437,8 @@
         errorLine2="               ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="43"
+            line="47"
             column="16"/>
-    </issue>
-
-    <issue
-        id="NewerVersionAvailable"
-        message="A newer version of io.github.cymchad:BaseRecyclerViewAdapterHelper than 3.0.14 is available: 4.0.3"
-        errorLine1="baseRecyclerViewAdapterHelper = &quot;3.0.14&quot;"
-        errorLine2="                                ~~~~~~~~">
-        <location
-            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="44"
-            column="33"/>
-    </issue>
-
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="        notifyDataSetChanged()"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/hoyn/common/lib/ui/network/PostAdapter.kt"
-            line="24"
-            column="9"/>
     </issue>
 
     <issue
@@ -343,6 +453,39 @@
     </issue>
 
     <issue
+        id="NestedWeights"
+        message="Nested weights are bad for performance"
+        errorLine1="            android:layout_weight=&quot;1&quot; />"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/activity_network_demo.xml"
+            line="65"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/dialog_background` with a theme that also paints a background (inferred theme is `@style/Theme.Commonlib`)"
+        errorLine1="    android:background=&quot;@color/dialog_background&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_confirm_sample.xml"
+            line="6"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `@color/dialog_background` with a theme that also paints a background (inferred theme is `@style/Theme.Commonlib`)"
+        errorLine1="    android:background=&quot;@color/dialog_background&quot;"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_dialog_safety_demo.xml"
+            line="6"
+            column="5"/>
+    </issue>
+
+    <issue
         id="Overdraw"
         message="Possible overdraw: Root element paints background `?android:attr/selectableItemBackground` with a theme that also paints a background (inferred theme is `@style/Theme.Commonlib`)"
         errorLine1="    android:background=&quot;?android:attr/selectableItemBackground&quot;"
@@ -351,6 +494,94 @@
             file="src/main/res/layout/item_demo.xml"
             line="7"
             column="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_dialog_safety_demo` appears to be unused"
+        errorLine1="&lt;ScrollView xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_dialog_safety_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_fragment_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_fragment_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_live_event_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_live_event_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_log_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_log_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_main` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_main.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_mmkv_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_mmkv_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_network_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_network_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.activity_status_bar_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_status_bar_demo.xml"
+            line="2"
+            column="1"/>
     </issue>
 
     <issue
@@ -377,13 +608,90 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.string.loading` appears to be unused"
-        errorLine1="    &lt;string name=&quot;loading&quot;>Loading…&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~">
+        message="The resource `R.color.text_on_primary` appears to be unused"
+        errorLine1="    &lt;color name=&quot;text_on_primary&quot;>#FFFFFFFF&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/res/values/strings.xml"
-            line="8"
-            column="13"/>
+            file="src/main/res/values/colors.xml"
+            line="22"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.toolbar_background` appears to be unused"
+        errorLine1="    &lt;color name=&quot;toolbar_background&quot;>#FF6200EE&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="27"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.log_background` appears to be unused"
+        errorLine1="    &lt;color name=&quot;log_background&quot;>#FFE0E0E0&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="30"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.log_text` appears to be unused"
+        errorLine1="    &lt;color name=&quot;log_text&quot;>#FF000000&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="31"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.color.dialog_background` appears to be unused"
+        errorLine1="    &lt;color name=&quot;dialog_background&quot;>#FFFFFFFF&lt;/color>"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/colors.xml"
+            line="32"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.dialog_confirm_sample` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/dialog_confirm_sample.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.fragment_dialog_safety_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/fragment_dialog_safety_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.layout.fragment_fragment_demo` appears to be unused"
+        errorLine1="&lt;ScrollView xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/fragment_fragment_demo.xml"
+            line="2"
+            column="1"/>
     </issue>
 
     <issue
@@ -393,7 +701,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="34"
+            line="40"
             column="13"/>
     </issue>
 
@@ -404,7 +712,205 @@
         errorLine2="            ~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="35"
+            line="41"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.fragment_demo_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;fragment_demo_title&quot;>Fragment Demo&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="45"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.fragment_demo_session_label` appears to be unused"
+        errorLine1="    &lt;string name=&quot;fragment_demo_session_label&quot;>Session ID&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="46"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.fragment_demo_count_label` appears to be unused"
+        errorLine1="    &lt;string name=&quot;fragment_demo_count_label&quot;>Counter&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="47"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.fragment_demo_increment` appears to be unused"
+        errorLine1="    &lt;string name=&quot;fragment_demo_increment&quot;>Increment Counter&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="48"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.fragment_demo_reset` appears to be unused"
+        errorLine1="    &lt;string name=&quot;fragment_demo_reset&quot;>Reset Counter&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="49"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_title&quot;>Dialog Safety Demo&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="50"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_intro` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_intro&quot;>This page demonstrates custom dialogs based on BaseDialogFragment, including Activity launched dialogs, Fragment scoped dialogs, and object argument demos.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="51"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_show_managed` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_show_managed&quot;>Show Activity custom dialog&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="52"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_show_reusable` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_show_reusable&quot;>Show fullscreen custom dialog&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="53"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_show_dialog_fragment` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_show_dialog_fragment&quot;>Show BaseDialogFragment&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="54"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_show_parcelable` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_show_parcelable&quot;>Show Parcelable argument dialog&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="55"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_show_serializable` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_show_serializable&quot;>Show Serializable argument dialog&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="56"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_fragment_intro` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_fragment_intro&quot;>Fragment section: custom dialogs are shown with childFragmentManager and follow the parent Fragment lifecycle.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="61"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_fragment_show_managed` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_fragment_show_managed&quot;>Show Fragment custom dialog&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="62"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_fragment_show_and_remove` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_fragment_show_and_remove&quot;>Show dialog then remove Fragment&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="63"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_confirm` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_confirm&quot;>Confirm&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="76"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.dialog_demo_cancel` appears to be unused"
+        errorLine1="    &lt;string name=&quot;dialog_demo_cancel&quot;>Cancel&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="77"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.stack_demo_dialog_close` appears to be unused"
+        errorLine1="    &lt;string name=&quot;stack_demo_dialog_close&quot;>Close&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="90"
             column="13"/>
     </issue>
 
@@ -415,7 +921,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="39"
+            line="93"
             column="13"/>
     </issue>
 
@@ -426,7 +932,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="40"
+            line="94"
             column="13"/>
     </issue>
 
@@ -437,7 +943,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="41"
+            line="95"
             column="13"/>
     </issue>
 
@@ -448,7 +954,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="42"
+            line="96"
             column="13"/>
     </issue>
 
@@ -459,7 +965,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="45"
+            line="99"
             column="13"/>
     </issue>
 
@@ -470,7 +976,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="46"
+            line="100"
             column="13"/>
     </issue>
 
@@ -481,7 +987,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="47"
+            line="101"
             column="13"/>
     </issue>
 
@@ -492,7 +998,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="48"
+            line="102"
             column="13"/>
     </issue>
 
@@ -503,7 +1009,117 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="49"
+            line="103"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.send_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;send_message&quot;>Send Message&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="108"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.send_normal` appears to be unused"
+        errorLine1="    &lt;string name=&quot;send_normal&quot;>Send Normal&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="109"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.send_sticky` appears to be unused"
+        errorLine1="    &lt;string name=&quot;send_sticky&quot;>Send Sticky&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="110"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.send_delay` appears to be unused"
+        errorLine1="    &lt;string name=&quot;send_delay&quot;>Send Delay (2s)&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="111"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.component_demo` appears to be unused"
+        errorLine1="    &lt;string name=&quot;component_demo&quot;>Service and Receiver Demo&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="112"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.send_to_service` appears to be unused"
+        errorLine1="    &lt;string name=&quot;send_to_service&quot;>Send EventBus Message To Service&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="115"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.send_broadcast_demo` appears to be unused"
+        errorLine1="    &lt;string name=&quot;send_broadcast_demo&quot;>Send Broadcast Demo&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="116"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.subscribe_message` appears to be unused"
+        errorLine1="    &lt;string name=&quot;subscribe_message&quot;>Subscribe Message&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="117"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.log_output` appears to be unused"
+        errorLine1="    &lt;string name=&quot;log_output&quot;>Log Output&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="124"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.clear_log` appears to be unused"
+        errorLine1="    &lt;string name=&quot;clear_log&quot;>Clear&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="125"
             column="13"/>
     </issue>
 
@@ -516,6 +1132,39 @@
             file="src/main/res/values/themes.xml"
             line="21"
             column="12"/>
+    </issue>
+
+    <issue
+        id="UselessParent"
+        message="This `LinearLayout` layout or its `FrameLayout` parent is unnecessary"
+        errorLine1="    &lt;LinearLayout"
+        errorLine2="     ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/layout_state_loading.xml"
+            line="7"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="        &lt;Button"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_confirm_sample.xml"
+            line="29"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="        &lt;Button"
+        errorLine2="         ~~~~~~">
+        <location
+            file="src/main/res/layout/dialog_confirm_sample.xml"
+            line="35"
+            column="10"/>
     </issue>
 
     <issue
@@ -541,14 +1190,14 @@
     </issue>
 
     <issue
-        id="UseKtx"
-        message="Use the KTX extension function `String.toColorInt` instead?"
-        errorLine1="            StatusBarHelper.translucent(this, Color.parseColor(&quot;#6200EE&quot;))"
-        errorLine2="                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        id="SetTextI18n"
+        message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
+        errorLine1="        binding.tvCounterValue.text = state.count.toString()"
+        errorLine2="                                      ~~~~~~~~~~~~~~~~~~~~~~">
         <location
-            file="src/main/java/com/hoyn/common/lib/ui/statusbar_demo/StatusBarDemoActivity.kt"
-            line="35"
-            column="47"/>
+            file="src/main/java/com/hoyn/common/lib/ui/fragment_demo/FragmentDemoFragment.kt"
+            line="86"
+            column="39"/>
     </issue>
 
     <issue
@@ -558,7 +1207,7 @@
         errorLine2="                                        ~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/hoyn/common/lib/ui/mmkv_demo/MmkvDemoActivity.kt"
-            line="38"
+            line="43"
             column="41"/>
     </issue>
 
@@ -569,7 +1218,7 @@
         errorLine2="                                        ~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/hoyn/common/lib/ui/mmkv_demo/MmkvDemoActivity.kt"
-            line="49"
+            line="54"
             column="41"/>
     </issue>
 
@@ -580,7 +1229,18 @@
         errorLine2="                                    ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/hoyn/common/lib/ui/mmkv_demo/MmkvDemoActivity.kt"
-            line="68"
+            line="76"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
+        errorLine1="        binding.tvCountValue.text = snapshot.size.toString()"
+        errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/hoyn/common/lib/ui/stack_demo/StackManagerDemoActivity.kt"
+            line="95"
             column="37"/>
     </issue>
 
@@ -619,23 +1279,12 @@
 
     <issue
         id="HardcodedText"
-        message="Hardcoded string &quot;VERBOSE&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;VERBOSE&quot; />"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_log_demo.xml"
-            line="47"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
         message="Hardcoded string &quot;DEBUG&quot;, should use `@string` resource"
         errorLine1="        android:text=&quot;DEBUG&quot; />"
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_log_demo.xml"
-            line="54"
+            line="47"
             column="9"/>
     </issue>
 
@@ -646,7 +1295,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_log_demo.xml"
-            line="61"
+            line="54"
             column="9"/>
     </issue>
 
@@ -657,7 +1306,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_log_demo.xml"
-            line="68"
+            line="61"
             column="9"/>
     </issue>
 
@@ -668,7 +1317,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_log_demo.xml"
-            line="75"
+            line="68"
             column="9"/>
     </issue>
 
@@ -679,7 +1328,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_log_demo.xml"
-            line="82"
+            line="75"
             column="9"/>
     </issue>
 
@@ -690,7 +1339,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/activity_log_demo.xml"
-            line="89"
+            line="82"
             column="9"/>
     </issue>
 
@@ -779,50 +1428,6 @@
         <location
             file="src/main/res/layout/activity_mmkv_demo.xml"
             line="70"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;返回&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;返回&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_network_demo.xml"
-            line="21"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;网络请求示例&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;网络请求示例&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_network_demo.xml"
-            line="30"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;刷新&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;刷新&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_network_demo.xml"
-            line="39"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;暂无数据&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;暂无数据&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_network_demo.xml"
-            line="71"
             column="9"/>
     </issue>
 

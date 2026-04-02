@@ -13,7 +13,12 @@ import com.hoyn.common.core.ThrowableBean
  */
 
 /**
- * 观察 Toast 事件
+ * 观察 Toast 事件。
+ *
+ * @param R Repository 类型
+ * @param owner 生命周期宿主
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onToast Toast 回调
  */
 fun <R> Fragment.observeToast(
     owner: LifecycleOwner,
@@ -24,7 +29,13 @@ fun <R> Fragment.observeToast(
 }
 
 /**
- * 观察加载框显示事件
+ * 观察加载框显示事件。
+ *
+ * @param R Repository 类型
+ * @param owner 生命周期宿主
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onShow 显示加载框的回调，参数为提示文本（可为 null）
+ * @param onDismiss 关闭加载框的回调
  */
 fun <R> Fragment.observeShowDialog(
     owner: LifecycleOwner,
@@ -39,7 +50,12 @@ fun <R> Fragment.observeShowDialog(
 }
 
 /**
- * 观察错误事件
+ * 观察错误事件。
+ *
+ * @param R Repository 类型
+ * @param owner 生命周期宿主
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onError 错误回调
  */
 fun <R> Fragment.observeError(
     owner: LifecycleOwner,
@@ -50,7 +66,12 @@ fun <R> Fragment.observeError(
 }
 
 /**
- * 观察消息事件
+ * 观察消息事件。
+ *
+ * @param R Repository 类型
+ * @param owner 生命周期宿主
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onMessage 消息回调
  */
 fun <R> Fragment.observeMessage(
     owner: LifecycleOwner,
@@ -61,7 +82,10 @@ fun <R> Fragment.observeMessage(
 }
 
 /**
- * 观察全局消息事件
+ * 观察全局消息事件。
+ *
+ * @param owner 生命周期宿主
+ * @param onMessage 消息回调
  */
 fun Fragment.observeGlobalMessage(
     owner: LifecycleOwner,
@@ -71,7 +95,10 @@ fun Fragment.observeGlobalMessage(
 }
 
 /**
- * 观察全局错误事件
+ * 观察全局错误事件。
+ *
+ * @param owner 生命周期宿主
+ * @param onError 错误回调
  */
 fun Fragment.observeGlobalError(
     owner: LifecycleOwner,
@@ -81,7 +108,16 @@ fun Fragment.observeGlobalError(
 }
 
 /**
- * 观察 BaseViewModel 的所有 UI 事件
+ * 观察 BaseViewModel 的所有 UI 事件（Toast、加载框、错误、消息）。
+ *
+ * @param R Repository 类型
+ * @param owner 生命周期宿主
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onToast Toast 回调
+ * @param onShowDialog 显示加载框回调
+ * @param onDismissDialog 关闭加载框回调
+ * @param onError 错误回调
+ * @param onMessage 消息回调
  */
 fun <R> Fragment.observeAllUIEvents(
     owner: LifecycleOwner,
@@ -101,7 +137,11 @@ fun <R> Fragment.observeAllUIEvents(
 // ============== Activity 扩展方法 ==============
 
 /**
- * 观察 Toast 事件
+ * 观察 Toast 事件（Activity 版本）。
+ *
+ * @param R Repository 类型
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onToast Toast 回调
  */
 fun <R> androidx.appcompat.app.AppCompatActivity.observeToast(
     viewModel: BaseViewModel<R>,
@@ -111,7 +151,12 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeToast(
 }
 
 /**
- * 观察加载框显示事件
+ * 观察加载框显示事件（Activity 版本）。
+ *
+ * @param R Repository 类型
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onShow 显示加载框的回调，参数为提示文本（可为 null）
+ * @param onDismiss 关闭加载框的回调
  */
 fun <R> androidx.appcompat.app.AppCompatActivity.observeShowDialog(
     viewModel: BaseViewModel<R>,
@@ -125,7 +170,11 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeShowDialog(
 }
 
 /**
- * 观察错误事件
+ * 观察错误事件（Activity 版本）。
+ *
+ * @param R Repository 类型
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onError 错误回调
  */
 fun <R> androidx.appcompat.app.AppCompatActivity.observeError(
     viewModel: BaseViewModel<R>,
@@ -135,7 +184,11 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeError(
 }
 
 /**
- * 观察消息事件
+ * 观察消息事件（Activity 版本）。
+ *
+ * @param R Repository 类型
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onMessage 消息回调
  */
 fun <R> androidx.appcompat.app.AppCompatActivity.observeMessage(
     viewModel: BaseViewModel<R>,
@@ -145,7 +198,9 @@ fun <R> androidx.appcompat.app.AppCompatActivity.observeMessage(
 }
 
 /**
- * 观察全局消息事件
+ * 观察全局消息事件（Activity 版本）。
+ *
+ * @param onMessage 消息回调
  */
 fun androidx.appcompat.app.AppCompatActivity.observeGlobalMessage(
     onMessage: (Message) -> Unit
@@ -154,7 +209,9 @@ fun androidx.appcompat.app.AppCompatActivity.observeGlobalMessage(
 }
 
 /**
- * 观察全局错误事件
+ * 观察全局错误事件（Activity 版本）。
+ *
+ * @param onError 错误回调
  */
 fun androidx.appcompat.app.AppCompatActivity.observeGlobalError(
     onError: (Throwable) -> Unit
@@ -163,7 +220,15 @@ fun androidx.appcompat.app.AppCompatActivity.observeGlobalError(
 }
 
 /**
- * 观察 BaseViewModel 的所有 UI 事件
+ * 观察 BaseViewModel 的所有 UI 事件（Activity 版本）。
+ *
+ * @param R Repository 类型
+ * @param viewModel 要观察的 ViewModel 实例
+ * @param onToast Toast 回调
+ * @param onShowDialog 显示加载框回调
+ * @param onDismissDialog 关闭加载框回调
+ * @param onError 错误回调
+ * @param onMessage 消息回调
  */
 fun <R> androidx.appcompat.app.AppCompatActivity.observeAllUIEvents(
     viewModel: BaseViewModel<R>,

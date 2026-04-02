@@ -31,6 +31,12 @@ object ThemeManager {
         DARK(2, "Dark");
 
         companion object {
+            /**
+             * 根据整数值查找对应的 ThemeMode 枚举值
+             *
+             * @param value 主题模式整数值
+             * @return 对应的 ThemeMode 枚举值，未找到则返回 SYSTEM
+             */
             fun fromValue(value: Int): ThemeMode {
                 return entries.find { it.value == value } ?: SYSTEM
             }

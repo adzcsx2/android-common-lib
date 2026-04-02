@@ -36,14 +36,17 @@ class ComposeDemoViewModel(
     private val autoLoadOnInit: Boolean = true
 ) : AndroidViewModel(application), KoinComponent {
 
+    /** 帖子数据仓库 */
     private val repository: PostRepository by inject()
 
     // UI 状态流
     private val _uiState = MutableStateFlow<UIState<List<Post>>>(UIState.Loading)
+    /** 帖子列表的 UI 状态流（公开只读） */
     val uiState: StateFlow<UIState<List<Post>>> = _uiState.asStateFlow()
 
     // 是否来自缓存
     private val _isFromCache = MutableStateFlow(false)
+    /** 是否来自本地缓存的状态流（公开只读） */
     val isFromCache: StateFlow<Boolean> = _isFromCache.asStateFlow()
 
     init {

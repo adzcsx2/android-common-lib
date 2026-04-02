@@ -17,15 +17,23 @@ import com.hoyn.common.ui.toast.ToastDuration
  */
 class SystemToast(context: Context) : IToast, Cloneable {
 
-    // 使用 applicationContext 避免内存泄漏
+    /** 使用 applicationContext 避免内存泄漏 */
     private val mContext: Context = context.applicationContext
+    /** 系统 Toast 实例 */
     private var mToast: Toast? = null
+    /** Toast 优先级 */
     private var priority: Int = 0
+    /** Toast 显示的内容视图 */
     private var contentView: View? = null
+    /** Toast 显示/消失的动画资源 ID */
     private var animation = android.R.style.Animation_Toast
+    /** Toast 在屏幕上的显示位置，默认底部居中 */
     private var gravity = Gravity.BOTTOM or Gravity.CENTER
+    /** Toast X 轴偏移量（像素） */
     private var xOffset: Int = 0
+    /** Toast Y 轴偏移量（像素） */
     private var yOffset: Int = 0
+    /** Toast 显示时长（毫秒） */
     @ToastDuration
     private var duration = DURATION_SHORT
 
@@ -83,15 +91,32 @@ class SystemToast(context: Context) : IToast, Cloneable {
         mToast = null
     }
 
+    /**
+     * 设置 Toast 的视图
+     *
+     * @param mView 要设置的视图
+     * @return 当前 SystemToast 实例，支持链式调用
+     */
     override fun setView(mView: View): SystemToast {
         this.contentView = mView
         return this
     }
 
+    /**
+     * 获取 Toast 的视图
+     *
+     * @return Toast 的视图对象
+     */
     override fun getView(): View {
         return this.contentView!!
     }
 
+    /**
+     * 设置 Toast 显示时长
+     *
+     * @param duration 显示时长
+     * @return 当前 SystemToast 实例，支持链式调用
+     */
     override fun setDuration(@ToastDuration duration: Int): SystemToast {
         this.duration = duration
         return this
@@ -115,6 +140,14 @@ class SystemToast(context: Context) : IToast, Cloneable {
         return this
     }
 
+    /**
+     * 设置 Toast 显示位置（带偏移）
+     *
+     * @param gravity 显示位置，使用 Gravity 常量
+     * @param xOffset X 轴偏移量
+     * @param yOffset Y 轴偏移量
+     * @return 当前 SystemToast 实例，支持链式调用
+     */
     override fun setGravity(gravity: Int, xOffset: Int, yOffset: Int): SystemToast {
         this.gravity = gravity
         this.xOffset = xOffset
@@ -122,6 +155,12 @@ class SystemToast(context: Context) : IToast, Cloneable {
         return this
     }
 
+    /**
+     * 设置 Toast 显示位置（默认偏移）
+     *
+     * @param gravity 显示位置，使用 Gravity 常量
+     * @return 当前 SystemToast 实例，支持链式调用
+     */
     override fun setGravity(gravity: Int): SystemToast {
         return setGravity(gravity, 0, 0)
     }
@@ -154,6 +193,12 @@ class SystemToast(context: Context) : IToast, Cloneable {
      */
     fun getPriority(): Int = priority
 
+    /**
+     * 设置 Toast 优先级
+     *
+     * @param mPriority 优先级值
+     * @return 当前 SystemToast 实例，支持链式调用
+     */
     /**
      * 设置 Toast 优先级
      *
