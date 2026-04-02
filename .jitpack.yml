@@ -8,5 +8,4 @@ install:
   # 发布所有模块到本地 Maven 仓库
   # -x test -x lint: 跳过测试和 lint 检查
   # --parallel: 并行构建多模块
-  - ./gradlew publishToMavenLocal -x test -x lint --parallel
-
+  - ./gradlew publishToMavenLocal -Pgroup=com.github.adzcsx2 -Pversion=$VERSION -x test -x lint --parallel
