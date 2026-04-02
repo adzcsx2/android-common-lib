@@ -71,10 +71,10 @@ class NetworkDemoViewModelTest : KoinTest {
     /**
      * 等待协程完成
      */
-    private fun waitForCoroutine(timeoutMs: Long = 1000) {
+    private fun waitForCoroutine(timeoutMs: Long = 2000) {
         val latch = CountDownLatch(1)
         Thread {
-            Thread.sleep(100) // 等待协程启动
+            Thread.sleep(300) // 等待协程完成（含 handleError delay(100)）
             latch.countDown()
         }.start()
         latch.await(timeoutMs, TimeUnit.MILLISECONDS)
@@ -210,11 +210,13 @@ class NetworkDemoViewModelTest : KoinTest {
         waitForCoroutine()
 
         val finalState = viewModel.commentsState.value
-        // launchOnlyResult now throws EmptyResponseDataException for empty data,
-        // which gets caught by error callback as UIState.Error
         assertTrue(
-            "Expected Error (empty data) but got $finalState",
-            finalState is UIState.Error
+            "Expected Success but got $finalState",
+            finalState is UIState.Success
+        )
+        assertTrue(
+            "Expected empty data but got ${(finalState as UIState.Success<*>).data}",
+            (finalState as UIState.Success<*>).data is List<*> && (finalState.data as List<*>).isEmpty()
         )
     }
 

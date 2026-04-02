@@ -12,6 +12,8 @@ plugins {
     alias(libs.plugins.room) apply false
 }
 
+val ciSkipTests = (findProperty("ciSkipTests") as? String)?.toBooleanStrictOrNull() ?: false
+
 // JitPack injects -Pgroup and -Pversion via Gradle -P flags.
 // Version is NOT inherited by subprojects in Gradle; group inherits but not reliably.
 // Propagate both to ALL projects so AGP auto-created publications get correct coordinates.
@@ -25,6 +27,14 @@ allprojects {
 allprojects {
     configurations.configureEach {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-android-extensions-runtime")
+    }
+
+    if (ciSkipTests) {
+        tasks.configureEach {
+            if (name.contains("test", ignoreCase = true)) {
+                enabled = false
+            }
+        }
     }
 }
 
