@@ -12,17 +12,19 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraConstrainedHighSpeedCaptureSession
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
+import android.hardware.camera2.CaptureResult
 import android.hardware.camera2.CaptureRequest
+import android.hardware.camera2.TotalCaptureResult
 import android.hardware.camera2.params.StreamConfigurationMap
 import android.media.MediaRecorder
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.ParcelFileDescriptor
+import android.os.SystemClock
 import android.provider.MediaStore
 import android.util.Range
 import android.util.Size
-import android.view.ScaleGestureDetector
 import android.view.Surface
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -50,6 +52,8 @@ class SlowMotionRecorder(
         private const val TAG = "SlowMotionRecorder"
         private const val OUTPUT_FRAME_RATE = 30
         private const val MOVIE_DIRECTORY = "Movies/SlowMotion"
+        private const val ULTRA_HIGH_SPEED_PREVIEW_FALLBACK_INTERVAL_MS = 25.0
+        private const val ULTRA_HIGH_SPEED_PREVIEW_FALLBACK_CONSECUTIVE_WINDOWS = 2
     }
 
     private data class HighSpeedProfile(
@@ -92,6 +96,42 @@ class SlowMotionRecorder(
     private var isReleasing = false
     private var isHostResumed = false
     private var lifecycleGeneration = 0L
+    private var recordingStatsRunnable: Runnable? = null
+    private var recordingStartedAtMs = 0L
+    private var lastCaptureTimestampNs = 0L
+    private var captureDeltaCount = 0
+    private var captureDeltaSumNs = 0L
+    private var captureDeltaMaxNs = 0L
+    private var lastExposureTimeNs = 0L
+    private var lastFrameDurationNs = 0L
+    private var isRecordingPreviewEnabled = true
+    private var unstableRecordingPreviewWindows = 0
+
+    private val recordingCaptureCallback = object : CameraCaptureSession.CaptureCallback() {
+        override fun onCaptureCompleted(
+            session: CameraCaptureSession,
+            request: CaptureRequest,
+            result: TotalCaptureResult
+        ) {
+            if (!_isRecording.value) {
+                return
+            }
+            val timestampNs = result.get(CaptureResult.SENSOR_TIMESTAMP) ?: return
+            if (lastCaptureTimestampNs != 0L) {
+                val deltaNs = timestampNs - lastCaptureTimestampNs
+                if (deltaNs > 0L) {
+                    captureDeltaCount += 1
+                    captureDeltaSumNs += deltaNs
+                    if (deltaNs > captureDeltaMaxNs) {
+                        captureDeltaMaxNs = deltaNs
+                    }
+                }
+            }
+            lastCaptureTimestampNs = timestampNs
+            lastExposureTimeNs = result.get(CaptureResult.SENSOR_EXPOSURE_TIME) ?: 0L
+            lastFrameDurationNs = result.get(CaptureResult.SENSOR_FRAME_DURATION) ?: 0L
+        }
+    }
 
     private val surfaceTextureListener = object : android.view.TextureView.SurfaceTextureListener {
         override fun onSurfaceTextureAvailable(surface: android.graphics.SurfaceTexture, width: Int, height: Int) {
@@ -154,6 +194,7 @@ class SlowMotionRecorder(
         Logger.d(TAG, "initialize previewAvailable=${previewView.isAvailable}")
         this.previewView = previewView
         previewView.setAspectRatio(9, 16)
+        previewView.isOpaque = true
         pendingOnReady = onReady
         isReleasing = false
         if (!isHostResumed) {
@@ -272,7 +313,12 @@ class SlowMotionRecorder(
         return streamMap.highSpeedVideoSizes
             .filter { size -> size == targetSize }
             .flatMap { size ->
-                streamMap.getHighSpeedVideoFpsRangesFor(size)
+                val rawRanges = streamMap.getHighSpeedVideoFpsRangesFor(size)
+                Logger.d(
+                    TAG,
+                    "rawHighSpeedRanges resolution=${resolution.name} size=${size.width}x${size.height} ranges=${rawRanges.joinToString(prefix = "[", postfix = "]") { range -> "${range.lower}-${range.upper}" }}"
+                )
+                rawRanges
                     .groupBy { range -> range.upper }
                     .mapNotNull { (fps, ranges) ->
                         if (fps !in setOf(120, 240, 480)) {
@@ -340,12 +386,12 @@ class SlowMotionRecorder(
                     Logger.e(TAG, "Camera open error: $error")
                     camera.close()
                     cameraDevice = null
-                    notifyRecordingFailed(context.getString(R.string.camera_unsupported_setting), generation)
+                    notifyRecordingFailed(buildUnsupportedSettingMessage("camera open error code=$error"), generation)
                 }
             }, backgroundHandler)
         } catch (e: Exception) {
             Logger.e(TAG, "Failed to open camera: ${e.message}")
-            notifyRecordingFailed(e.message ?: context.getString(R.string.camera_unsupported_setting), generation)
+            notifyRecordingFailed(buildUnsupportedSettingMessage(e.message), generation)
         }
     }
 
@@ -366,10 +412,11 @@ class SlowMotionRecorder(
         previewSurface?.release()
         surfaceTexture.setDefaultBufferSize(targetPreviewSize.width, targetPreviewSize.height)
         previewSurface = Surface(surfaceTexture)
+        val previewSurface = previewSurface ?: return
+        applyPreviewFrameRateHint(previewSurface, currentProfile)
         applyPreviewTransform()
         try {
             captureSession?.close()
-            val previewSurface = previewSurface ?: return
             cameraDevice.createCaptureSession(
                 listOf(previewSurface),
                 object : CameraCaptureSession.StateCallback() {
@@ -392,14 +439,14 @@ class SlowMotionRecorder(
                             return
                         }
                         Logger.e(TAG, "Preview session configuration failed")
-                        handlePreviewSessionFailure(context.getString(R.string.camera_unsupported_setting), generation)
+                        handlePreviewSessionFailure(buildUnsupportedSettingMessage("preview session configuration failed"), generation)
                     }
                 },
                 backgroundHandler
             )
         } catch (e: Exception) {
             Logger.e(TAG, "Failed to create preview session: ${e.message}")
-            handlePreviewSessionFailure(e.message ?: context.getString(R.string.camera_unsupported_setting), generation)
+            handlePreviewSessionFailure(buildUnsupportedSettingMessage(e.message), generation)
         }
     }
 
@@ -427,10 +474,15 @@ class SlowMotionRecorder(
             val profile = supportedProfilesByResolution[resolution]
                 ?.firstOrNull { profile -> profile.fps == fps.value }
             if (profile == null) {
-                notifyRecordingFailed(context.getString(R.string.camera_unsupported_setting), lifecycleGeneration)
+                notifyRecordingFailed(
+                    buildUnsupportedSettingMessage("resolution=${resolution.name}, fps=${fps.value}"),
+                    lifecycleGeneration
+                )
                 return false
             }
             currentProfile = profile
+            isRecordingPreviewEnabled = true
+            unstableRecordingPreviewWindows = 0
             isStartingRecording = true
             startSequence += 1
             val startToken = startSequence
@@ -446,9 +498,12 @@ class SlowMotionRecorder(
         } catch (e: Exception) {
             Logger.e(TAG, "Failed to start recording: ${e.message}")
             isStartingRecording = false
+            currentProfile = null
+            isRecordingPreviewEnabled = true
+            unstableRecordingPreviewWindows = 0
             releaseAttempt(activeAttempt, deleteOutput = true)
             activeAttempt = null
-            notifyRecordingFailed(e.message ?: context.getString(R.string.camera_unsupported_setting), lifecycleGeneration)
+            notifyRecordingFailed(buildUnsupportedSettingMessage(e.message), lifecycleGeneration)
             return false
         }
     }
@@ -520,8 +575,11 @@ class SlowMotionRecorder(
                             return
                         }
                         captureSession = session
+                        val includePreviewTarget = shouldIncludePreviewTargetInRecording(profile)
                         val requestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply {
-                            addTarget(previewSurface)
+                            if (includePreviewTarget) {
+                                addTarget(previewSurface)
+                            }
                             addTarget(recorderSurface)
                             applyHighSpeedVideoTuning(this, profile)
                             set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, profile.fpsRange)
@@ -529,22 +587,29 @@ class SlowMotionRecorder(
                         }
                         val highSpeedSession = session as CameraConstrainedHighSpeedCaptureSession
                         val burst = highSpeedSession.createHighSpeedRequestList(requestBuilder.build())
-                        highSpeedSession.setRepeatingBurst(burst, null, backgroundHandler)
+                        highSpeedSession.setRepeatingBurst(burst, recordingCaptureCallback, backgroundHandler)
                         attempt.recorder.start()
                         isStartingRecording = false
                         _isRecording.value = true
+                        startRecordingStats(profile, attempt)
                         notifyRecordingStarted(attempt.token)
-                        Logger.d(TAG, "Slow motion recording started at ${profile.fps}fps")
+                        Logger.d(
+                            TAG,
+                            "Slow motion recording started at ${profile.fps}fps includePreviewTarget=$includePreviewTarget burstSize=${burst.size}"
+                        )
                     } catch (e: Exception) {
                         Logger.e(TAG, "Failed to start high speed recording: ${e.message}")
                         isStartingRecording = false
+                        isRecordingPreviewEnabled = true
+                        unstableRecordingPreviewWindows = 0
+                        stopRecordingStats()
                         session.close()
                         releaseAttempt(attempt, deleteOutput = true)
                         if (activeAttempt?.token == attempt.token) {
                             activeAttempt = null
                         }
                         currentProfile = null
-                        notifyRecordingFailed(e.message ?: context.getString(R.string.camera_unsupported_setting), generation)
+                        notifyRecordingFailed(buildUnsupportedSettingMessage(e.message), generation)
                     }
                 }
 
@@ -555,13 +620,15 @@ class SlowMotionRecorder(
                     }
                     Logger.e(TAG, "High speed session configuration failed")
                     isStartingRecording = false
+                    isRecordingPreviewEnabled = true
+                    unstableRecordingPreviewWindows = 0
                     session.close()
                     releaseAttempt(attempt, deleteOutput = true)
                     if (activeAttempt?.token == attempt.token) {
                         activeAttempt = null
                     }
                     currentProfile = null
-                    notifyRecordingFailed(context.getString(R.string.camera_unsupported_setting), generation)
+                    notifyRecordingFailed(buildUnsupportedSettingMessage("high speed session configuration failed"), generation)
                 }
             },
             backgroundHandler
@@ -570,7 +637,7 @@ class SlowMotionRecorder(
 
     private fun calculateBitRate(profile: HighSpeedProfile): Int {
         val bitRate = when {
-            profile.fps >= 480 -> 40_000_000
+            profile.fps >= 480 -> 24_000_000
             profile.size.width >= 1920 && profile.fps >= 240 -> 72_000_000
             profile.size.width >= 1920 -> 48_000_000
             profile.fps >= 240 -> 36_000_000
@@ -663,9 +730,13 @@ class SlowMotionRecorder(
         startSequence += 1
         if (isStartingRecording && !_isRecording.value) {
             isStartingRecording = false
+            stopRecordingStats()
             pendingOnReady = null
             releaseAttempt(activeAttempt, deleteOutput = true)
             activeAttempt = null
+            currentProfile = null
+            isRecordingPreviewEnabled = true
+            unstableRecordingPreviewWindows = 0
             if (!isReleasing && isHostResumed) {
                 previewSize = supportedProfilesByResolution[Resolution.HD_720P]
                     ?.firstOrNull()
@@ -681,6 +752,7 @@ class SlowMotionRecorder(
             return
         }
         val attempt = activeAttempt ?: return
+        stopRecordingStats()
         try {
             captureSession?.stopRepeating()
             captureSession?.abortCaptures()
@@ -700,7 +772,7 @@ class SlowMotionRecorder(
             activeAttempt = null
             _isRecording.value = false
             currentProfile = null
-            notifyRecordingFailed(e.message ?: context.getString(R.string.camera_recording_failed), callbackGeneration)
+            notifyRecordingFailed(buildRecordingFailureReason(e.message), callbackGeneration)
             return
         }
 
@@ -708,6 +780,8 @@ class SlowMotionRecorder(
         activeAttempt = null
         _isRecording.value = false
         currentProfile = null
+        isRecordingPreviewEnabled = true
+        unstableRecordingPreviewWindows = 0
         if (!isReleasing && isHostResumed) {
             previewSize = supportedProfilesByResolution[Resolution.HD_720P]
                 ?.firstOrNull()
@@ -723,31 +797,15 @@ class SlowMotionRecorder(
      * 设置缩放比例
      */
     fun setZoom(ratio: Float) {
+        if (_isRecording.value && currentProfile?.fps ?: 0 >= 480) {
+            Logger.d(TAG, "Ignore zoom update while recording 480fps")
+            return
+        }
         val maxZoom = _maxZoomRatio.value
 
         val clampedRatio = ratio.coerceIn(1.0f, maxZoom)
         _zoomRatio.value = clampedRatio
         updateRepeatingRequest()
-    }
-
-    /**
-     * 处理缩放手势
-     */
-    fun handlePinchZoom(scaleFactor: Float) {
-        val newRatio = _zoomRatio.value * scaleFactor
-        setZoom(newRatio)
-    }
-
-    /**
-     * 创建缩放手势检测器
-     */
-    fun createScaleGestureDetector(): ScaleGestureDetector {
-        return ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector): Boolean {
-                handlePinchZoom(detector.scaleFactor)
-                return true
-            }
-        })
     }
 
     /**
@@ -805,18 +863,26 @@ class SlowMotionRecorder(
             if (_isRecording.value) {
                 val recorderSurface = attempt?.recorder?.surface ?: return
                 val profile = currentProfile ?: return
+                val includePreviewTarget = shouldIncludePreviewTargetInRecording(profile)
                 val requestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD).apply {
-                    addTarget(previewSurface)
+                    if (includePreviewTarget) {
+                        addTarget(previewSurface)
+                    }
                     addTarget(recorderSurface)
                     applyHighSpeedVideoTuning(this, profile)
                     set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, profile.fpsRange)
                     applyZoom(this)
                 }
                 val highSpeedSession = captureSession as? CameraConstrainedHighSpeedCaptureSession ?: return
+                val burst = highSpeedSession.createHighSpeedRequestList(requestBuilder.build())
                 highSpeedSession.setRepeatingBurst(
-                    highSpeedSession.createHighSpeedRequestList(requestBuilder.build()),
-                    null,
+                    burst,
+                    recordingCaptureCallback,
                     backgroundHandler
+                )
+                Logger.d(
+                    TAG,
+                    "updateRepeatingRequest recording fps=${profile.fps} includePreviewTarget=$includePreviewTarget burstSize=${burst.size}"
                 )
             } else {
                 val requestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW).apply {
@@ -894,6 +960,9 @@ class SlowMotionRecorder(
         Logger.e(TAG, "notifyRecordingFailed message=$message resumed=$isHostResumed")
         isStartingRecording = false
         _isRecording.value = false
+        currentProfile = null
+        isRecordingPreviewEnabled = true
+        stopRecordingStats()
         mainExecutor.execute {
             if (!shouldDispatchUiCallback(generation)) {
                 Logger.d(TAG, "Skip recording failed callback generation=$generation resumed=$isHostResumed")
@@ -909,6 +978,25 @@ class SlowMotionRecorder(
             createPreviewSession()
         } else {
             closeCameraResources(stopThread = true)
+        }
+    }
+
+    private fun buildUnsupportedSettingMessage(reason: String?): String {
+        val baseMessage = context.getString(R.string.camera_unsupported_setting)
+        val normalizedReason = reason?.trim().orEmpty()
+        return if (normalizedReason.isEmpty() || normalizedReason == baseMessage) {
+            baseMessage
+        } else {
+            "$baseMessage: $normalizedReason"
+        }
+    }
+
+    private fun buildRecordingFailureReason(reason: String?): String {
+        val normalizedReason = reason?.trim().orEmpty()
+        return if (normalizedReason.isEmpty()) {
+            context.getString(R.string.camera_recording_failed)
+        } else {
+            normalizedReason
         }
     }
 
@@ -1005,7 +1093,11 @@ class SlowMotionRecorder(
 
         chooseSupportedMode(
             characteristics.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES),
-            intArrayOf(CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO, CaptureRequest.CONTROL_AF_MODE_AUTO)
+            if (isUltraHighSpeed) {
+                intArrayOf(CaptureRequest.CONTROL_AF_MODE_OFF, CaptureRequest.CONTROL_AF_MODE_AUTO)
+            } else {
+                intArrayOf(CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO, CaptureRequest.CONTROL_AF_MODE_AUTO)
+            }
         )?.let { mode ->
             requestBuilder.set(CaptureRequest.CONTROL_AF_MODE, mode)
         }
@@ -1015,6 +1107,15 @@ class SlowMotionRecorder(
             intArrayOf(CaptureRequest.CONTROL_AWB_MODE_AUTO)
         )?.let { mode ->
             requestBuilder.set(CaptureRequest.CONTROL_AWB_MODE, mode)
+        }
+
+        if (isUltraHighSpeed) {
+            if (characteristics.get(CameraCharacteristics.CONTROL_AE_LOCK_AVAILABLE) == true) {
+                requestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, true)
+            }
+            if (characteristics.get(CameraCharacteristics.CONTROL_AWB_LOCK_AVAILABLE) == true) {
+                requestBuilder.set(CaptureRequest.CONTROL_AWB_LOCK, true)
+            }
         }
 
         chooseSupportedMode(
@@ -1076,6 +1177,10 @@ class SlowMotionRecorder(
         )
     }
 
+    private fun shouldIncludePreviewTargetInRecording(profile: HighSpeedProfile): Boolean {
+        return profile.fps < 480 || isRecordingPreviewEnabled
+    }
+
     private fun chooseSupportedMode(availableModes: IntArray?, preferredModes: IntArray): Int? {
         val supportedModes = availableModes ?: return null
         return preferredModes.firstOrNull { candidate -> supportedModes.contains(candidate) }
@@ -1105,7 +1210,116 @@ class SlowMotionRecorder(
         }
     }
 
+    private fun applyPreviewFrameRateHint(surface: Surface, profile: HighSpeedProfile?) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            return
+        }
+        val previewView = previewView ?: return
+        val supportedModes = previewView.display?.supportedModes ?: return
+        val maxSupportedRefreshRate = supportedModes.maxOfOrNull { mode -> mode.refreshRate } ?: return
+        val requestedRate = when {
+            profile?.fps ?: 0 >= 480 -> minOf(60f, maxSupportedRefreshRate)
+            profile?.fps ?: 0 >= 240 -> minOf(90f, maxSupportedRefreshRate)
+            else -> minOf(60f, maxSupportedRefreshRate)
+        }
+        Logger.d(
+            TAG,
+            "applyPreviewFrameRateHint requestedRate=$requestedRate maxSupportedRefreshRate=$maxSupportedRefreshRate profileFps=${profile?.fps}"
+        )
+        surface.setFrameRate(requestedRate, Surface.FRAME_RATE_COMPATIBILITY_FIXED_SOURCE)
+    }
+
     private fun shouldDispatchUiCallback(generation: Long): Boolean {
         return !isReleasing && isHostResumed && generation == lifecycleGeneration
+    }
+
+    private fun startRecordingStats(profile: HighSpeedProfile, attempt: RecordingAttempt) {
+        stopRecordingStats()
+        recordingStartedAtMs = SystemClock.elapsedRealtime()
+        resetCaptureStats()
+        val handler = backgroundHandler ?: return
+        val runnable = object : Runnable {
+            override fun run() {
+                if (!_isRecording.value || activeAttempt?.token != attempt.token) {
+                    return
+                }
+                val elapsedMs = SystemClock.elapsedRealtime() - recordingStartedAtMs
+                val outputBytes = attempt.outputPfd.statSize
+                val sessionName = captureSession?.javaClass?.simpleName ?: "null"
+                val previewDimensions = previewSize?.let { size -> "${size.width}x${size.height}" } ?: "unknown"
+                val avgCaptureIntervalMs = if (captureDeltaCount > 0) {
+                    captureDeltaSumNs.toDouble() / captureDeltaCount / 1_000_000.0
+                } else {
+                    0.0
+                }
+                val maxCaptureIntervalMs = captureDeltaMaxNs / 1_000_000.0
+                val exposureMs = lastExposureTimeNs / 1_000_000.0
+                val frameDurationMs = lastFrameDurationNs / 1_000_000.0
+                Logger.d(
+                    TAG,
+                    "recordingStats elapsedMs=$elapsedMs outputBytes=$outputBytes fps=${profile.fps} fpsRange=${profile.fpsRange.lower}-${profile.fpsRange.upper} zoom=${_zoomRatio.value} session=$sessionName previewSize=$previewDimensions previewAvailable=${previewView?.isAvailable == true} captureCount=$captureDeltaCount avgCaptureIntervalMs=${"%.3f".format(Locale.US, avgCaptureIntervalMs)} maxCaptureIntervalMs=${"%.3f".format(Locale.US, maxCaptureIntervalMs)} exposureMs=${"%.3f".format(Locale.US, exposureMs)} frameDurationMs=${"%.3f".format(Locale.US, frameDurationMs)}"
+                )
+                maybeFallbackRecordingPreview(profile, attempt, avgCaptureIntervalMs)
+                resetCaptureStats(keepLastTimestamp = true)
+                handler.postDelayed(this, 1000)
+            }
+        }
+        recordingStatsRunnable = runnable
+        handler.postDelayed(runnable, 1000)
+    }
+
+    private fun stopRecordingStats() {
+        val handler = backgroundHandler
+        val runnable = recordingStatsRunnable
+        if (handler != null && runnable != null) {
+            handler.removeCallbacks(runnable)
+        }
+        recordingStatsRunnable = null
+        recordingStartedAtMs = 0L
+        resetCaptureStats()
+        unstableRecordingPreviewWindows = 0
+    }
+
+    private fun resetCaptureStats(keepLastTimestamp: Boolean = false) {
+        if (!keepLastTimestamp) {
+            lastCaptureTimestampNs = 0L
+        }
+        captureDeltaCount = 0
+        captureDeltaSumNs = 0L
+        captureDeltaMaxNs = 0L
+        lastExposureTimeNs = 0L
+        lastFrameDurationNs = 0L
+    }
+
+    private fun maybeFallbackRecordingPreview(
+        profile: HighSpeedProfile,
+        attempt: RecordingAttempt,
+        avgCaptureIntervalMs: Double
+    ) {
+        if (profile.fps < 480 || !isRecordingPreviewEnabled || activeAttempt?.token != attempt.token) {
+            return
+        }
+        if (avgCaptureIntervalMs <= 0.0) {
+            unstableRecordingPreviewWindows = 0
+            return
+        }
+        if (avgCaptureIntervalMs < ULTRA_HIGH_SPEED_PREVIEW_FALLBACK_INTERVAL_MS) {
+            unstableRecordingPreviewWindows = 0
+            return
+        }
+        unstableRecordingPreviewWindows += 1
+        Logger.w(
+            TAG,
+            "recording preview unstable fps=${profile.fps} avgCaptureIntervalMs=${"%.3f".format(Locale.US, avgCaptureIntervalMs)} unstableWindows=$unstableRecordingPreviewWindows"
+        )
+        if (unstableRecordingPreviewWindows < ULTRA_HIGH_SPEED_PREVIEW_FALLBACK_CONSECUTIVE_WINDOWS) {
+            return
+        }
+        unstableRecordingPreviewWindows = 0
+        isRecordingPreviewEnabled = false
+        Logger.w(TAG, "Fallback to recorder-only high speed request for ${profile.fps}fps to protect recording cadence")
+        if (_isRecording.value && activeAttempt?.token == attempt.token && currentProfile?.fps == profile.fps) {
+            updateRepeatingRequest()
+        }
     }
 }

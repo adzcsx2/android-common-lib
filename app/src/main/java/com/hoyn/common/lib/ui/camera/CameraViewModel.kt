@@ -27,8 +27,10 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     companion object {
         private const val KEY_RESOLUTION = "camera_resolution"
         private const val KEY_FPS = "camera_fps"
+        private const val KEY_ZOOM_RATIO = "camera_zoom_ratio"
         private val DEFAULT_RESOLUTION = Resolution.HD_720P
         private val DEFAULT_FPS = Fps.FPS_120
+        private const val DEFAULT_ZOOM_RATIO_STORED = 100
     }
 
     // 分辨率枚举
@@ -76,15 +78,16 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     private val _zoomRatio = MutableStateFlow(1.0f)
     val zoomRatio: StateFlow<Float> = _zoomRatio.asStateFlow()
 
-    // 显示缩放指示器
-    private val _showZoomIndicator = MutableStateFlow(false)
-    val showZoomIndicator: StateFlow<Boolean> = _showZoomIndicator.asStateFlow()
+    // 当前可用缩放范围
+    private val _zoomRange = MutableStateFlow(resolveZoomRange(DEFAULT_FPS, 1.0f))
+    val zoomRange: StateFlow<CameraZoomRange> = _zoomRange.asStateFlow()
 
     // 录像计时器 Job
     private var recordingTimerJob: Job? = null
 
-    // 缩放指示器隐藏 Job
-    private var zoomIndicatorJob: Job? = null
+    private var deviceMaxZoomRatio = 1.0f
+    private var restoredZoomRatio = 1.0f
+    private var hasResolvedDeviceZoomRatio = false
 
     init {
         // 从 MMKV 恢复保存的设置
@@ -109,6 +112,10 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
         // 恢复帧率设置
         val savedFpsOrdinal = MMKVUtils.getInt(KEY_FPS, DEFAULT_FPS.ordinal)
         _selectedFps.value = Fps.entries.getOrNull(savedFpsOrdinal) ?: DEFAULT_FPS
+
+        restoredZoomRatio = storedValueToZoomRatio(
+            MMKVUtils.getInt(KEY_ZOOM_RATIO, DEFAULT_ZOOM_RATIO_STORED)
+        )
 
         // 根据分辨率更新可用帧率选项
         updateAvailableFpsOptions(_selectedResolution.value)
@@ -150,6 +157,11 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
             _selectedFps.value = nextFps
             MMKVUtils.put(KEY_FPS, nextFps.ordinal)
         }
+
+        refreshZoomState(
+            preferredRatio = if (hasResolvedDeviceZoomRatio) _zoomRatio.value else restoredZoomRatio,
+            shouldPersist = hasResolvedDeviceZoomRatio
+        )
     }
 
     /**
@@ -168,6 +180,8 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
         // 保存到 MMKV
         MMKVUtils.put(KEY_FPS, fps.ordinal)
 
+        refreshZoomState(preferredRatio = _zoomRatio.value, shouldPersist = hasResolvedDeviceZoomRatio)
+
         return true
     }
 
@@ -177,6 +191,12 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     fun setSupportedFpsByResolution(supportedFpsByResolution: Map<Resolution, Set<Int>>) {
         _supportedFpsByResolution.value = supportedFpsByResolution
         updateAvailableFpsOptions(_selectedResolution.value)
+    }
+
+    fun setDeviceMaxZoomRatio(maxZoomRatio: Float) {
+        deviceMaxZoomRatio = maxZoomRatio.coerceAtLeast(1.0f)
+        hasResolvedDeviceZoomRatio = true
+        refreshZoomState(preferredRatio = restoredZoomRatio, shouldPersist = false)
     }
 
     /**
@@ -216,14 +236,22 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
      * 更新缩放比例
      */
     fun updateZoomRatio(ratio: Float) {
-        _zoomRatio.value = ratio.coerceAtLeast(1.0f)
+        val clampedRatio = clampZoomRatio(ratio, _zoomRange.value)
+        _zoomRatio.value = clampedRatio
+        restoredZoomRatio = clampedRatio
+        MMKVUtils.put(KEY_ZOOM_RATIO, zoomRatioToStoredValue(clampedRatio))
+    }
 
-        // 显示缩放指示器，并在一段时间后自动隐藏
-        _showZoomIndicator.value = true
-        zoomIndicatorJob?.cancel()
-        zoomIndicatorJob = viewModelScope.launch {
-            delay(2000)
-            _showZoomIndicator.value = false
+    private fun refreshZoomState(preferredRatio: Float, shouldPersist: Boolean) {
+        val resolvedRange = resolveZoomRange(_selectedFps.value, deviceMaxZoomRatio)
+        _zoomRange.value = resolvedRange
+
+        val clampedRatio = clampZoomRatio(preferredRatio, resolvedRange)
+        _zoomRatio.value = clampedRatio
+        restoredZoomRatio = clampedRatio
+
+        if (shouldPersist) {
+            MMKVUtils.put(KEY_ZOOM_RATIO, zoomRatioToStoredValue(clampedRatio))
         }
     }
 
@@ -239,6 +267,5 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     override fun onCleared() {
         super.onCleared()
         recordingTimerJob?.cancel()
-        zoomIndicatorJob?.cancel()
     }
 }

@@ -2,8 +2,7 @@ package com.hoyn.common.lib.ui.camera
 
 import android.Manifest
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.ScaleGestureDetector
+import android.widget.SeekBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import com.hoyn.common.base.BaseActivity
@@ -31,13 +30,11 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
 
     companion object {
         private const val TAG = "CameraActivity"
+        private const val ZOOM_SLIDER_MAX = 1000
     }
 
     // 慢动作录像控制器
     private lateinit var recorder: SlowMotionRecorder
-
-    // 缩放手势检测器
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
 
     private var isStartingRecording = false
     private var isCameraSetup = false
@@ -85,7 +82,6 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         }
         Logger.d(TAG, "setupCamera start")
         recorder = SlowMotionRecorder(this, this)
-        scaleGestureDetector = recorder.createScaleGestureDetector()
         isCameraSetup = true
 
         // 初始化相机预览
@@ -93,12 +89,12 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             Logger.d(TAG, "Camera initialized")
 
             viewModel.setSupportedFpsByResolution(recorder.supportedFpsByResolution.value)
+            viewModel.setDeviceMaxZoomRatio(recorder.maxZoomRatio.value)
         }
 
         // 设置录像回调
         recorder.setOnRecordingSavedListener { _ ->
             Logger.d(TAG, "Recording saved callback")
-            ToastUtil.show(getString(R.string.camera_recording_saved))
             resetRecordingUi()
         }
 
@@ -108,27 +104,37 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             viewModel.startRecording()
             binding.btnRecord.isSelected = true
             animateRecordButton(toRecording = true)
-            ToastUtil.show(getString(R.string.camera_recording_started))
         }
 
         recorder.setOnRecordingFailedListener { error ->
             Logger.e(TAG, "Recording failed callback: $error")
             resetRecordingUi()
-            ToastUtil.show(getString(R.string.camera_recording_failed) + ": $error")
+            ToastUtil.show(buildRecordingFailedMessage(error))
         }
 
-        // 观察缩放变化并同步到 recorder
-        lifecycleScope.launchWhenStarted {
-            recorder.zoomRatio.collect { ratio ->
-                viewModel.updateZoomRatio(ratio)
-            }
-        }
     }
 
     /**
      * 设置控件点击事件
      */
     private fun setupControls() {
+        binding.seekZoom.max = ZOOM_SLIDER_MAX
+        binding.seekZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (!fromUser) {
+                    return
+                }
+                val zoomRatio = progressToZoomRatio(progress, viewModel.zoomRange.value, ZOOM_SLIDER_MAX)
+                viewModel.updateZoomRatio(zoomRatio)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+
         // 分辨率按钮
         binding.btnResolution720p.click {
             viewModel.selectResolution(Resolution.HD_720P)
@@ -268,6 +274,18 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         }
     }
 
+    private fun buildRecordingFailedMessage(error: String): String {
+        val baseMessage = getString(R.string.camera_recording_failed)
+        val normalizedError = error.trim()
+        return if (normalizedError.isEmpty()) {
+            baseMessage
+        } else if (normalizedError == baseMessage || normalizedError.startsWith(baseMessage + ",")) {
+            normalizedError
+        } else {
+            baseMessage + ", " + normalizedError
+        }
+    }
+
     /**
      * 观察状态变化
      */
@@ -290,14 +308,22 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             }
         }
 
+        // 观察缩放范围
+        lifecycleScope.launchWhenStarted {
+            viewModel.zoomRange.collect { range ->
+                binding.seekZoom.isEnabled = range.isAdjustable
+                binding.seekZoom.alpha = if (range.isAdjustable) 1.0f else 0.45f
+                binding.seekZoom.progress = zoomRatioToProgress(viewModel.zoomRatio.value, range, ZOOM_SLIDER_MAX)
+            }
+        }
+
         // 观察缩放比例
         lifecycleScope.launchWhenStarted {
-            viewModel.showZoomIndicator.collect { show ->
-                if (show) {
-                    binding.tvZoomRatio.visible()
-                    binding.tvZoomRatio.text = getString(R.string.camera_zoom_label, viewModel.zoomRatio.value)
-                } else {
-                    binding.tvZoomRatio.gone()
+            viewModel.zoomRatio.collect { ratio ->
+                binding.tvZoomRatio.text = getString(R.string.camera_zoom_label, ratio)
+                binding.seekZoom.progress = zoomRatioToProgress(ratio, viewModel.zoomRange.value, ZOOM_SLIDER_MAX)
+                if (::recorder.isInitialized) {
+                    recorder.setZoom(ratio)
                 }
             }
         }
@@ -333,16 +359,6 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         val minutes = seconds / 60
         val secs = seconds % 60
         return String.format("%02d:%02d", minutes, secs)
-    }
-
-    /**
-     * 处理触摸事件（用于缩放）
-     */
-    override fun dispatchTouchEvent(event: MotionEvent?): Boolean {
-        if (::scaleGestureDetector.isInitialized && event != null) {
-            scaleGestureDetector.onTouchEvent(event)
-        }
-        return super.dispatchTouchEvent(event)
     }
 
     override fun onResume() {
