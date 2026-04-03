@@ -27,14 +27,14 @@
     </FrameLayout>
 
     <!-- Runtime Log Overlay -->
-    <LinearLayout
+    <ScrollView
         android:id="@+id/logOverlay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:layout_gravity="bottom"
-        android:orientation="vertical"
         android:padding="16dp"
-        android:background="#80000000">
+        android:background="#80000000"
+        android:scrollbars="vertical">
 
         <TextView
             android:id="@+id/tvLogContent"
@@ -43,10 +43,8 @@
             android:textColor="@color/white"
             android:textSize="11sp"
             android:fontFamily="monospace"
-            android:lineSpacingExtra="2dp"
-            android:maxLines="15"
-            android:scrollbars="vertical" />
-    </LinearLayout>
+            android:lineSpacingExtra="2dp" />
+    </ScrollView>
 
     <!-- Top Controls -->
     <LinearLayout
@@ -80,29 +78,13 @@
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="8dp" />
 
-            <TextView
-                android:id="@+id/btnResolution720p"
+            <!-- 动态分辨率按钮容器 -->
+            <LinearLayout
+                android:id="@+id/resolutionContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/selector_setting_button"
-                android:text="@string/camera_resolution_720p"
-                android:textColor="@color/camera_setting_button_text"
-                android:textSize="14sp"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp" />
-
-            <TextView
-                android:id="@+id/btnResolution1080p"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/selector_setting_button"
-                android:text="@string/camera_resolution_1080p"
-                android:textColor="@color/camera_setting_button_text"
-                android:textSize="14sp"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp" />
+                android:orientation="horizontal"
+                android:gravity="center" />
         </LinearLayout>
 
         <!-- FPS Buttons Row -->

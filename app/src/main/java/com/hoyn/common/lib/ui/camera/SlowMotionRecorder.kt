@@ -34,7 +34,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.hoyn.common.lib.R
-import com.hoyn.common.lib.ui.camera.CameraViewModel.Resolution
 import com.hoyn.common.utils.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,7 +59,7 @@ class SlowMotionRecorder(
         private const val TAG = "SlowMotionRecorder"
         private const val MOVIE_DIRECTORY = "Movies/SlowMotion"
         private const val MIN_SUPPORTED_HIGH_SPEED_FPS = 60
-        private const val MAX_SUPPORTED_HIGH_SPEED_FPS = 240
+        private const val MAX_SUPPORTED_HIGH_SPEED_FPS = 1000  // 支持 960fps 等超高帧率
         private const val ULTRA_HIGH_SPEED_PREVIEW_FALLBACK_INTERVAL_MS = 25.0
         private const val ULTRA_HIGH_SPEED_PREVIEW_FALLBACK_CONSECUTIVE_WINDOWS = 2
         private const val PREVIEW_RECOVERY_DELAY_MS = 200L
@@ -106,7 +105,6 @@ class SlowMotionRecorder(
     private var activeArrayRect: Rect? = null
     private var currentProfile: HighSpeedProfile? = null
     private var pendingOnReady: (() -> Unit)? = null
-    private var supportedProfilesByResolution: Map<Resolution, List<HighSpeedProfile>> = emptyMap()
     private var previewSize: Size? = null
     private var startSequence = 0L
     private var isStartingRecording = false
@@ -129,6 +127,7 @@ class SlowMotionRecorder(
     private var previewRecoveryRetryCount = 0
     private var pendingPreviewRecoveryRunnable: Runnable? = null
     private var isPreviewVisible = true
+    private var supportedProfilesByResolution: Map<CameraResolution, List<HighSpeedProfile>> = emptyMap()
 
     private val recordingCaptureCallback = object : CameraCaptureSession.CaptureCallback() {
         override fun onCaptureCompleted(
@@ -236,8 +235,8 @@ class SlowMotionRecorder(
     val maxZoomRatio: StateFlow<Float> = _maxZoomRatio.asStateFlow()
 
     // 各分辨率支持的帧率
-    private val _supportedFpsByResolution = MutableStateFlow<Map<Resolution, List<CameraFpsOption>>>(emptyMap())
-    val supportedFpsByResolution: StateFlow<Map<Resolution, List<CameraFpsOption>>> = _supportedFpsByResolution.asStateFlow()
+    private val _supportedFpsByResolution = MutableStateFlow<Map<CameraResolution, List<CameraFpsOption>>>(emptyMap())
+    val supportedFpsByResolution: StateFlow<Map<CameraResolution, List<CameraFpsOption>>> = _supportedFpsByResolution.asStateFlow()
 
     // 录像回调
     private var onRecordingStarted: (() -> Unit)? = null
@@ -363,45 +362,64 @@ class SlowMotionRecorder(
         }
     }
 
-    private fun supportedProfilesFor(characteristics: CameraCharacteristics): Map<Resolution, List<HighSpeedProfile>> {
+    /**
+     * 动态检测所有支持的慢动作分辨率
+     *
+     * 不再硬编码 720p 和 1080p，而是遍历所有 highSpeedVideoSizes，
+     * 为每个支持的分辨率生成对应的 CameraResolution 和帧率列表。
+     */
+    private fun supportedProfilesFor(characteristics: CameraCharacteristics): Map<CameraResolution, List<HighSpeedProfile>> {
         val capabilities = characteristics.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES) ?: return emptyMap()
         if (CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO !in capabilities) {
             return emptyMap()
         }
         val streamMap = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: return emptyMap()
-        return Resolution.entries.associateWith { resolution ->
-            profilesForResolution(streamMap, resolution)
+
+        // 动态检测所有支持的分辨率
+        val supportedSizes = streamMap.highSpeedVideoSizes
+        val resolutionProfiles = mutableMapOf<CameraResolution, List<HighSpeedProfile>>()
+
+        for (size in supportedSizes) {
+            val resolution = CameraResolution.fromSize(size.width, size.height)
+            val profiles = profilesForResolution(streamMap, size, resolution)
+            if (profiles.isNotEmpty()) {
+                resolutionProfiles[resolution] = profiles
+            }
         }
+
+        // 输出日志：设备支持的慢动作分辨率
+        val resolutions = resolutionProfiles.keys.sortedBy { it.width }
+        Logger.d(TAG, "设备支持的慢动作分辨率: ${resolutions.map { "${it.width}x${it.height}(${it.displayName})" }}")
+
+        return resolutionProfiles
     }
 
     private fun profilesForResolution(
         streamMap: StreamConfigurationMap,
-        resolution: Resolution
+        size: Size,
+        resolution: CameraResolution
     ): List<HighSpeedProfile> {
-        val targetSize = when (resolution) {
-            Resolution.HD_720P -> Size(1280, 720)
-            Resolution.HD_1080P -> Size(1920, 1080)
+        val rawRanges = streamMap.getHighSpeedVideoFpsRangesFor(size)
+        Logger.d(
+            TAG,
+            "rawHighSpeedRanges resolution=${resolution.displayName} size=${size.width}x${size.height} ranges=${rawRanges.joinToString(prefix = "[", postfix = "]") { range -> "${range.lower}-${range.upper}" }}"
+        )
+        val normalizedOptions = normalizeHighSpeedFpsRanges(
+            rawRanges = rawRanges.asIterable(),
+            minSupportedFps = MIN_SUPPORTED_HIGH_SPEED_FPS,
+            maxSupportedFps = MAX_SUPPORTED_HIGH_SPEED_FPS
+        )
+        Logger.d(
+            TAG,
+            "normalizedFpsOptions resolution=${resolution.displayName} count=${normalizedOptions.size} options=${normalizedOptions.joinToString(prefix = "[", postfix = "]") { "${it.lower}-${it.upper}(exact=${it.isExact})" }}"
+        )
+        return normalizedOptions.map { fpsOption ->
+            Logger.d(
+                TAG,
+                "profilesForResolution resolution=${resolution.displayName} size=${size.width}x${size.height} selectedRange=${fpsOption.lower}-${fpsOption.upper} exact=${fpsOption.isExact}"
+            )
+            HighSpeedProfile(size, Range(fpsOption.lower, fpsOption.upper))
         }
-        return streamMap.highSpeedVideoSizes
-            .filter { size -> size == targetSize }
-            .flatMap { size ->
-                val rawRanges = streamMap.getHighSpeedVideoFpsRangesFor(size)
-                Logger.d(
-                    TAG,
-                    "rawHighSpeedRanges resolution=${resolution.name} size=${size.width}x${size.height} ranges=${rawRanges.joinToString(prefix = "[", postfix = "]") { range -> "${range.lower}-${range.upper}" }}"
-                )
-                normalizeHighSpeedFpsRanges(
-                    rawRanges = rawRanges.asIterable(),
-                    minSupportedFps = MIN_SUPPORTED_HIGH_SPEED_FPS,
-                    maxSupportedFps = MAX_SUPPORTED_HIGH_SPEED_FPS
-                ).map { fpsOption ->
-                    Logger.d(
-                        TAG,
-                        "profilesForResolution resolution=${resolution.name} size=${size.width}x${size.height} selectedRange=${fpsOption.lower}-${fpsOption.upper} exact=${fpsOption.isExact}"
-                    )
-                    HighSpeedProfile(size, Range(fpsOption.lower, fpsOption.upper))
-                }
-            }
             .distinctBy { profile -> profile.fpsRange.lower to profile.fpsRange.upper }
             .sortedWith(compareBy({ profile -> profile.fps }, { profile -> profile.fpsRange.lower }))
     }
@@ -470,7 +488,7 @@ class SlowMotionRecorder(
     private fun createPreviewSession() {
         val cameraDevice = cameraDevice ?: return
         val generation = lifecycleGeneration
-        val targetPreviewSize = previewSize ?: supportedProfilesByResolution[Resolution.HD_720P]
+        val targetPreviewSize = previewSize ?: supportedProfilesByResolution[CameraResolution.HD_720P]
             ?.firstOrNull()
             ?.size
             ?: Size(1280, 720)
@@ -529,7 +547,7 @@ class SlowMotionRecorder(
      * @param fps 帧率
      */
     fun startRecording(
-        resolution: Resolution,
+        resolution: CameraResolution,
         fpsOption: CameraFpsOption
     ): Boolean {
         if (_isRecording.value || isStartingRecording) {
@@ -570,7 +588,7 @@ class SlowMotionRecorder(
             if (profile == null) {
                 notifyRecordingFailed(
                     buildUnsupportedSettingMessage(
-                        "resolution=${resolution.name}, fps=${targetFpsOption.lower}-${targetFpsOption.upper}"
+                        "resolution=${resolution.displayName}, fps=${targetFpsOption.lower}-${targetFpsOption.upper}"
                     ),
                     lifecycleGeneration,
                     rebuildPreview = false
@@ -587,7 +605,7 @@ class SlowMotionRecorder(
             val startToken = startSequence
             Logger.d(
                 TAG,
-                "startRecording token=$startToken resolution=${resolution.name} recordingFps=${targetFpsOption.lower}-${targetFpsOption.upper}"
+                "startRecording token=$startToken resolution=${resolution.displayName} recordingFps=${targetFpsOption.lower}-${targetFpsOption.upper}"
             )
             val handler = backgroundHandler
             if (handler == null) {
@@ -920,7 +938,7 @@ class SlowMotionRecorder(
             updatePreviewViewVisibility()
             if (!isReleasing && isHostResumed) {
                 switchPreviewOutputMode(PreviewOutputMode.TEXTURE_VIEW)
-                previewSize = supportedProfilesByResolution[Resolution.HD_720P]
+                previewSize = supportedProfilesByResolution[CameraResolution.HD_720P]
                     ?.firstOrNull()
                     ?.size
                     ?: previewSize
@@ -1475,7 +1493,7 @@ class SlowMotionRecorder(
                 return@Runnable
             }
             switchPreviewOutputMode(PreviewOutputMode.TEXTURE_VIEW)
-            previewSize = supportedProfilesByResolution[Resolution.HD_720P]
+            previewSize = supportedProfilesByResolution[CameraResolution.HD_720P]
                 ?.firstOrNull()
                 ?.size
                 ?: previewSize

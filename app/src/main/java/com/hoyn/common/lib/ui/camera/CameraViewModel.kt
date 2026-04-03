@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
  * CameraActivity 的 ViewModel
  *
  * 管理相机设置状态：
- * - 分辨率选择（720p / 1080p）
+ * - 分辨率选择（动态支持所有设备支持的分辨率）
  * - 帧率选择（120 / 240 fps）
  * - 录像状态
  * - 缩放比例
@@ -26,24 +26,24 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
 
     companion object {
         private const val KEY_RESOLUTION = "camera_resolution"
+        private const val KEY_RESOLUTION_WIDTH = "camera_resolution_width"
+        private const val KEY_RESOLUTION_HEIGHT = "camera_resolution_height"
         private const val KEY_FPS = "camera_fps"
         private const val KEY_FPS_LOWER = "camera_fps_lower"
         private const val KEY_ZOOM_RATIO = "camera_zoom_ratio"
-        private val DEFAULT_RESOLUTION = Resolution.HD_1080P
+        private val DEFAULT_RESOLUTION = CameraResolution.HD_1080P
         private const val DEFAULT_FPS = 240
         private val DEFAULT_FPS_OPTION = CameraFpsOption(DEFAULT_FPS, DEFAULT_FPS)
         private const val DEFAULT_ZOOM_RATIO_STORED = 100
     }
 
-    // 分辨率枚举
-    enum class Resolution {
-        HD_720P,  // 1280x720
-        HD_1080P  // 1920x1080
-    }
-
     // 当前选中的分辨率
     private val _selectedResolution = MutableStateFlow(DEFAULT_RESOLUTION)
-    val selectedResolution: StateFlow<Resolution> = _selectedResolution.asStateFlow()
+    val selectedResolution: StateFlow<CameraResolution> = _selectedResolution.asStateFlow()
+
+    // 可用的分辨率选项
+    private val _availableResolutions = MutableStateFlow<List<CameraResolution>>(emptyList())
+    val availableResolutions: StateFlow<List<CameraResolution>> = _availableResolutions.asStateFlow()
 
     // 当前选中的帧率
     private val _selectedFps = MutableStateFlow(DEFAULT_FPS_OPTION)
@@ -53,9 +53,20 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     private val _availableFpsOptions = MutableStateFlow<List<CameraFpsOption>>(emptyList())
     val availableFpsOptions: StateFlow<List<CameraFpsOption>> = _availableFpsOptions.asStateFlow()
 
+    // 技术调试日志（用于在 LogOverlay 显示）
+    private val _debugLog = MutableStateFlow<String?>(null)
+    val debugLog: StateFlow<String?> = _debugLog.asStateFlow()
+
+    /**
+     * 添加调试日志（会显示在 LogOverlay）
+     */
+    fun addDebugLog(message: String) {
+        _debugLog.value = message
+    }
+
     // 各分辨率对应支持的帧率列表
-    private val _supportedFpsByResolution = MutableStateFlow<Map<Resolution, List<CameraFpsOption>>>(emptyMap())
-    val supportedFpsByResolution: StateFlow<Map<Resolution, List<CameraFpsOption>>> = _supportedFpsByResolution.asStateFlow()
+    private val _supportedFpsByResolution = MutableStateFlow<Map<CameraResolution, List<CameraFpsOption>>>(emptyMap())
+    val supportedFpsByResolution: StateFlow<Map<CameraResolution, List<CameraFpsOption>>> = _supportedFpsByResolution.asStateFlow()
 
     // 是否正在录像
     private val _isRecording = MutableStateFlow(false)
@@ -98,11 +109,25 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
 
     /**
      * 从 MMKV 恢复保存的设置
+     *
+     * 双重存储策略：
+     * 1. 优先读取新格式（KEY_RESOLUTION_WIDTH + KEY_RESOLUTION_HEIGHT）
+     * 2. 如果不存在，读取旧格式（KEY_RESOLUTION + ordinal）
+     * 3. 保存时同时写入新旧两种格式
      */
     private fun restoreSettings() {
-        // 恢复分辨率设置
-        val savedResolutionOrdinal = MMKVUtils.getInt(KEY_RESOLUTION, DEFAULT_RESOLUTION.ordinal)
-        _selectedResolution.value = Resolution.entries.getOrNull(savedResolutionOrdinal) ?: DEFAULT_RESOLUTION
+        // 恢复分辨率设置（双重存储）
+        val savedWidth = MMKVUtils.getInt(KEY_RESOLUTION_WIDTH, -1)
+        val savedHeight = MMKVUtils.getInt(KEY_RESOLUTION_HEIGHT, -1)
+
+        _selectedResolution.value = if (savedWidth > 0 && savedHeight > 0) {
+            // 新格式：从宽高恢复
+            CameraResolution.fromSize(savedWidth, savedHeight)
+        } else {
+            // 旧格式：从 ordinal 恢复（向后兼容）
+            val savedOrdinal = MMKVUtils.getInt(KEY_RESOLUTION, DEFAULT_RESOLUTION.toStorageOrdinal())
+            CameraResolution.fromOrdinal(savedOrdinal)
+        }
 
         // 恢复帧率设置
         val savedUpperFps = normalizeStoredFpsValue(MMKVUtils.getInt(KEY_FPS, DEFAULT_FPS))
@@ -123,13 +148,19 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     /**
      * 选择分辨率
      *
+     * 双重存储策略：同时保存新格式（宽高）和旧格式（ordinal）
+     *
      * @param resolution 目标分辨率
      */
-    fun selectResolution(resolution: Resolution) {
+    fun selectResolution(resolution: CameraResolution) {
         _selectedResolution.value = resolution
 
-        // 保存到 MMKV
-        MMKVUtils.put(KEY_RESOLUTION, resolution.ordinal)
+        // 双重存储：新格式（宽高）
+        MMKVUtils.put(KEY_RESOLUTION_WIDTH, resolution.width)
+        MMKVUtils.put(KEY_RESOLUTION_HEIGHT, resolution.height)
+
+        // 双重存储：旧格式（ordinal），用于向后兼容
+        MMKVUtils.put(KEY_RESOLUTION, resolution.toStorageOrdinal())
 
         // 更新可用帧率选项
         updateAvailableFpsOptions(resolution)
@@ -138,12 +169,20 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     /**
      * 更新可用帧率选项
      */
-    private fun updateAvailableFpsOptions(resolution: Resolution) {
-        val resolvedOptions = filterExactFpsOptions(
-            _supportedFpsByResolution.value[resolution]
-                ?.sorted()
-                .orEmpty()
-        )
+    private fun updateAvailableFpsOptions(resolution: CameraResolution) {
+        val rawOptions = _supportedFpsByResolution.value[resolution]
+            ?.sorted()
+            .orEmpty()
+
+        val rawLogMsg = "原始fps[${rawOptions.size}]: ${rawOptions.joinToString { "${it.lower}-${it.upper}" }}"
+        addDebugLog(rawLogMsg)
+        com.hoyn.common.utils.Logger.d("CameraViewModel", "updateAvailableFpsOptions: $rawLogMsg")
+
+        val resolvedOptions = filterExactFpsOptions(rawOptions)
+
+        val filteredLogMsg = "显示fps[${resolvedOptions.size}]: ${resolvedOptions.joinToString { "${it.upper}fps" }}"
+        addDebugLog(filteredLogMsg)
+        com.hoyn.common.utils.Logger.d("CameraViewModel", "updateAvailableFpsOptions: $filteredLogMsg")
 
         _availableFpsOptions.value = resolvedOptions
 
@@ -182,8 +221,22 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     /**
      * 设置支持的帧率列表
      */
-    fun setSupportedFpsByResolution(supportedFpsByResolution: Map<Resolution, List<CameraFpsOption>>) {
+    fun setSupportedFpsByResolution(supportedFpsByResolution: Map<CameraResolution, List<CameraFpsOption>>) {
         _supportedFpsByResolution.value = supportedFpsByResolution
+
+        // 输出调试日志：每个分辨率支持的 fps（显示在 LogOverlay）
+        supportedFpsByResolution.forEach { (resolution, fpsList) ->
+            val logMsg = "分辨率 ${resolution.displayName} 支持的fps: ${fpsList.joinToString { "${it.lower}-${it.upper}" }}"
+            addDebugLog(logMsg)
+            com.hoyn.common.utils.Logger.d("CameraViewModel", logMsg)
+        }
+
+        // 更新可用分辨率列表（按宽度升序）
+        val resolutions = supportedFpsByResolution.keys
+            .filter { resolution -> supportedFpsByResolution[resolution].isNullOrEmpty().not() }
+            .sortedBy { it.width }
+        _availableResolutions.value = resolutions
+
         updateAvailableFpsOptions(_selectedResolution.value)
     }
 
@@ -280,12 +333,21 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
             ?: DEFAULT_FPS_OPTION
     }
 
+    /**
+     * 规范化存储的 FPS 值
+     *
+     * 向后兼容旧版本的特殊值：
+     * - 0 -> 120fps
+     * - 1 -> 240fps
+     * - 2 -> DEFAULT_FPS (240fps)
+     * - 其他值直接使用（包括 480、960 等）
+     */
     private fun normalizeStoredFpsValue(rawValue: Int): Int {
         return when (rawValue) {
             0 -> 120
             1 -> 240
             2 -> DEFAULT_FPS
-            else -> if (rawValue == 480) DEFAULT_FPS else rawValue
+            else -> rawValue  // 直接使用存储的值，支持 480、960 等
         }
     }
 

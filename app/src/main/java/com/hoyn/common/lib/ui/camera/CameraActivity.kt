@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,7 +18,6 @@ import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityCameraBinding
 import com.hoyn.common.lib.logging.AppRuntimeLogCapture
-import com.hoyn.common.lib.ui.camera.CameraViewModel.Resolution
 import com.hoyn.common.ui.ext.click
 import com.hoyn.common.ui.ext.gone
 import com.hoyn.common.ui.ext.invisible
@@ -44,6 +44,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     // 慢动作录像控制器
     private lateinit var recorder: SlowMotionRecorder
 
+    private val resolutionButtons = linkedMapOf<CameraResolution, TextView>()
     private val fpsButtons = linkedMapOf<CameraFpsOption, TextView>()
     private val permissionRequirement by lazy {
         CameraStartupPermissionPolicy.resolve(Build.VERSION.SDK_INT)
@@ -132,7 +133,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             val fpsOption = viewModel.selectedFps.value
             val resolution = viewModel.selectedResolution.value
             appendLog("录像开始")
-            appendLog("分辨率: ${resolution.name}")
+            appendLog("分辨率: ${resolution.displayName}")
             appendLog("帧率: ${fpsOption.upper} fps")
         }
 
@@ -171,25 +172,11 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             }
         })
 
-        // 分辨率按钮
-        binding.btnResolution720p.click {
-            viewModel.selectResolution(Resolution.HD_720P)
-            updateResolutionButtons(Resolution.HD_720P)
-            appendLog("分辨率: 720p")
-            binding.fpsScroll.visible()
-        }
-
-        binding.btnResolution1080p.click {
-            viewModel.selectResolution(Resolution.HD_1080P)
-            updateResolutionButtons(Resolution.HD_1080P)
-            appendLog("分辨率: 1080p")
-            binding.fpsScroll.visible()
-        }
-
         binding.btnTogglePreview.click {
             togglePreviewVisibility()
         }
 
+        renderResolutionButtons(viewModel.availableResolutions.value)
         renderFpsButtons(viewModel.availableFpsOptions.value)
 
         // 录像按钮
@@ -215,9 +202,52 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     /**
      * 更新分辨率按钮状态
      */
-    private fun updateResolutionButtons(resolution: Resolution) {
-        binding.btnResolution720p.isSelected = resolution == Resolution.HD_720P
-        binding.btnResolution1080p.isSelected = resolution == Resolution.HD_1080P
+    private fun updateResolutionButtons(resolution: CameraResolution) {
+        resolutionButtons.forEach { (value, button) ->
+            button.isSelected = value == resolution
+        }
+    }
+
+    /**
+     * 动态生成分辨率按钮
+     */
+    private fun renderResolutionButtons(resolutions: List<CameraResolution>) {
+        // 按宽度去重，保留每个宽度范围的最常用分辨率（通常是 16:9）
+        val normalizedResolutions = resolutions
+            .distinctBy { it.width }  // 按宽度去重
+            .sortedBy { it.width }
+
+        if (resolutionButtons.keys.toList() != normalizedResolutions) {
+            binding.resolutionContainer.removeAllViews()
+            resolutionButtons.clear()
+
+            normalizedResolutions.forEachIndexed { index, resolution ->
+                val button = TextView(this).apply {
+                    background = ContextCompat.getDrawable(context, R.drawable.selector_setting_button)
+                    text = resolution.displayName
+                    setTextColor(ContextCompat.getColor(context, R.color.camera_setting_button_text))
+                    textSize = 14f
+                    setPadding(dpToPx(16), dpToPx(8), dpToPx(16), dpToPx(8))
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        if (index > 0) {
+                            marginStart = dpToPx(16)
+                        }
+                    }
+                }
+                button.click {
+                    viewModel.selectResolution(resolution)
+                    updateResolutionButtons(resolution)
+                    appendLog("分辨率: ${resolution.displayName}")
+                    binding.fpsScroll.visible()
+                }
+                binding.resolutionContainer.addView(button)
+                resolutionButtons[resolution] = button
+            }
+        }
+        updateResolutionButtons(viewModel.selectedResolution.value)
     }
 
     /**
@@ -280,7 +310,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         val fpsOption = viewModel.selectedFps.value
         Logger.d(
             TAG,
-            "startRecording requested resolution=${resolution.name} fps=${fpsOption.lower}-${fpsOption.upper}"
+            "startRecording requested resolution=${resolution.displayName} fps=${fpsOption.lower}-${fpsOption.upper}"
         )
 
         isStartingRecording = true
@@ -359,14 +389,9 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             "$currentText\n$message"
         }
         binding.tvLogContent.text = newText
-        // 自动滚动到底部
+        // 自动滚动到底部（ScrollView 版本）
         binding.logOverlay.post {
-            val layout = binding.tvLogContent.layout
-            if (layout != null && binding.tvLogContent.lineCount > 0) {
-                val lineBottom = layout.getLineBottom(binding.tvLogContent.lineCount - 1)
-                val scrollY = (lineBottom - binding.tvLogContent.height).coerceAtLeast(0)
-                binding.tvLogContent.scrollTo(0, scrollY)
-            }
+            binding.logOverlay.fullScroll(View.FOCUS_DOWN)
         }
     }
 
@@ -385,12 +410,12 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     private fun updateSettingControls() {
         val isLocked = isStartingRecording || viewModel.isRecording.value
         val alpha = if (isLocked) 0.45f else 1.0f
-        binding.btnResolution720p.isEnabled = !isLocked
-        binding.btnResolution1080p.isEnabled = !isLocked
         binding.btnTogglePreview.isEnabled = !isLocked
-        binding.btnResolution720p.alpha = alpha
-        binding.btnResolution1080p.alpha = alpha
         binding.btnTogglePreview.alpha = alpha
+        resolutionButtons.values.forEach { button ->
+            button.isEnabled = !isLocked
+            button.alpha = alpha
+        }
         fpsButtons.values.forEach { button ->
             button.isEnabled = !isLocked
             button.alpha = alpha
@@ -489,6 +514,14 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             }
         }
 
+        // 观察可用分辨率选项
+        lifecycleScope.launchWhenStarted {
+            viewModel.availableResolutions.collect { resolutions ->
+                renderResolutionButtons(resolutions)
+                updateSettingControls()
+            }
+        }
+
         // 观察分辨率变化，更新按钮选中状态
         lifecycleScope.launchWhenStarted {
             viewModel.selectedResolution.collect { resolution ->
@@ -503,6 +536,15 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
                 updateFpsButtons(fps)
                 updateZoomControls()
                 updateSettingControls()
+            }
+        }
+
+        // 观察调试日志，显示在 LogOverlay
+        lifecycleScope.launchWhenStarted {
+            viewModel.debugLog.collect { logMsg ->
+                if (logMsg != null) {
+                    appendLog(logMsg)
+                }
             }
         }
     }
