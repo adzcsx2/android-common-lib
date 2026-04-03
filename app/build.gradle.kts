@@ -59,8 +59,8 @@ tasks.configureEach {
         doLast {
             val elapsed = System.currentTimeMillis() - startTime
             val apkDir = File(buildDir, "outputs/apk/$variantName")
-            val apkFile = apkDir.walkTopDown()
-                .firstOrNull { it.extension == "apk" && it.isFile }
+            val apkFile = apkDir.listFiles()
+                ?.firstOrNull { it.extension == "apk" && it.isFile }
             if (apkFile != null) {
                 val elapsedSeconds = elapsed / 1000.0
                 logger.lifecycle("========================================")
