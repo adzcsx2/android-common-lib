@@ -47,6 +47,35 @@ android {
     }
 }
 
+// ===== APK build info: print APK path and build time after assemble =====
+tasks.configureEach {
+    if (name.startsWith("package") && (name.endsWith("Debug") || name.endsWith("Release"))) {
+        val variantName = if (name.endsWith("Debug")) "debug" else "release"
+        val buildDir = layout.buildDirectory.get().asFile
+        var startTime: Long = 0L
+        doFirst {
+            startTime = System.currentTimeMillis()
+        }
+        doLast {
+            val elapsed = System.currentTimeMillis() - startTime
+            val apkDir = File(buildDir, "outputs/apk/$variantName")
+            val apkFile = apkDir.listFiles()
+                ?.firstOrNull { it.extension == "apk" && it.isFile }
+            if (apkFile != null) {
+                val elapsedSeconds = elapsed / 1000.0
+                logger.lifecycle("========================================")
+                logger.lifecycle("APK Build Info")
+                logger.lifecycle("----------------------------------------")
+                logger.lifecycle("Variant : $variantName")
+                logger.lifecycle("APK Path: ${apkFile.absolutePath}")
+                logger.lifecycle("APK Size: ${"%.2f".format(apkFile.length() / (1024.0 * 1024.0))} MB")
+                logger.lifecycle("Package Time: ${"%.1f".format(elapsedSeconds)}s")
+                logger.lifecycle("========================================")
+            }
+        }
+    }
+}
+
 room {
     schemaDirectory("$projectDir/schemas")
 }
