@@ -43,6 +43,9 @@ utilcodex = "1.31.0"
 mmkv = "2.3.0"
 window = "1.3.0"
 
+# CameraX
+camerax = "1.4.1"
+
 # UI
 smartRefresh = "2.0.6"
 baseRecyclerViewAdapterHelper = "4.3.4"
@@ -119,6 +122,13 @@ androidx-window = { group = "androidx.window", name = "window", version.ref = "w
 smart-refresh = { group = "io.github.scwang90", name = "refresh-layout-kernel", version.ref = "smartRefresh" }
 smart-refresh-header = { group = "io.github.scwang90", name = "refresh-header-classics", version.ref = "smartRefresh" }
 base-recycler-view-adapter-helper = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper4", version.ref = "baseRecyclerViewAdapterHelper" }
+
+# CameraX
+camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camerax-video = { group = "androidx.camera", name = "camera-video", version.ref = "camerax" }
+camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

@@ -30,4 +30,13 @@
     <color name="log_background">#FFE0E0E0</color>
     <color name="log_text">#FF000000</color>
     <color name="dialog_background">#FFFFFFFF</color>
+
+    <!-- Camera Demo -->
+    <color name="camera_record_button">#FFFF0000</color>
+    <color name="camera_record_button_recording">#FFFF4444</color>
+    <color name="camera_setting_button_bg">#66FFFFFF</color>
+    <color name="camera_setting_button_selected_bg">#CCFFFFFF</color>
+    <color name="camera_setting_button_text">#FFFFFFFF</color>
+    <color name="camera_setting_button_selected_text">#FFFF0000</color>
+    <color name="camera_overlay_bg">#80000000</color>
 </resources>

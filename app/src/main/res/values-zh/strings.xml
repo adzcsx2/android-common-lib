@@ -1,6 +1,6 @@
 <resources>
     <!-- App -->
-    <string name="app_name">通用库示例</string>
+    <string name="app_name">慢动作摄像</string>
 
     <!-- Common -->
     <string name="back">返回</string>
@@ -10,121 +10,19 @@
     <string name="unknown_error">未知错误</string>
     <string name="load_failed">加载失败</string>
 
-    <!-- Demo List -->
-    <string name="compose_demo">Compose 示例</string>
-    <string name="compose_demo_desc">Jetpack Compose 完整示例</string>
-    <string name="toast_demo">Toast 示例</string>
-    <string name="toast_demo_desc">展示各种 Toast 样式</string>
-    <string name="network_demo">网络请求示例</string>
-    <string name="network_demo_desc">ViewModel + Repository + 网络请求 + Room 缓存</string>
-    <string name="fragment_demo">Fragment 示例</string>
-    <string name="fragment_demo_desc">BaseFragment + 泛型 ViewModel 注入 + 重建状态保持</string>
-    <string name="mmkv_demo">MMKV 示例</string>
-    <string name="mmkv_demo_desc">展示键值存储操作</string>
-    <string name="log_demo">日志示例</string>
-    <string name="log_demo_desc">展示不同级别日志输出</string>
-    <string name="status_bar_demo">状态栏示例</string>
-    <string name="status_bar_demo_desc">展示状态栏设置</string>
-    <string name="recommended">推荐</string>
-
-    <!-- Compose Demo -->
-    <string name="compose_demo_title">Compose 示例</string>
-    <string name="load_data">加载数据</string>
-    <string name="test_toast">测试 Toast</string>
-
-    <!-- Network Demo -->
-    <string name="network_demo_title">网络请求示例</string>
-    <string name="refresh">刷新</string>
-    <string name="using_cached_data">网络不可用，显示缓存数据</string>
-
-    <!-- Fragment Demo -->
-    <string name="fragment_demo_title">Fragment 示例</string>
-    <string name="fragment_demo_session_label">会话 ID</string>
-    <string name="fragment_demo_count_label">计数器</string>
-    <string name="fragment_demo_increment">计数加一</string>
-    <string name="fragment_demo_reset">重置计数</string>
-
-    <!-- Dialog Demo -->
-    <string name="dialog_demo">Dialog 示例</string>
-    <string name="dialog_demo_desc">展示 BaseActivity、BaseFragment 和 BaseDialogFragment 的安全 Dialog 管理</string>
-    <string name="dialog_demo_title">Dialog 安全示例</string>
-    <string name="dialog_demo_intro">本页面演示基于 BaseDialogFragment 的自定义对话框，包括 Activity 启动对话框、Fragment 作用域对话框和对象参数传递示例。</string>
-    <string name="dialog_demo_show_managed">显示 Activity 自定义对话框</string>
-    <string name="dialog_demo_show_reusable">显示全屏自定义对话框</string>
-    <string name="dialog_demo_show_dialog_fragment">显示 BaseDialogFragment</string>
-    <string name="dialog_demo_show_parcelable">显示 Parcelable 参数对话框</string>
-    <string name="dialog_demo_show_serializable">显示 Serializable 参数对话框</string>
-    <string name="dialog_demo_plain_title">Activity 自定义对话框</string>
-    <string name="dialog_demo_plain_message">此对话框由 BaseActivity 通过 BaseDialogFragment 启动，并通过参数恢复。</string>
-    <string name="dialog_demo_reusable_title">全屏自定义对话框</string>
-    <string name="dialog_demo_reusable_message">此自定义对话框演示窗口尺寸配置，不依赖 AlertDialog。</string>
-    <string name="dialog_demo_fragment_intro">Fragment 部分：自定义对话框通过 childFragmentManager 显示，并跟随父 Fragment 生命周期。</string>
-    <string name="dialog_demo_fragment_show_managed">显示 Fragment 自定义对话框</string>
-    <string name="dialog_demo_fragment_show_and_remove">显示对话框后移除 Fragment</string>
-    <string name="dialog_demo_fragment_managed_title">Fragment 作用域对话框</string>
-    <string name="dialog_demo_fragment_managed_message">移除 Fragment 时也会销毁其子对话框层级，因此此自定义对话框跟随 Fragment 生命周期。</string>
-    <string name="dialog_demo_fragment_title">BaseDialogFragment</string>
-    <string name="dialog_demo_fragment_message">此对话框使用 ViewBinding，可扩展为可复用的业务对话框。</string>
-    <string name="dialog_demo_parcelable_title">Parcelable 参数示例</string>
-    <string name="dialog_demo_parcelable_order_id">PO-20260401</string>
-    <string name="dialog_demo_parcelable_remark">此负载通过 Parcel 持久化，并从 Dialog 参数恢复。</string>
-    <string name="dialog_demo_parcelable_format">Parcelable -&gt; orderId=%1$s, amount=%2$d, remark=%3$s</string>
-    <string name="dialog_demo_serializable_title">Serializable 参数示例</string>
-    <string name="dialog_demo_serializable_owner">common-lib</string>
-    <string name="dialog_demo_serializable_scene">Serializable 对象同样持久化在参数中，用于进程重建。</string>
-    <string name="dialog_demo_serializable_format">Serializable -&gt; owner=%1$s, enabled=%2$s, scene=%3$s</string>
-    <string name="dialog_demo_confirm">确认</string>
-    <string name="dialog_demo_cancel">取消</string>
-
-    <!-- Stack Manager Demo -->
-    <string name="stack_demo">Activity 栈管理示例</string>
-    <string name="stack_demo_desc">手动注册 Activity 栈并查看快照</string>
-    <string name="stack_demo_title">Activity 栈管理示例</string>
-    <string name="stack_demo_intro">本页面不继承 BaseActivity，手动注册到 ActivityStackManager 并按需刷新栈快照。</string>
-    <string name="stack_demo_open_next">打开另一个示例页面</string>
-    <string name="stack_demo_refresh">刷新栈信息</string>
-    <string name="stack_demo_show_dialog">显示对话框</string>
-    <string name="stack_demo_finish_with_dialog">显示对话框并关闭</string>
-    <string name="stack_demo_current_label">当前 Activity</string>
-    <string name="stack_demo_count_label">栈数量</string>
-    <string name="stack_demo_snapshot_label">栈快照</string>
-    <string name="stack_demo_empty">空</string>
-    <string name="stack_demo_dialog_title">自定义对话框示例</string>
-    <string name="stack_demo_dialog_message">本页面使用 BaseDialogFragment 显示对话框。关闭 Activity 时，FragmentManager 也会清理对话框生命周期。</string>
-    <string name="stack_demo_dialog_close">关闭</string>
-
-    <!-- Theme -->
-    <string name="theme_settings">主题设置</string>
-    <string name="theme_light">浅色模式</string>
-    <string name="theme_dark">深色模式</string>
-    <string name="theme_system">跟随系统</string>
-
-    <!-- Language -->
-    <string name="language_settings">语言设置</string>
-    <string name="language_en">English</string>
-    <string name="language_zh">简体中文</string>
-    <string name="language_zh_tw">繁體中文</string>
-    <string name="language_system">跟随系统</string>
-
-    <!-- LiveEvent Demo -->
-    <string name="liveevent_demo">LiveEvent 示例</string>
-    <string name="liveevent_demo_desc">测试消息发送、接收、粘性事件、Service 与 Receiver 转发</string>
-    <string name="send_message">发送消息</string>
-    <string name="send_normal">发送普通消息</string>
-    <string name="send_sticky">发送粘性消息</string>
-    <string name="send_delay">延迟发送（2 秒）</string>
-    <string name="component_demo">Service 与 Receiver 示例</string>
-    <string name="start_service_listener">启动 Service 监听</string>
-    <string name="stop_service_listener">停止 Service 监听</string>
-    <string name="send_to_service">发送 EventBus 消息到 Service</string>
-    <string name="send_broadcast_demo">发送广播示例</string>
-    <string name="subscribe_message">订阅消息</string>
-    <string name="subscribe_normal">订阅普通消息</string>
-    <string name="subscribe_sticky">订阅粘性消息</string>
-    <string name="unsubscribe_normal">取消普通订阅</string>
-    <string name="unsubscribe_sticky">取消粘性订阅</string>
-    <string name="manual_subscribe">手动订阅</string>
-    <string name="cancel_manual_subscribe">取消手动订阅</string>
-    <string name="log_output">日志输出</string>
-    <string name="clear_log">清空</string>
+    <!-- Camera -->
+    <string name="camera_demo_title">慢动作摄像</string>
+    <string name="camera_resolution_720p">720p</string>
+    <string name="camera_resolution_1080p">1080p</string>
+    <string name="camera_fps_120">120fps</string>
+    <string name="camera_fps_240">240fps</string>
+    <string name="camera_fps_480">480fps</string>
+    <string name="camera_permission_required">需要相机和麦克风权限</string>
+    <string name="camera_recording_started">开始录制</string>
+    <string name="camera_recording_saved">视频已保存</string>
+    <string name="camera_recording_failed">录制失败</string>
+    <string name="camera_unsupported_fps">此设备不支持 %1$d fps</string>
+    <string name="camera_zoom_label">%.1fx</string>
+    <string name="camera_unsupported_setting">不支持的设置</string>
+    <string name="camera_slow_motion_not_supported">此设备不支持所选设置的慢动作录制</string>
 </resources>

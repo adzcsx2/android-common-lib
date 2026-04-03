@@ -1,1 +1,0 @@
-# Project ProGuard rules for the aggregate library.

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -15,32 +18,14 @@
         android:theme="@style/Theme.Commonlib">
 
         <activity
-            android:name=".ui.main.MainActivity"
-            android:exported="true">
+            android:name=".ui.camera.CameraActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Demo Activities -->
-        <activity android:name=".ui.compose.ComposeDemoActivity" />
-        <activity android:name=".ui.toast_demo.ToastDemoActivity" />
-        <activity android:name=".ui.network.NetworkDemoActivity" />
-        <activity android:name=".ui.mmkv_demo.MmkvDemoActivity" />
-        <activity android:name=".ui.log_demo.LogDemoActivity" />
-        <activity android:name=".ui.statusbar_demo.StatusBarDemoActivity" />
-        <activity android:name=".ui.fragment_demo.FragmentDemoActivity" />
-        <activity android:name=".ui.dialog_demo.DialogSafetyDemoActivity" />
-        <activity android:name=".ui.stack_demo.StackManagerDemoActivity" />
-        <activity android:name=".ui.liveevent.LiveEventDemoActivity" />
-
-        <service
-            android:name=".ui.liveevent.LiveEventDemoService"
-            android:exported="false" />
-        <receiver
-            android:name=".ui.liveevent.LiveEventDemoReceiver"
-            android:exported="false" />
 
     </application>
 

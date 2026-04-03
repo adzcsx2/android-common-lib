@@ -12,7 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.hoyn.common.lib"
+        applicationId = "com.hoyn.camera"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -53,13 +53,7 @@ room {
 
 dependencies {
     // 依赖所有模块用于演示
-    implementation(project(":common-core"))
-    implementation(project(":common-base"))
-    implementation(project(":common-compose"))
-    implementation(project(":common-utils"))
-    implementation(project(":common-network"))
-    implementation(project(":common-image"))
-    implementation(project(":common-ui"))
+    implementation("com.github.adzcsx2.android-common-lib:common-all:1.2.9")
 
     // AndroidX
     implementation(libs.androidx.core.ktx)
@@ -69,6 +63,13 @@ dependencies {
     // Navigation
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+
+    // CameraX
+    implementation(libs.camerax.core)
+    implementation(libs.camerax.camera2)
+    implementation(libs.camerax.lifecycle)
+    implementation(libs.camerax.video)
+    implementation(libs.camerax.view)
 
     // Room
     implementation(libs.room.runtime)
