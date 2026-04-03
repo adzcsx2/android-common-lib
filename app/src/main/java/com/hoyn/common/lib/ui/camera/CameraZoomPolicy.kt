@@ -1,4 +1,4 @@
-﻿package com.hoyn.common.lib.ui.camera
+package com.hoyn.common.lib.ui.camera
 
 import kotlin.math.roundToInt
 
@@ -10,21 +10,50 @@ data class CameraZoomRange(
         get() = maxRatio > minRatio
 }
 
-internal fun resolveZoomRange(fps: CameraViewModel.Fps, deviceMaxZoomRatio: Float): CameraZoomRange {
-    val sanitizedMaxZoomRatio = deviceMaxZoomRatio.coerceAtLeast(1.0f)
-    val maxRatio = when (fps) {
-        CameraViewModel.Fps.FPS_480 -> 1.0f
-        CameraViewModel.Fps.FPS_120,
-        CameraViewModel.Fps.FPS_240 -> sanitizedMaxZoomRatio
+data class ResolvedCameraZoomState(
+    val range: CameraZoomRange,
+    val appliedRatio: Float,
+    val restoredRatio: Float
+)
+
+internal fun resolveZoomPolicyFps(
+    selectedOption: CameraFpsOption,
+    supportedOptions: List<CameraFpsOption>
+): Int {
+    if (selectedOption.isExact) {
+        return selectedOption.upper
     }
+
+    return selectedOption.lower
+}
+
+internal fun resolveZoomRange(fps: Int, deviceMaxZoomRatio: Float): CameraZoomRange {
+    val sanitizedMaxZoomRatio = deviceMaxZoomRatio.coerceAtLeast(1.0f)
     return CameraZoomRange(
         minRatio = 1.0f,
-        maxRatio = maxRatio.coerceAtLeast(1.0f)
+        maxRatio = sanitizedMaxZoomRatio
     )
 }
 
 internal fun clampZoomRatio(ratio: Float, range: CameraZoomRange): Float {
     return ratio.coerceIn(range.minRatio, range.maxRatio)
+}
+
+internal fun resolveZoomState(
+    preferredRatio: Float,
+    restoredRatio: Float,
+    fps: Int,
+    deviceMaxZoomRatio: Float,
+    hasResolvedDeviceZoomRatio: Boolean
+): ResolvedCameraZoomState {
+    val range = resolveZoomRange(fps, deviceMaxZoomRatio)
+    val appliedRatio = clampZoomRatio(preferredRatio, range)
+    val nextRestoredRatio = if (hasResolvedDeviceZoomRatio) appliedRatio else restoredRatio
+    return ResolvedCameraZoomState(
+        range = range,
+        appliedRatio = appliedRatio,
+        restoredRatio = nextRestoredRatio
+    )
 }
 
 internal fun storedValueToZoomRatio(value: Int): Float {

@@ -4,6 +4,7 @@
 
     <!-- Common -->
     <string name="back">返回</string>
+    <string name="continue_label">繼續</string>
     <string name="retry">重試</string>
     <string name="loading">載入中…</string>
     <string name="no_data">暫無資料</string>
@@ -14,15 +15,22 @@
     <string name="camera_demo_title">慢動作攝像</string>
     <string name="camera_resolution_720p">720p</string>
     <string name="camera_resolution_1080p">1080p</string>
-    <string name="camera_fps_120">120fps</string>
-    <string name="camera_fps_240">240fps</string>
-    <string name="camera_fps_480">480fps</string>
-    <string name="camera_permission_required">需要相機和麥克風權限</string>
+    <string name="camera_fps_label_a">A</string>
+    <string name="camera_fps_label_b">B</string>
+    <string name="camera_fps_exact_format">%1$dfps</string>
+    <string name="camera_permission_required">需要相機、麥克風和存儲權限</string>
     <string name="camera_recording_started">開始錄製</string>
     <string name="camera_recording_saved">視頻已保存</string>
     <string name="camera_recording_failed">錄製失敗</string>
-    <string name="camera_unsupported_fps">此設備不支持 %1$d fps</string>
+    <string name="camera_recording_empty_output">錄製結果為空文件，請重試。</string>
     <string name="camera_zoom_label">%.1fx</string>
     <string name="camera_unsupported_setting">不支持的設置</string>
     <string name="camera_slow_motion_not_supported">此設備不支持所選設置的慢動作錄制</string>
+    <string name="camera_hide_preview">隱藏預覽</string>
+    <string name="camera_show_preview">顯示預覽</string>
+    <string name="camera_runtime_log_path">日誌文件：%1$s</string>
+    <string name="camera_runtime_log_path_unavailable">日誌文件：不可用</string>
+    <string name="camera_storage_permission_title">需要權限</string>
+    <string name="camera_storage_settings_required">請在接下來的系統頁面允許存儲訪問，然後返回應用。</string>
+    <string name="camera_storage_permission_denied">仍未獲得存儲訪問權限。你可以重新前往系統設置頁授權，或直接繼續進入應用。</string>
 </resources>

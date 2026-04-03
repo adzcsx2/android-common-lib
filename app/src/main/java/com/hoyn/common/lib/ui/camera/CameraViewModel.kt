@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
  *
  * 管理相机设置状态：
  * - 分辨率选择（720p / 1080p）
- * - 帧率选择（120 / 240 / 480 fps）
+ * - 帧率选择（120 / 240 fps）
  * - 录像状态
  * - 缩放比例
  * - 设置持久化（MMKV）
@@ -27,9 +27,11 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     companion object {
         private const val KEY_RESOLUTION = "camera_resolution"
         private const val KEY_FPS = "camera_fps"
+        private const val KEY_FPS_LOWER = "camera_fps_lower"
         private const val KEY_ZOOM_RATIO = "camera_zoom_ratio"
-        private val DEFAULT_RESOLUTION = Resolution.HD_720P
-        private val DEFAULT_FPS = Fps.FPS_120
+        private val DEFAULT_RESOLUTION = Resolution.HD_1080P
+        private const val DEFAULT_FPS = 240
+        private val DEFAULT_FPS_OPTION = CameraFpsOption(DEFAULT_FPS, DEFAULT_FPS)
         private const val DEFAULT_ZOOM_RATIO_STORED = 100
     }
 
@@ -39,28 +41,21 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
         HD_1080P  // 1920x1080
     }
 
-    // 帧率枚举
-    enum class Fps(val value: Int) {
-        FPS_120(120),
-        FPS_240(240),
-        FPS_480(480)
-    }
-
     // 当前选中的分辨率
     private val _selectedResolution = MutableStateFlow(DEFAULT_RESOLUTION)
     val selectedResolution: StateFlow<Resolution> = _selectedResolution.asStateFlow()
 
     // 当前选中的帧率
-    private val _selectedFps = MutableStateFlow(DEFAULT_FPS)
-    val selectedFps: StateFlow<Fps> = _selectedFps.asStateFlow()
+    private val _selectedFps = MutableStateFlow(DEFAULT_FPS_OPTION)
+    val selectedFps: StateFlow<CameraFpsOption> = _selectedFps.asStateFlow()
 
-    // 可用的帧率选项（1080p 时隐藏 480fps）
-    private val _availableFpsOptions = MutableStateFlow(listOf(Fps.FPS_120, Fps.FPS_240, Fps.FPS_480))
-    val availableFpsOptions: StateFlow<List<Fps>> = _availableFpsOptions.asStateFlow()
+    // 可用的帧率选项
+    private val _availableFpsOptions = MutableStateFlow<List<CameraFpsOption>>(emptyList())
+    val availableFpsOptions: StateFlow<List<CameraFpsOption>> = _availableFpsOptions.asStateFlow()
 
     // 各分辨率对应支持的帧率列表
-    private val _supportedFpsByResolution = MutableStateFlow<Map<Resolution, Set<Int>>>(emptyMap())
-    val supportedFpsByResolution: StateFlow<Map<Resolution, Set<Int>>> = _supportedFpsByResolution.asStateFlow()
+    private val _supportedFpsByResolution = MutableStateFlow<Map<Resolution, List<CameraFpsOption>>>(emptyMap())
+    val supportedFpsByResolution: StateFlow<Map<Resolution, List<CameraFpsOption>>> = _supportedFpsByResolution.asStateFlow()
 
     // 是否正在录像
     private val _isRecording = MutableStateFlow(false)
@@ -79,7 +74,7 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     val zoomRatio: StateFlow<Float> = _zoomRatio.asStateFlow()
 
     // 当前可用缩放范围
-    private val _zoomRange = MutableStateFlow(resolveZoomRange(DEFAULT_FPS, 1.0f))
+    private val _zoomRange = MutableStateFlow(resolveZoomRange(DEFAULT_FPS_OPTION.upper, 1.0f))
     val zoomRange: StateFlow<CameraZoomRange> = _zoomRange.asStateFlow()
 
     // 录像计时器 Job
@@ -110,8 +105,12 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
         _selectedResolution.value = Resolution.entries.getOrNull(savedResolutionOrdinal) ?: DEFAULT_RESOLUTION
 
         // 恢复帧率设置
-        val savedFpsOrdinal = MMKVUtils.getInt(KEY_FPS, DEFAULT_FPS.ordinal)
-        _selectedFps.value = Fps.entries.getOrNull(savedFpsOrdinal) ?: DEFAULT_FPS
+        val savedUpperFps = normalizeStoredFpsValue(MMKVUtils.getInt(KEY_FPS, DEFAULT_FPS))
+        val savedLowerFps = normalizeStoredFpsValue(MMKVUtils.getInt(KEY_FPS_LOWER, savedUpperFps))
+        _selectedFps.value = CameraFpsOption(
+            lower = savedLowerFps.coerceAtMost(savedUpperFps),
+            upper = savedUpperFps
+        )
 
         restoredZoomRatio = storedValueToZoomRatio(
             MMKVUtils.getInt(KEY_ZOOM_RATIO, DEFAULT_ZOOM_RATIO_STORED)
@@ -140,22 +139,18 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
      * 更新可用帧率选项
      */
     private fun updateAvailableFpsOptions(resolution: Resolution) {
-        val fallbackOptions = when (resolution) {
-            Resolution.HD_720P -> listOf(Fps.FPS_120, Fps.FPS_240, Fps.FPS_480)
-            Resolution.HD_1080P -> listOf(Fps.FPS_120, Fps.FPS_240)
-        }
-        val resolvedOptions = _supportedFpsByResolution.value[resolution]
-            ?.let { supported ->
-                Fps.entries.filter { fps -> fps.value in supported }
-            }
-            ?: fallbackOptions
+        val resolvedOptions = filterExactFpsOptions(
+            _supportedFpsByResolution.value[resolution]
+                ?.sorted()
+                .orEmpty()
+        )
 
         _availableFpsOptions.value = resolvedOptions
 
-        if (_selectedFps.value !in resolvedOptions) {
-            val nextFps = resolvedOptions.firstOrNull() ?: DEFAULT_FPS
-            _selectedFps.value = nextFps
-            MMKVUtils.put(KEY_FPS, nextFps.ordinal)
+        if (resolvedOptions.isNotEmpty() && _selectedFps.value !in resolvedOptions) {
+            val nextFpsOption = preferredFpsFor(resolvedOptions)
+            _selectedFps.value = nextFpsOption
+            persistSelectedFps(nextFpsOption)
         }
 
         refreshZoomState(
@@ -170,15 +165,14 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
      * @param fps 目标帧率
      * @return 是否选择成功（设备不支持时返回 false）
      */
-    fun selectFps(fps: Fps): Boolean {
-        if (fps !in _availableFpsOptions.value) {
+    fun selectFps(fpsOption: CameraFpsOption): Boolean {
+        if (fpsOption !in _availableFpsOptions.value) {
             return false
         }
 
-        _selectedFps.value = fps
+        _selectedFps.value = fpsOption
 
-        // 保存到 MMKV
-        MMKVUtils.put(KEY_FPS, fps.ordinal)
+        persistSelectedFps(fpsOption)
 
         refreshZoomState(preferredRatio = _zoomRatio.value, shouldPersist = hasResolvedDeviceZoomRatio)
 
@@ -188,7 +182,7 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     /**
      * 设置支持的帧率列表
      */
-    fun setSupportedFpsByResolution(supportedFpsByResolution: Map<Resolution, Set<Int>>) {
+    fun setSupportedFpsByResolution(supportedFpsByResolution: Map<Resolution, List<CameraFpsOption>>) {
         _supportedFpsByResolution.value = supportedFpsByResolution
         updateAvailableFpsOptions(_selectedResolution.value)
     }
@@ -202,8 +196,8 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     /**
      * 检查帧率是否支持
      */
-    fun isFpsSupported(fps: Fps): Boolean {
-        return fps in _availableFpsOptions.value
+    fun isFpsSupported(fpsOption: CameraFpsOption): Boolean {
+        return fpsOption in _availableFpsOptions.value
     }
 
     /**
@@ -235,23 +229,32 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     /**
      * 更新缩放比例
      */
-    fun updateZoomRatio(ratio: Float) {
+    fun updateZoomRatio(ratio: Float, persist: Boolean = true) {
         val clampedRatio = clampZoomRatio(ratio, _zoomRange.value)
         _zoomRatio.value = clampedRatio
         restoredZoomRatio = clampedRatio
-        MMKVUtils.put(KEY_ZOOM_RATIO, zoomRatioToStoredValue(clampedRatio))
+        if (persist) {
+            MMKVUtils.put(KEY_ZOOM_RATIO, zoomRatioToStoredValue(clampedRatio))
+        }
     }
 
     private fun refreshZoomState(preferredRatio: Float, shouldPersist: Boolean) {
-        val resolvedRange = resolveZoomRange(_selectedFps.value, deviceMaxZoomRatio)
-        _zoomRange.value = resolvedRange
-
-        val clampedRatio = clampZoomRatio(preferredRatio, resolvedRange)
-        _zoomRatio.value = clampedRatio
-        restoredZoomRatio = clampedRatio
+        val resolvedZoomState = resolveZoomState(
+            preferredRatio = preferredRatio,
+            restoredRatio = restoredZoomRatio,
+            fps = resolveZoomPolicyFps(
+                selectedOption = _selectedFps.value,
+                supportedOptions = _availableFpsOptions.value
+            ),
+            deviceMaxZoomRatio = deviceMaxZoomRatio,
+            hasResolvedDeviceZoomRatio = hasResolvedDeviceZoomRatio
+        )
+        _zoomRange.value = resolvedZoomState.range
+        _zoomRatio.value = resolvedZoomState.appliedRatio
+        restoredZoomRatio = resolvedZoomState.restoredRatio
 
         if (shouldPersist) {
-            MMKVUtils.put(KEY_ZOOM_RATIO, zoomRatioToStoredValue(clampedRatio))
+            MMKVUtils.put(KEY_ZOOM_RATIO, zoomRatioToStoredValue(resolvedZoomState.appliedRatio))
         }
     }
 
@@ -267,5 +270,27 @@ class CameraViewModel : BaseViewModel<Nothing?>() {
     override fun onCleared() {
         super.onCleared()
         recordingTimerJob?.cancel()
+    }
+
+    private fun preferredFpsFor(options: List<CameraFpsOption>): CameraFpsOption {
+        return options.firstOrNull { option -> option.upper == DEFAULT_FPS && option.isExact }
+            ?: options.firstOrNull { option -> option.isExact }
+            ?: options.filter { option -> option.upper == DEFAULT_FPS }.maxByOrNull { option -> option.lower }
+            ?: options.firstOrNull()
+            ?: DEFAULT_FPS_OPTION
+    }
+
+    private fun normalizeStoredFpsValue(rawValue: Int): Int {
+        return when (rawValue) {
+            0 -> 120
+            1 -> 240
+            2 -> DEFAULT_FPS
+            else -> if (rawValue == 480) DEFAULT_FPS else rawValue
+        }
+    }
+
+    private fun persistSelectedFps(fpsOption: CameraFpsOption) {
+        MMKVUtils.put(KEY_FPS, fpsOption.upper)
+        MMKVUtils.put(KEY_FPS_LOWER, fpsOption.lower)
     }
 }

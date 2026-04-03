@@ -17,6 +17,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+
+        <com.hoyn.common.lib.ui.camera.AspectRatioSurfaceView
+            android:id="@+id/surfacePreviewView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
     </FrameLayout>
 
     <!-- Top Controls -->
@@ -39,9 +46,23 @@
             android:gravity="center">
 
             <TextView
+                android:id="@+id/btnTogglePreview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="gone"
+                android:background="@drawable/selector_setting_button"
+                android:text="@string/camera_hide_preview"
+                android:textColor="@color/camera_setting_button_text"
+                android:textSize="14sp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp" />
+
+            <TextView
                 android:id="@+id/btnResolution720p"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:background="@drawable/selector_setting_button"
                 android:text="@string/camera_resolution_720p"
                 android:textColor="@color/camera_setting_button_text"
@@ -63,48 +84,35 @@
         </LinearLayout>
 
         <!-- FPS Buttons Row -->
-        <LinearLayout
+        <HorizontalScrollView
+            android:id="@+id/fpsScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-            <TextView
-                android:id="@+id/btnFps120"
+            <LinearLayout
+                android:id="@+id/fpsContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/selector_setting_button"
-                android:text="@string/camera_fps_120"
-                android:textColor="@color/camera_setting_button_text"
-                android:textSize="14sp"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp" />
+                android:gravity="center"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
-            <TextView
-                android:id="@+id/btnFps240"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/selector_setting_button"
-                android:text="@string/camera_fps_240"
-                android:textColor="@color/camera_setting_button_text"
-                android:textSize="14sp"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp" />
-
-            <TextView
-                android:id="@+id/btnFps480"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/selector_setting_button"
-                android:text="@string/camera_fps_480"
-                android:textColor="@color/camera_setting_button_text"
-                android:textSize="14sp"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvRuntimeLogPath"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:alpha="0.88"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:maxLines="3"
+            android:text="@string/camera_runtime_log_path_unavailable"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="日志文件：/sdcard/Android/data/com.hoyn.camera/files/camera_log.txt" />
     </LinearLayout>
 
     <!-- Bottom Controls -->

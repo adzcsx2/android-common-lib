@@ -2,6 +2,7 @@ package com.hoyn.common.lib
 
 import android.app.Application
 import com.hoyn.common.lib.di.initKoin
+import com.hoyn.common.lib.logging.AppRuntimeLogCapture
 import com.hoyn.common.utils.LanguageHelper
 import com.hoyn.common.utils.Logger
 import com.hoyn.common.utils.MMKVUtils
@@ -33,8 +34,10 @@ class MainApplication : Application() {
         instance = this
         // 初始化 Koin
         initKoin(this)
+        val runtimeLogFile = AppRuntimeLogCapture.start(this)
         // 初始化日志
         Logger.init(BuildConfig.DEBUG, getString(R.string.app_name))
+        Logger.i("Runtime log file=${runtimeLogFile?.absolutePath ?: "unavailable"}")
         // 初始化 MMKV
         MMKVUtils.init(this)
         // 应用主题设置

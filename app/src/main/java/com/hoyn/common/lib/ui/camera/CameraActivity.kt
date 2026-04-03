@@ -1,14 +1,22 @@
 package com.hoyn.common.lib.ui.camera
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.widget.SeekBar
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityCameraBinding
-import com.hoyn.common.lib.ui.camera.CameraViewModel.Fps
+import com.hoyn.common.lib.logging.AppRuntimeLogCapture
 import com.hoyn.common.lib.ui.camera.CameraViewModel.Resolution
 import com.hoyn.common.ui.ext.click
 import com.hoyn.common.ui.ext.gone
@@ -22,7 +30,7 @@ import com.hoyn.common.utils.Logger
  *
  * 功能：
  * - 分辨率选择（720p / 1080p）
- * - 帧率选择（120 / 240 / 480 fps）
+ * - 帧率选择（120 / 240 fps）
  * - 高帧率慢动作录像
  * - 缩放功能
  */
@@ -36,40 +44,51 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     // 慢动作录像控制器
     private lateinit var recorder: SlowMotionRecorder
 
+    private val fpsButtons = linkedMapOf<CameraFpsOption, TextView>()
+    private val permissionRequirement by lazy {
+        CameraStartupPermissionPolicy.resolve(Build.VERSION.SDK_INT)
+    }
+
     private var isStartingRecording = false
     private var isCameraSetup = false
+    private var isPreviewVisible = true
+    private var awaitingManageStorageResult = false
 
     // 权限请求
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
-        Logger.d(TAG, "Permission result cameraGranted=$cameraGranted")
-
-        if (cameraGranted) {
-            setupCamera()
-        } else {
-            ToastUtil.show(getString(R.string.camera_permission_required))
-            finish()
+        val grantedPermissions = permissionRequirement.runtimePermissions
+            .filter { permission -> permissions[permission] == true || hasPermission(permission) }
+            .toSet()
+        Logger.d(TAG, "Permission result granted=${grantedPermissions.joinToString()}")
+        if (CameraStartupPermissionPolicy.hasAllRuntimePermissions(permissionRequirement, grantedPermissions)) {
+            ensureStorageAccessAndSetupCamera()
+            return@registerForActivityResult
         }
+        handleRuntimePermissionDenied()
+    }
+
+    private val manageStorageLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        awaitingManageStorageResult = false
+        handleManageStorageResult()
     }
 
     override fun initView(savedInstanceState: Bundle?) {
         // 设置透明状态栏
         StatusBarHelper.translucent(this)
 
-        // 请求权限
-        permissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.CAMERA
-            )
-        )
-
         // 初始化控件
         setupControls()
+        updateRuntimeLogPath()
 
         // 观察状态
         observeState()
+
+        // 请求权限
+        requestStartupPermissions()
     }
 
     /**
@@ -85,12 +104,14 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         isCameraSetup = true
 
         // 初始化相机预览
-        recorder.initialize(binding.previewView) {
+        recorder.initialize(binding.previewView, binding.surfacePreviewView) {
             Logger.d(TAG, "Camera initialized")
 
             viewModel.setSupportedFpsByResolution(recorder.supportedFpsByResolution.value)
             viewModel.setDeviceMaxZoomRatio(recorder.maxZoomRatio.value)
         }
+        recorder.setPreviewVisible(isPreviewVisible)
+        updatePreviewToggleButton()
 
         // 设置录像回调
         recorder.setOnRecordingSavedListener { _ ->
@@ -125,13 +146,19 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
                     return
                 }
                 val zoomRatio = progressToZoomRatio(progress, viewModel.zoomRange.value, ZOOM_SLIDER_MAX)
-                viewModel.updateZoomRatio(zoomRatio)
+                viewModel.updateZoomRatio(zoomRatio, persist = false)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                val zoomRatio = progressToZoomRatio(
+                    seekBar?.progress ?: 0,
+                    viewModel.zoomRange.value,
+                    ZOOM_SLIDER_MAX
+                )
+                viewModel.updateZoomRatio(zoomRatio)
             }
         })
 
@@ -146,18 +173,11 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             updateResolutionButtons(Resolution.HD_1080P)
         }
 
-        // 帧率按钮
-        binding.btnFps120.click {
-            selectFpsIfSupported(Fps.FPS_120, binding.btnFps120)
+        binding.btnTogglePreview.click {
+            togglePreviewVisibility()
         }
 
-        binding.btnFps240.click {
-            selectFpsIfSupported(Fps.FPS_240, binding.btnFps240)
-        }
-
-        binding.btnFps480.click {
-            selectFpsIfSupported(Fps.FPS_480, binding.btnFps480)
-        }
+        renderFpsButtons(viewModel.availableFpsOptions.value)
 
         // 录像按钮
         binding.btnRecord.click {
@@ -168,12 +188,12 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     /**
      * 选择帧率（如果设备支持）
      */
-    private fun selectFpsIfSupported(fps: Fps, button: android.widget.TextView) {
-        if (viewModel.isFpsSupported(fps)) {
-            viewModel.selectFps(fps)
-            updateFpsButtons(fps)
+    private fun selectFpsIfSupported(fpsOption: CameraFpsOption) {
+        if (viewModel.isFpsSupported(fpsOption)) {
+            viewModel.selectFps(fpsOption)
+            updateFpsButtons(fpsOption)
         } else {
-            ToastUtil.show(getString(R.string.camera_unsupported_fps, fps.value))
+            ToastUtil.show(formatUnsupportedFpsMessage(fpsOption))
         }
     }
 
@@ -183,29 +203,48 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     private fun updateResolutionButtons(resolution: Resolution) {
         binding.btnResolution720p.isSelected = resolution == Resolution.HD_720P
         binding.btnResolution1080p.isSelected = resolution == Resolution.HD_1080P
-
-        // 根据 1080p 隐藏/显示 480fps 按钮
-        updateFpsButtonsVisibility(resolution)
     }
 
     /**
      * 更新帧率按钮状态
      */
-    private fun updateFpsButtons(fps: Fps) {
-        binding.btnFps120.isSelected = fps == Fps.FPS_120
-        binding.btnFps240.isSelected = fps == Fps.FPS_240
-        binding.btnFps480.isSelected = fps == Fps.FPS_480
+    private fun updateFpsButtons(fpsOption: CameraFpsOption) {
+        fpsButtons.forEach { (value, button) ->
+            button.isSelected = value == fpsOption
+        }
     }
 
-    /**
-     * 更新帧率按钮可见性
-     */
-    private fun updateFpsButtonsVisibility(resolution: Resolution) {
-        if (resolution == Resolution.HD_1080P) {
-            binding.btnFps480.gone()
-        } else {
-            binding.btnFps480.visible()
+    private fun renderFpsButtons(options: List<CameraFpsOption>) {
+        val normalizedOptions = options.distinct().sorted()
+        if (fpsButtons.keys.toList() != normalizedOptions) {
+            binding.fpsContainer.removeAllViews()
+            fpsButtons.clear()
+
+            normalizedOptions.forEachIndexed { index, fpsOption ->
+                val button = TextView(this).apply {
+                    background = ContextCompat.getDrawable(context, R.drawable.selector_setting_button)
+                    text = formatFpsOptionLabel(fpsOption)
+                    setTextColor(ContextCompat.getColor(context, R.color.camera_setting_button_text))
+                    textSize = 14f
+                    setPadding(dpToPx(16), dpToPx(8), dpToPx(16), dpToPx(8))
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        if (index > 0) {
+                            marginStart = dpToPx(16)
+                        }
+                    }
+                }
+                button.click {
+                    selectFpsIfSupported(fpsOption)
+                }
+                binding.fpsContainer.addView(button)
+                fpsButtons[fpsOption] = button
+            }
         }
+        if (normalizedOptions.isEmpty()) binding.fpsScroll.gone() else binding.fpsScroll.visible()
+        updateFpsButtons(viewModel.selectedFps.value)
     }
 
     /**
@@ -224,13 +263,20 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
      */
     private fun startRecording() {
         val resolution = viewModel.selectedResolution.value
-        val fps = viewModel.selectedFps.value
-        Logger.d(TAG, "startRecording requested resolution=${resolution.name} fps=${fps.value}")
+        val fpsOption = viewModel.selectedFps.value
+        Logger.d(
+            TAG,
+            "startRecording requested resolution=${resolution.name} fps=${fpsOption.lower}-${fpsOption.upper}"
+        )
 
         isStartingRecording = true
-        val started = recorder.startRecording(resolution, fps)
+        updateZoomControls()
+        updateSettingControls()
+        val started = recorder.startRecording(resolution, fpsOption)
         if (!started) {
             isStartingRecording = false
+            updateZoomControls()
+            updateSettingControls()
             return
         }
     }
@@ -252,6 +298,55 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         }
         binding.btnRecord.isSelected = false
         animateRecordButton(toRecording = false)
+        updateZoomControls()
+        updateSettingControls()
+    }
+
+    private fun togglePreviewVisibility() {
+        isPreviewVisible = !isPreviewVisible
+        if (::recorder.isInitialized) {
+            recorder.setPreviewVisible(isPreviewVisible)
+        }
+        updatePreviewToggleButton()
+    }
+
+    private fun updatePreviewToggleButton() {
+        binding.btnTogglePreview.text = getString(
+            if (isPreviewVisible) R.string.camera_hide_preview else R.string.camera_show_preview
+        )
+        binding.btnTogglePreview.isSelected = isPreviewVisible
+    }
+
+    private fun updateRuntimeLogPath() {
+        val logPath = AppRuntimeLogCapture.currentLogFilePath()
+        binding.tvRuntimeLogPath.text = if (logPath.isNullOrBlank()) {
+            getString(R.string.camera_runtime_log_path_unavailable)
+        } else {
+            getString(R.string.camera_runtime_log_path, logPath)
+        }
+    }
+
+    private fun updateZoomControls() {
+        val range = viewModel.zoomRange.value
+        val shouldLockZoom = isStartingRecording || viewModel.isRecording.value
+        val isEnabled = range.isAdjustable && !shouldLockZoom
+        binding.seekZoom.isEnabled = isEnabled
+        binding.seekZoom.alpha = if (isEnabled) 1.0f else 0.45f
+    }
+
+    private fun updateSettingControls() {
+        val isLocked = isStartingRecording || viewModel.isRecording.value
+        val alpha = if (isLocked) 0.45f else 1.0f
+        binding.btnResolution720p.isEnabled = !isLocked
+        binding.btnResolution1080p.isEnabled = !isLocked
+        binding.btnTogglePreview.isEnabled = !isLocked
+        binding.btnResolution720p.alpha = alpha
+        binding.btnResolution1080p.alpha = alpha
+        binding.btnTogglePreview.alpha = alpha
+        fpsButtons.values.forEach { button ->
+            button.isEnabled = !isLocked
+            button.alpha = alpha
+        }
     }
 
     /**
@@ -286,6 +381,18 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         }
     }
 
+    private fun formatFpsOptionLabel(fpsOption: CameraFpsOption): String {
+        return when (fpsOption.upper) {
+            120 -> getString(R.string.camera_fps_label_a)
+            240 -> getString(R.string.camera_fps_label_b)
+            else -> getString(R.string.camera_fps_exact_format, fpsOption.upper)
+        }
+    }
+
+    private fun formatUnsupportedFpsMessage(fpsOption: CameraFpsOption): String {
+        return getString(R.string.camera_unsupported_setting)
+    }
+
     /**
      * 观察状态变化
      */
@@ -298,6 +405,8 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
                 } else {
                     binding.tvTimer.gone()
                 }
+                updateZoomControls()
+                updateSettingControls()
             }
         }
 
@@ -311,9 +420,8 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         // 观察缩放范围
         lifecycleScope.launchWhenStarted {
             viewModel.zoomRange.collect { range ->
-                binding.seekZoom.isEnabled = range.isAdjustable
-                binding.seekZoom.alpha = if (range.isAdjustable) 1.0f else 0.45f
                 binding.seekZoom.progress = zoomRatioToProgress(viewModel.zoomRatio.value, range, ZOOM_SLIDER_MAX)
+                updateZoomControls()
             }
         }
 
@@ -328,12 +436,11 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             }
         }
 
-        // 观察可用帧率选项（用于 1080p 时隐藏 480fps）
+        // 观察可用帧率选项
         lifecycleScope.launchWhenStarted {
             viewModel.availableFpsOptions.collect { options ->
-                if (options.contains(Fps.FPS_120)) binding.btnFps120.visible() else binding.btnFps120.gone()
-                if (options.contains(Fps.FPS_240)) binding.btnFps240.visible() else binding.btnFps240.gone()
-                if (options.contains(Fps.FPS_480)) binding.btnFps480.visible() else binding.btnFps480.gone()
+                renderFpsButtons(options)
+                updateSettingControls()
             }
         }
 
@@ -341,6 +448,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         lifecycleScope.launchWhenStarted {
             viewModel.selectedResolution.collect { resolution ->
                 updateResolutionButtons(resolution)
+                updateSettingControls()
             }
         }
 
@@ -348,6 +456,8 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         lifecycleScope.launchWhenStarted {
             viewModel.selectedFps.collect { fps ->
                 updateFpsButtons(fps)
+                updateZoomControls()
+                updateSettingControls()
             }
         }
     }
@@ -393,6 +503,92 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     }
 
     private fun hasCameraPermission(): Boolean {
-        return checkSelfPermission(Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        return hasPermission(Manifest.permission.CAMERA)
+    }
+
+    private fun requestStartupPermissions() {
+        val missingPermissions = permissionRequirement.runtimePermissions
+            .filterNot { permission -> hasPermission(permission) }
+        if (missingPermissions.isNotEmpty()) {
+            permissionLauncher.launch(missingPermissions.toTypedArray())
+            return
+        }
+        ensureStorageAccessAndSetupCamera()
+    }
+
+    private fun ensureStorageAccessAndSetupCamera() {
+        val grantedPermissions = permissionRequirement.runtimePermissions
+            .filter { permission -> hasPermission(permission) }
+            .toSet()
+        if (!CameraStartupPermissionPolicy.canProceed(permissionRequirement, grantedPermissions)) {
+            handleRuntimePermissionDenied()
+            return
+        }
+        if (permissionRequirement.promptsManageExternalStorage && !hasManageStorageAccess()) {
+            requestManageStorageAccess()
+            return
+        }
+        setupCamera()
+    }
+
+    private fun requestManageStorageAccess() {
+        if (!permissionRequirement.promptsManageExternalStorage || hasManageStorageAccess()) {
+            setupCamera()
+            return
+        }
+        awaitingManageStorageResult = true
+        ToastUtil.show(getString(R.string.camera_storage_settings_required))
+        manageStorageLauncher.launch(buildManageStorageIntent())
+    }
+
+    private fun handleManageStorageResult() {
+        if (hasManageStorageAccess()) {
+            setupCamera()
+            return
+        }
+        AlertDialog.Builder(this)
+            .setCancelable(false)
+            .setTitle(R.string.camera_storage_permission_title)
+            .setMessage(R.string.camera_storage_permission_denied)
+            .setPositiveButton(R.string.retry) { _, _ ->
+                requestManageStorageAccess()
+            }
+            .setNegativeButton(R.string.continue_label) { _, _ ->
+                setupCamera()
+            }
+            .show()
+    }
+
+    private fun handleRuntimePermissionDenied() {
+        AlertDialog.Builder(this)
+            .setCancelable(false)
+            .setTitle(R.string.camera_storage_permission_title)
+            .setMessage(R.string.camera_permission_required)
+            .setPositiveButton(R.string.retry) { _, _ ->
+                requestStartupPermissions()
+            }
+            .setNegativeButton(R.string.back) { _, _ ->
+                finish()
+            }
+            .show()
+    }
+
+    private fun buildManageStorageIntent(): Intent {
+        val packageUri = Uri.parse("package:$packageName")
+        return Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, packageUri)
+            .takeIf { intent -> intent.resolveActivity(packageManager) != null }
+            ?: Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+    }
+
+    private fun hasManageStorageAccess(): Boolean {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.R || Environment.isExternalStorageManager()
+    }
+
+    private fun hasPermission(permission: String): Boolean {
+        return checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun dpToPx(value: Int): Int {
+        return (value * resources.displayMetrics.density).toInt()
     }
 }

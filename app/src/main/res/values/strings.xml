@@ -4,6 +4,7 @@
 
     <!-- Common -->
     <string name="back">Back</string>
+    <string name="continue_label">Continue</string>
     <string name="retry">Retry</string>
     <string name="loading">Loading…</string>
     <string name="no_data">No data available</string>
@@ -14,15 +15,22 @@
     <string name="camera_demo_title">Slow Motion Camera</string>
     <string name="camera_resolution_720p">720p</string>
     <string name="camera_resolution_1080p">1080p</string>
-    <string name="camera_fps_120">120fps</string>
-    <string name="camera_fps_240">240fps</string>
-    <string name="camera_fps_480">480fps</string>
-    <string name="camera_permission_required">Camera permission is required</string>
+    <string name="camera_fps_label_a">A</string>
+    <string name="camera_fps_label_b">B</string>
+    <string name="camera_fps_exact_format">%1$dfps</string>
+    <string name="camera_permission_required">Camera, microphone and storage permissions are required</string>
     <string name="camera_recording_started">Recording started</string>
     <string name="camera_recording_saved">Video saved</string>
     <string name="camera_recording_failed">Recording failed</string>
-    <string name="camera_unsupported_fps">This device does not support %1$d fps</string>
+    <string name="camera_recording_empty_output">Recording produced an empty video file. Please try again.</string>
     <string name="camera_zoom_label">%.1fx</string>
     <string name="camera_unsupported_setting">Unsupported setting</string>
     <string name="camera_slow_motion_not_supported">This device does not support slow motion recording for the selected setting</string>
+    <string name="camera_hide_preview">Hide preview</string>
+    <string name="camera_show_preview">Show preview</string>
+    <string name="camera_runtime_log_path">Log file: %1$s</string>
+    <string name="camera_runtime_log_path_unavailable">Log file: unavailable</string>
+    <string name="camera_storage_permission_title">Permission required</string>
+    <string name="camera_storage_settings_required">Allow storage access on the next system page, then return to the app.</string>
+    <string name="camera_storage_permission_denied">Storage access is still not granted. You can retry on the system settings page or continue into the app.</string>
 </resources>
