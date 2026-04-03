@@ -48,10 +48,12 @@ internal fun normalizeHighSpeedFpsOptions(
         .sorted()
 }
 
+private const val MIN_DISPLAY_FPS = 120
+
 internal fun filterExactFpsOptions(
     options: List<CameraFpsOption>
 ): List<CameraFpsOption> {
-    return options.filter { it.isExact && (it.upper == 120 || it.upper == 240) }
+    return options.filter { it.isExact && it.upper >= MIN_DISPLAY_FPS }
 }
 
 internal fun resolveRecordingFpsOption(

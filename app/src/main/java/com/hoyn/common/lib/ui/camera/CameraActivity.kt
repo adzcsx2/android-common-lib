@@ -20,8 +20,8 @@ import com.hoyn.common.lib.logging.AppRuntimeLogCapture
 import com.hoyn.common.lib.ui.camera.CameraViewModel.Resolution
 import com.hoyn.common.ui.ext.click
 import com.hoyn.common.ui.ext.gone
+import com.hoyn.common.ui.ext.invisible
 import com.hoyn.common.ui.ext.visible
-import com.hoyn.common.ui.toast.ToastUtil
 import com.hoyn.common.ui.utils.StatusBarHelper
 import com.hoyn.common.utils.Logger
 
@@ -82,7 +82,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
 
         // 初始化控件
         setupControls()
-        updateRuntimeLogPath()
+        updateInitialLog()
 
         // 观察状态
         observeState()
@@ -114,8 +114,10 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         updatePreviewToggleButton()
 
         // 设置录像回调
-        recorder.setOnRecordingSavedListener { _ ->
-            Logger.d(TAG, "Recording saved callback")
+        recorder.setOnRecordingSavedListener { videoUri, filePath ->
+            Logger.d(TAG, "Recording saved callback, uri=$videoUri path=$filePath")
+            appendLog("录像结束")
+            appendLog("保存位置: $filePath")
             resetRecordingUi()
         }
 
@@ -125,12 +127,19 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             viewModel.startRecording()
             binding.btnRecord.isSelected = true
             animateRecordButton(toRecording = true)
+
+            // 记录录像开始日志
+            val fpsOption = viewModel.selectedFps.value
+            val resolution = viewModel.selectedResolution.value
+            appendLog("录像开始")
+            appendLog("分辨率: ${resolution.name}")
+            appendLog("帧率: ${fpsOption.upper} fps")
         }
 
         recorder.setOnRecordingFailedListener { error ->
             Logger.e(TAG, "Recording failed callback: $error")
             resetRecordingUi()
-            ToastUtil.show(buildRecordingFailedMessage(error))
+            appendLog(buildRecordingFailedMessage(error))
         }
 
     }
@@ -166,11 +175,15 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         binding.btnResolution720p.click {
             viewModel.selectResolution(Resolution.HD_720P)
             updateResolutionButtons(Resolution.HD_720P)
+            appendLog("分辨率: 720p")
+            binding.fpsScroll.visible()
         }
 
         binding.btnResolution1080p.click {
             viewModel.selectResolution(Resolution.HD_1080P)
             updateResolutionButtons(Resolution.HD_1080P)
+            appendLog("分辨率: 1080p")
+            binding.fpsScroll.visible()
         }
 
         binding.btnTogglePreview.click {
@@ -192,8 +205,10 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         if (viewModel.isFpsSupported(fpsOption)) {
             viewModel.selectFps(fpsOption)
             updateFpsButtons(fpsOption)
+            appendLog("帧率: ${fpsOption.upper} fps")
+            binding.fpsScroll.gone()
         } else {
-            ToastUtil.show(formatUnsupportedFpsMessage(fpsOption))
+            appendLog(formatUnsupportedFpsMessage(fpsOption))
         }
     }
 
@@ -243,7 +258,6 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
                 fpsButtons[fpsOption] = button
             }
         }
-        if (normalizedOptions.isEmpty()) binding.fpsScroll.gone() else binding.fpsScroll.visible()
         updateFpsButtons(viewModel.selectedFps.value)
     }
 
@@ -317,13 +331,47 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         binding.btnTogglePreview.isSelected = isPreviewVisible
     }
 
-    private fun updateRuntimeLogPath() {
+    private fun updateInitialLog() {
+        clearLog()
+        // 显示日志文件路径
         val logPath = AppRuntimeLogCapture.currentLogFilePath()
-        binding.tvRuntimeLogPath.text = if (logPath.isNullOrBlank()) {
+        appendLog(if (logPath.isNullOrBlank()) {
             getString(R.string.camera_runtime_log_path_unavailable)
         } else {
             getString(R.string.camera_runtime_log_path, logPath)
+        })
+    }
+
+    private fun updateRuntimeLogPath() {
+        val logPath = AppRuntimeLogCapture.currentLogFilePath()
+        appendLog(if (logPath.isNullOrBlank()) {
+            getString(R.string.camera_runtime_log_path_unavailable)
+        } else {
+            getString(R.string.camera_runtime_log_path, logPath)
+        })
+    }
+
+    private fun appendLog(message: String) {
+        val currentText = binding.tvLogContent.text.toString()
+        val newText = if (currentText.isEmpty()) {
+            message
+        } else {
+            "$currentText\n$message"
         }
+        binding.tvLogContent.text = newText
+        // 自动滚动到底部
+        binding.logOverlay.post {
+            val layout = binding.tvLogContent.layout
+            if (layout != null && binding.tvLogContent.lineCount > 0) {
+                val lineBottom = layout.getLineBottom(binding.tvLogContent.lineCount - 1)
+                val scrollY = (lineBottom - binding.tvLogContent.height).coerceAtLeast(0)
+                binding.tvLogContent.scrollTo(0, scrollY)
+            }
+        }
+    }
+
+    private fun clearLog() {
+        binding.tvLogContent.text = ""
     }
 
     private fun updateZoomControls() {
@@ -382,11 +430,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
     }
 
     private fun formatFpsOptionLabel(fpsOption: CameraFpsOption): String {
-        return when (fpsOption.upper) {
-            120 -> getString(R.string.camera_fps_label_a)
-            240 -> getString(R.string.camera_fps_label_b)
-            else -> getString(R.string.camera_fps_exact_format, fpsOption.upper)
-        }
+        return getString(R.string.camera_fps_exact_format, fpsOption.upper)
     }
 
     private fun formatUnsupportedFpsMessage(fpsOption: CameraFpsOption): String {
@@ -401,7 +445,8 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
         lifecycleScope.launchWhenStarted {
             viewModel.isRecording.collect { isRecording ->
                 if (isRecording) {
-                    binding.tvTimer.visible()
+//                    binding.tvTimer.visible()
+                    binding.tvTimer.invisible()
                 } else {
                     binding.tvTimer.gone()
                 }
@@ -537,7 +582,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding, CameraViewModel>() {
             return
         }
         awaitingManageStorageResult = true
-        ToastUtil.show(getString(R.string.camera_storage_settings_required))
+        appendLog(getString(R.string.camera_storage_settings_required))
         manageStorageLauncher.launch(buildManageStorageIntent())
     }
 

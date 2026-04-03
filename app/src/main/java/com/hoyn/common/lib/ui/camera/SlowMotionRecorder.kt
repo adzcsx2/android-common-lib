@@ -24,6 +24,7 @@ import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.media.MediaMetadataRetriever
+import android.os.Environment
 import android.util.Range
 import android.util.Size
 import android.view.Surface
@@ -82,6 +83,7 @@ class SlowMotionRecorder(
         val recorder: MediaRecorder,
         val outputPfd: ParcelFileDescriptor,
         val outputUri: android.net.Uri,
+        val fileName: String,
         val profile: HighSpeedProfile
     )
 
@@ -239,7 +241,7 @@ class SlowMotionRecorder(
 
     // 录像回调
     private var onRecordingStarted: (() -> Unit)? = null
-    private var onRecordingSaved: ((String) -> Unit)? = null
+    private var onRecordingSaved: ((String, String) -> Unit)? = null
     private var onRecordingFailed: ((String) -> Unit)? = null
 
     /**
@@ -655,8 +657,8 @@ class SlowMotionRecorder(
     }
 
     private fun prepareMediaRecorder(profile: HighSpeedProfile, token: Long): RecordingAttempt {
-        val outputUri = createOutputUri() ?: throw IllegalStateException("Failed to create output uri")
-        val outputPfd = context.contentResolver.openFileDescriptor(outputUri, "rw")
+        val outputInfo = createOutputInfo() ?: throw IllegalStateException("Failed to create output uri")
+        val outputPfd = context.contentResolver.openFileDescriptor(outputInfo.uri, "rw")
             ?: throw IllegalStateException("Failed to open output file")
 
         val recorder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -681,7 +683,8 @@ class SlowMotionRecorder(
             token = token,
             recorder = recorder,
             outputPfd = outputPfd,
-            outputUri = outputUri,
+            outputUri = outputInfo.uri,
+            fileName = outputInfo.fileName,
             profile = profile
         )
     }
@@ -869,7 +872,9 @@ class SlowMotionRecorder(
         return normalized == 90 || normalized == 270
     }
 
-    private fun createOutputUri(): android.net.Uri? {
+    private data class OutputInfo(val uri: android.net.Uri, val fileName: String)
+
+    private fun createOutputInfo(): OutputInfo? {
         val name = "SlowMo_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(System.currentTimeMillis())}.mp4"
         val contentValues = ContentValues().apply {
             put(MediaStore.Video.Media.DISPLAY_NAME, name)
@@ -879,7 +884,20 @@ class SlowMotionRecorder(
                 put(MediaStore.Video.Media.IS_PENDING, 1)
             }
         }
-        return context.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)
+        val uri = context.contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)
+            ?: return null
+        return OutputInfo(uri, name)
+    }
+
+    private fun resolveFilePath(uri: android.net.Uri, fileName: String): String {
+        val projection = arrayOf(MediaStore.Video.Media.DATA)
+        context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val data = cursor.getString(0)
+                if (!data.isNullOrBlank()) return data
+            }
+        }
+        return "${Environment.getExternalStorageDirectory()}/${MOVIE_DIRECTORY}/${fileName}"
     }
 
     /**
@@ -951,8 +969,9 @@ class SlowMotionRecorder(
             }
             finalizeOutput(attempt.outputUri)
             val uri = attempt.outputUri.toString()
-            Logger.d(TAG, "Recording saved: $uri")
-            notifyRecordingSaved(uri, callbackGeneration)
+            val filePath = resolveFilePath(attempt.outputUri, attempt.fileName)
+            Logger.d(TAG, "Recording saved: $uri path=$filePath")
+            notifyRecordingSaved(uri, filePath, callbackGeneration)
         } catch (e: Exception) {
             Logger.e(TAG, "Failed to stop recording: ${e.message}")
             releaseAttempt(attempt, deleteOutput = true)
@@ -1005,7 +1024,7 @@ class SlowMotionRecorder(
     /**
      * 设置录像保存回调
      */
-    fun setOnRecordingSavedListener(listener: (String) -> Unit) {
+    fun setOnRecordingSavedListener(listener: (String, String) -> Unit) {
         onRecordingSaved = listener
     }
 
@@ -1217,7 +1236,7 @@ class SlowMotionRecorder(
         }
     }
 
-    private fun notifyRecordingSaved(uri: String, generation: Long) {
+    private fun notifyRecordingSaved(uri: String, filePath: String, generation: Long) {
         if (isReleasing) {
             return
         }
@@ -1226,7 +1245,7 @@ class SlowMotionRecorder(
                 Logger.d(TAG, "Skip recording saved callback generation=$generation resumed=$isHostResumed")
                 return@execute
             }
-            onRecordingSaved?.invoke(uri)
+            onRecordingSaved?.invoke(uri, filePath)
         }
     }
 
