@@ -1,5 +1,6 @@
 package com.hoyn.common.network
 
+import com.hoyn.common.core.gson.GsonUtils
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -35,7 +36,7 @@ object RetrofitFactory {
             Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(GsonUtils.getGson()))
                 .build()
         }
     }

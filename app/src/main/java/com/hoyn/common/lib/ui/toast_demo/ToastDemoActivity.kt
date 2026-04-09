@@ -3,6 +3,9 @@ package com.hoyn.common.lib.ui.toast_demo
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import com.google.android.material.snackbar.Snackbar
+import com.hjq.toast.style.BlackToastStyle
+import com.hjq.toast.style.WhiteToastStyle
 import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.R
@@ -10,10 +13,6 @@ import com.hoyn.common.lib.databinding.ActivityToastDemoBinding
 import com.hoyn.common.ui.ext.click
 import com.hoyn.common.ui.ext.gone
 import com.hoyn.common.ui.ext.visible
-import com.hjq.toast.style.BlackToastStyle
-import com.hjq.toast.style.CustomToastStyle
-import com.hjq.toast.style.WhiteToastStyle
-import com.google.android.material.snackbar.Snackbar
 
 /**
  * Toast 示例页面
@@ -30,7 +29,6 @@ import com.google.android.material.snackbar.Snackbar
 class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() {
 
     private val pendingActions = mutableListOf<Runnable>()
-    private var toastSnapshot: com.hoyn.common.utils.ToastUtils.Snapshot? = null
 
     /**
      * 初始化视图
@@ -38,16 +36,13 @@ class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() 
      * @param savedInstanceState 保存的实例状态
      */
     override fun initView(savedInstanceState: Bundle?) {
-        toastSnapshot = toast.snapshot()
-        toast.useBlackStyle()
-        toast.setImmediateStrategy()
         setupViews()
     }
 
     override fun onCleanUp() {
         pendingActions.forEach(binding.root::removeCallbacks)
         pendingActions.clear()
-        toast.restore(toastSnapshot)
+        toast.setImmediateStrategy()
     }
 
     /**
@@ -66,7 +61,7 @@ class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() 
 
         // 显示短时 Toast（SHORT 时长）
         binding.btnShortToast.click {
-            toast.showShort(R.string.toast_demo_message_short_result)
+            toast.show(R.string.toast_demo_message_short_result)
         }
 
         // 显示长时 Toast（LONG 时长）
@@ -116,28 +111,43 @@ class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() 
 
         // 使用 Info 信息样式布局显示 Toast（蓝色提示）
         binding.btnInfoStyle.click {
-            toast.showWithLayout(R.string.toast_demo_message_info_style, R.layout.toast_info)
+            toast.showWithLayout(
+                R.string.toast_demo_message_info_style,
+                R.layout.toast_info
+            )
         }
 
         // 使用 Warn 警告样式布局显示 Toast（黄色提示）
         binding.btnWarnStyle.click {
-            toast.showWithLayout(R.string.toast_demo_message_warn_style, R.layout.toast_warn)
+            toast.showWithLayout(
+                R.string.toast_demo_message_warn_style,
+                R.layout.toast_warn
+            )
         }
 
         // 使用 Success 成功样式布局显示 Toast（绿色提示）
         binding.btnSuccessStyle.click {
-            toast.showWithLayout(R.string.toast_demo_message_success_style, R.layout.toast_success)
+            toast.showWithLayout(
+                R.string.toast_demo_message_success_style,
+                R.layout.toast_success
+            )
         }
 
         // 使用 Error 错误样式布局显示 Toast（红色提示）
         binding.btnErrorStyle.click {
-            toast.showWithLayout(R.string.toast_demo_message_error_style, R.layout.toast_error)
+            toast.showWithLayout(
+                R.string.toast_demo_message_error_style,
+                R.layout.toast_error
+            )
         }
 
         // 使用自定义 XML 布局作为全局 Toast 视图，居中显示
         binding.btnCustomXmlToast.click {
-            toast.setGlobalCustomView(R.layout.toast_custom_view, Gravity.CENTER)
-            toast.show(R.string.toast_demo_message_custom_xml)
+            toast.showWithLayout(
+                R.string.toast_demo_message_custom_xml,
+                R.layout.toast_custom_view,
+                Gravity.CENTER
+            )
         }
 
         // 在屏幕居中位置显示短时 Toast
@@ -147,7 +157,10 @@ class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() 
 
         // 在屏幕居中位置显示长时 Toast
         binding.btnCenterLongToast.click {
-            toast.showCenterLong(R.string.toast_demo_message_center_long)
+            toast.showLong(R.string.toast_demo_message_center_long) {
+                gravity = Gravity.CENTER
+                yOffset = 0
+            }
         }
 
         // 切换到队列策略：新 Toast 会排队等候前一个显示完毕，同时显示提示文字
@@ -177,11 +190,19 @@ class ToastDemoActivity : BaseActivity<ActivityToastDemoBinding, NoViewModel>() 
         // 后台 Toast 演示：先提示用户即将回到桌面，2 秒后再提示，4 秒后回到桌面，5 秒后展示全局 Toast
         binding.btnBackgroundToast.click {
             // 立即显示 Snackbar 提示
-            Snackbar.make(binding.root, R.string.toast_demo_message_background_hint, Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(
+                binding.root,
+                R.string.toast_demo_message_background_hint,
+                Snackbar.LENGTH_SHORT
+            ).show()
 
             // 2 秒后显示第二个 Snackbar
             postDemoAction(2000) {
-                Snackbar.make(binding.root, R.string.toast_demo_message_background_snackbar, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(
+                    binding.root,
+                    R.string.toast_demo_message_background_snackbar,
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }
 
             // 4 秒后回到桌面

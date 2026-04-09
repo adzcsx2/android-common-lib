@@ -6,6 +6,88 @@
 
 ## Package: `com.hoyn.common.ui`
 
+### ToastUtils
+
+Toast 统一入口，基于 Toaster 库封装。统一使用 Application 初始化，避免页面级 Context 泄露。
+
+```kotlin
+object ToastUtils {
+    fun init(application: Application, config: (ToastConfig.() -> Unit)? = null)
+    fun show(message: CharSequence?, config: ToastConfig.() -> Unit = {})
+    fun show(@StringRes messageRes: Int, config: ToastConfig.() -> Unit = {})
+    fun showLong(message: CharSequence?, config: ToastConfig.() -> Unit = {})
+    fun showCenter(message: CharSequence?, config: ToastConfig.() -> Unit = {})
+    fun showGlobal(message: CharSequence?, config: ToastConfig.() -> Unit = {})
+    fun debugShow(message: CharSequence?)
+    fun delayedShow(message: CharSequence?, delayMillis: Long, config: ToastConfig.() -> Unit = {})
+    fun cancel()
+    fun setGlobalStyle(style: IToastStyle<*>)
+    fun showWithStyle(message: CharSequence?, style: IToastStyle<*>, config: ToastConfig.() -> Unit = {})
+    fun showWithLayout(message: CharSequence?, @LayoutRes layoutRes: Int, gravity: Int = Gravity.CENTER, config: ToastConfig.() -> Unit = {})
+    fun setGravity(gravity: Int, xOffset: Int = 0, yOffset: Int = ToastConfig.defaults().yOffset)
+    fun resetGravity()
+}
+```
+
+#### Methods
+
+| Method | Description |
+|--------|-------------|
+| `init(app, config?)` | 初始化 ToastUtils，必须在 Application.onCreate() 中调用 |
+| `show(message, config)` | 显示短时 Toast（底部），仅 Debug 包生效 |
+| `showLong(message, config)` | 显示长时 Toast（底部），仅 Debug 包生效 |
+| `showCenter(message, config)` | 显示短时 Toast（居中），仅 Debug 包生效 |
+| `showGlobal(message, config)` | 显示全局优先级 Toast，不会被覆盖 |
+| `debugShow(message)` | 显示 Debug 专用 Toast |
+| `delayedShow(message, delay)` | 延迟显示 Toast |
+| `cancel()` | 取消当前 Toast |
+| `setGlobalStyle(style)` | 设置全局 Toast 样式 |
+| `showWithStyle(message, style)` | 使用指定样式显示 Toast |
+| `showWithLayout(message, layoutRes)` | 使用自定义布局显示 Toast |
+| `setGravity(gravity, x, y)` | 设置默认显示位置 |
+| `resetGravity()` | 重置为默认底部位置 |
+
+#### Usage Example
+
+```kotlin
+// 初始化（Application 中）
+ToastUtils.init(this) {
+    gravity = Gravity.CENTER
+    stackSkips = 2
+}
+
+// 短时间显示
+ToastUtils.show("提示信息")
+
+// 长时间显示
+ToastUtils.showLong("长提示")
+
+// 居中显示
+ToastUtils.showCenter("居中提示")
+
+// 单次调用覆盖配置
+ToastUtils.show("提示") {
+    xOffset = 10
+    yOffset = 100
+}
+
+// 在 BaseActivity/BaseFragment 中使用 toast 扩展
+toast("操作成功")
+```
+
+### ToastConfig
+
+Toast 配置类，支持 DSL 风格配置。
+
+```kotlin
+class ToastConfig private constructor(
+    var gravity: Int,      // 显示位置，默认 Gravity.BOTTOM
+    var xOffset: Int,      // X 轴偏移量（px），默认 0
+    var yOffset: Int,      // Y 轴偏移量（px），默认底部 64dp
+    var stackSkips: Int    // 堆栈跳过层数，默认 0
+)
+```
+
 ### BaseActivity
 
 Generic base class for Activities with ViewBinding support.
@@ -391,6 +473,7 @@ class MyActivity : AppCompatActivity() {
 | com.google.android.material | api |
 | kotlinx.coroutines:core | implementation |
 | kotlinx.coroutines:android | implementation |
+| com.hjq.toast:Toaster | implementation |
 
 ## Module Information
 

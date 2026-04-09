@@ -28,7 +28,7 @@ koin = "3.5.6"
 # Network
 retrofit = "2.11.0"
 okhttp = "4.12.0"
-gson = "2.11.0"
+gson = "2.13.2"
 
 # Image
 glide = "4.16.0"
@@ -42,6 +42,7 @@ coroutinesTest = "1.10.1"
 utilcodex = "1.31.0"
 mmkv = "2.3.0"
 window = "1.3.0"
+gsonfactory = "10.5"
 
 # UI
 smartRefresh = "2.0.6"
@@ -78,6 +79,7 @@ retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+gsonfactory = { group = "com.github.getActivity", name = "GsonFactory", version.ref = "gsonfactory" }
 
 # Database
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
@@ -104,6 +106,7 @@ mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mo
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlin" }
 
 # Koin
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }

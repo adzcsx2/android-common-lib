@@ -1,6 +1,6 @@
 ﻿package com.hoyn.common.network
 
-import com.google.gson.Gson
+import com.hoyn.common.core.gson.GsonUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -9,7 +9,7 @@ import org.junit.Test
 
 class ApiResponseTest {
 
-    private val gson = Gson()
+    private val gson = GsonUtils.getGson()
 
     @Test
     fun `isSuccess returns true when code is zero`() {

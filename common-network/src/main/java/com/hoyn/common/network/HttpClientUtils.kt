@@ -2,8 +2,7 @@ package com.hoyn.common.network
 
 import android.content.Context
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonPrimitive
-import com.google.gson.JsonSerializer
+import com.hoyn.common.core.gson.GsonUtils
 import com.hoyn.common.network.ssl.SSLManager
 import okhttp3.ConnectionPool
 import okhttp3.Interceptor
@@ -35,22 +34,10 @@ object HttpClientUtils {
     /**
      * 初始化 Gson Builder
      *
-     * 配置 Gson 的序列化选项，包括：
-     * - 序列化 null 值
-     * - 启用复杂 Map Key 序列化
-     * - Double 类型优化（整数不显示小数点）
-     *
      * @return 配置好的 GsonBuilder
      */
     fun initGsonBuilder(): GsonBuilder {
-        return GsonBuilder().serializeNulls().enableComplexMapKeySerialization()
-            .registerTypeAdapter(Double::class.java, JsonSerializer<Double> { src, _, _ ->
-                if (src != null && src.equals(src.toLong().toDouble())) {
-                    JsonPrimitive(src.toLong())
-                } else {
-                    JsonPrimitive(src)
-                }
-            })
+        return GsonUtils.newGsonBuilder()
     }
 
     /**
@@ -122,7 +109,7 @@ object HttpClientUtils {
         return Retrofit.Builder()
             .baseUrl(config.baseUrl)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(initGsonBuilder().create()))
+            .addConverterFactory(GsonConverterFactory.create(GsonUtils.getGson()))
             .build()
     }
 

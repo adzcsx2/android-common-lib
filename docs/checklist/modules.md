@@ -38,7 +38,7 @@
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.0")
 ```
 
 **使用示例**:
@@ -88,7 +88,7 @@ if (response.isSuccess()) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.0")
 ```
 
 **使用示例**:
@@ -128,7 +128,7 @@ ImageLoader.load(imageView)
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.0")
 ```
 
 **使用示例**:
@@ -182,7 +182,7 @@ lifecycleScope.launch {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
 ```
 
 **使用示例**:
@@ -204,26 +204,74 @@ Logger.t("CustomTag").d("Message")
 
 ---
 
-### Toast 提示
+### JSON 解析
 
-**模块**: `common-utils`
+**模块**: `common-core`
 
-**功能**: Toast 工具封装
+**包名**: `com.hoyn.common.core.gson`
+
+**功能**: 统一 Gson 容错解析与序列化入口
 
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.0")
 ```
 
 **使用示例**:
 
 ```kotlin
+// Application 中初始化，可选接收解析异常回调
+GsonUtils.init { event ->
+    Logger.w("Gson parse mismatch: ${event.fieldName} -> ${event.jsonToken}")
+}
+
+// 统一使用 GsonUtils，避免直接 new Gson()
+val gson = GsonUtils.getGson()
+val json = GsonUtils.toJson(user)
+val model = GsonUtils.fromJson<User>(json)
+
+// List 反序列化
+val listJson = GsonUtils.toJson(users)
+val userList = GsonUtils.fromJson<List<User>>(listJson).orEmpty()
+```
+
+---
+
+### Toast 提示
+
+**模块**: `common-ui`
+
+**包名**: `com.hoyn.common.ui.toast`
+
+**功能**: Toast 工具封装，支持 DSL 风格的全局和单次调用配置
+
+**依赖**:
+
+```kotlin
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
+```
+
+**使用示例**:
+
+```kotlin
+// 初始化（支持 DSL 配置全局默认值）
+ToastUtils.init(this) {
+    gravity = Gravity.CENTER
+    stackSkips = 2
+}
+
 // 短时间显示
 ToastUtils.show("提示信息")
 
 // 长时间显示
 ToastUtils.showLong("长提示")
+
+// 单次调用覆盖配置
+ToastUtils.show("提示") {
+    xOffset = 10
+    yOffset = 100
+}
 
 // 在主线程安全显示
 ToastUtils.debugShow("安全提示")
@@ -240,7 +288,7 @@ ToastUtils.debugShow("安全提示")
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
 ```
 
 **使用示例**:
@@ -276,7 +324,7 @@ val hasNotch = NotchHelper.hasNotch(activity)
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
 ```
 
 **使用示例**:
@@ -315,7 +363,7 @@ if (LivePermissions.check(context, Manifest.permission.CAMERA)) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
 ```
 
 **使用示例**:
@@ -349,7 +397,7 @@ MMKVUtils.clearAll()
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
 ```
 
 **使用示例**:
@@ -382,7 +430,7 @@ suspend fun computeOperation() = withDefault {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
 ```
 
 **使用示例**:
@@ -419,7 +467,7 @@ val height = view.height
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.0")
 ```
 
 **使用示例**:
@@ -453,7 +501,7 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.0")
 ```
 
 **使用示例**:
@@ -500,7 +548,7 @@ observeAllUIEvents(
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-compose:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-compose:1.3.0")
 ```
 
 **使用示例**:
@@ -580,16 +628,16 @@ common-ui (依赖 common-base)
 ```kotlin
 dependencies {
     // 核心功能
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.7")
-    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.7")
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
 
     // 架构基础
-    implementation("com.github.adzcsx2.android-common-lib:common-base:1.2.7")
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.0")
 
     // 按需添加
-    implementation("com.github.adzcsx2.android-common-lib:common-network:1.2.7")
-    implementation("com.github.adzcsx2.android-common-lib:common-image:1.2.7")
-    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.7")
+    implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
 }
 ```
 
@@ -603,11 +651,11 @@ dependencies {
 | minSdk     | 24     |
 | targetSdk  | 34     |
 | Kotlin     | 2.3.10 |
-| JVM Target | 11     |
+| JVM Target | 17     |
 
 ---
 
 ## 更新日志
 
-- **1.2.7** - 当前版本，包含所有上述功能
+- **1.3.0** - 当前版本，Toast 重构（迁移到 Toaster 库）、GsonUtils 新增、包路径迁移
 - 详见 [CHANGELOG.md](../CHANGELOG.md)

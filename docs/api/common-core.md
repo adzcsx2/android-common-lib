@@ -123,6 +123,82 @@ val bean = ThrowableBean.from(exception)
 
 | Dependency | Type |
 |------------|------|
+## Package: `com.hoyn.common.core.gson`
+
+### GsonUtils
+
+Gson 全局单例工具类，提供统一的序列化/反序列化入口，内置容错解析回调。
+
+```kotlin
+object GsonUtils {
+    fun init(handler: GsonParseExceptionHandler? = null)
+    fun getGson(): Gson
+    fun newGsonBuilder(): GsonBuilder
+    fun toJson(src: Any?): String
+    fun <T> fromJson(json: String, clazz: Class<T>): T?
+    fun <T> fromJson(json: String, type: Type): T?
+    inline fun <reified T> fromJson(json: String): T?
+}
+```
+
+#### Methods
+
+| Method | Description |
+|--------|-------------|
+| `init(handler?)` | 初始化 GsonUtils，可选注册解析异常回调 |
+| `getGson()` | 获取全局 Gson 单例（双重检查锁定，线程安全） |
+| `newGsonBuilder()` | 创建预配置的 GsonBuilder |
+| `toJson(src)` | 将对象序列化为 JSON 字符串 |
+| `fromJson(json, clazz)` | 反序列化为指定类型，失败返回 null |
+| `fromJson(json, type)` | 反序列化为指定 Type（泛型场景） |
+| `fromJson<T>(json)` | inline reified 便捷反序列化方法 |
+
+#### Usage Example
+
+```kotlin
+// 初始化（Application 中），可选注册解析异常回调
+GsonUtils.init { event ->
+    Logger.w("Gson parse mismatch: ${event.fieldName} -> ${event.jsonToken}")
+}
+
+// 序列化
+val json = GsonUtils.toJson(user)
+
+// 反序列化
+val user = GsonUtils.fromJson<User>(json)
+
+// 泛型 List
+val users = GsonUtils.fromJson<List<User>>(jsonList).orEmpty()
+```
+
+### GsonParseExceptionHandler
+
+Gson 解析异常回调接口（SAM）。
+
+```kotlin
+fun interface GsonParseExceptionHandler {
+    fun handleGsonParseException(event: GsonParseExceptionEvent)
+}
+```
+
+### GsonParseExceptionEvent
+
+Gson 解析异常事件，封装解析失败时的上下文信息。
+
+```kotlin
+data class GsonParseExceptionEvent(
+    val kind: GsonParseExceptionKind,  // OBJECT / LIST_ITEM / MAP_ITEM
+    val typeToken: TypeToken<*>,
+    val fieldName: String?,
+    val jsonToken: JsonToken?,
+    val mapItemKey: String? = null     // 仅 MAP_ITEM 时有值
+)
+```
+
+## Dependencies
+
+| Dependency | Type |
+|------------|------|
 | androidx.core:core-ktx | implementation |
 | androidx.lifecycle:lifecycle-runtime-ktx | api |
 | androidx.lifecycle:lifecycle-viewmodel-ktx | api |
@@ -144,7 +220,7 @@ val bean = ThrowableBean.from(exception)
 
 ```gradle
 dependencies {
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.2.7")
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.0")
 }
 ```
 

@@ -42,6 +42,7 @@ android {
 dependencies {
     api(project(":common-core"))
     api(project(":common-utils"))
+    api(project(":common-ui"))
 
     // AndroidX UI (for BaseActivity/BaseFragment)
     api(libs.androidx.appcompat)

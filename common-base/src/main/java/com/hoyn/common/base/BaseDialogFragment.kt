@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewbinding.ViewBinding
 import com.hoyn.common.utils.Logger
-import com.hoyn.common.utils.ToastUtils
+import com.hoyn.common.ui.toast.ToastUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel

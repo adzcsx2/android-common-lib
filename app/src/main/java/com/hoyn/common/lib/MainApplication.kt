@@ -2,11 +2,12 @@ package com.hoyn.common.lib
 
 import android.app.Application
 import com.hoyn.common.lib.di.initKoin
+import com.hoyn.common.core.gson.GsonUtils
 import com.hoyn.common.utils.LanguageHelper
 import com.hoyn.common.utils.Logger
 import com.hoyn.common.utils.MMKVUtils
 import com.hoyn.common.utils.ThemeManager
-import com.hoyn.common.utils.ToastUtils
+import com.hoyn.common.ui.toast.ToastUtils
 
 /**
  * MainApplication
@@ -36,6 +37,10 @@ class MainApplication : Application() {
         initKoin(this)
         // 初始化日志
         Logger.init(BuildConfig.DEBUG, getString(R.string.app_name))
+        // 初始化 Gson 容错解析
+        GsonUtils.init { event ->
+            Logger.w(event.toString())
+        }
         // 初始化 MMKV
         MMKVUtils.init(this)
         // 初始化 Toast

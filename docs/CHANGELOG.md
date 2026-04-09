@@ -13,6 +13,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Runtime permissions handling
 - Pagination support
 
+## [1.3.0] - 2026-04-09
+
+### Added
+- `GsonUtils` Gson 序列化工具（common-core），支持全局单例、容错解析回调、Double 智能格式化
+- `GsonParseExceptionHandler` / `GsonParseExceptionEvent` Gson 解析异常回调体系
+- `ToastConfig` Toast DSL 配置类，支持 gravity、xOffset、yOffset、stackSkips
+- `ToastCallerLocator` / `ToastInterceptorComposer` / `ToastParamsMapper` / `ToastStackSkipsStore` Toast 内部基础设施
+- `HttpClientUtilsTest` / `RetrofitFactoryTest` 网络模块单元测试
+- Toaster 库依赖（com.hjq.toast:Toaster）
+- Gson-Factory 库依赖（com.hjq.gson:factory）
+
+### Changed
+- **Toast 重构**：删除旧版自实现 `common-ui/toast/inner/`（BaseToast、SystemToast、ActivityToast 等），迁移到基于 Toaster 库的新实现
+- **Toast 包路径迁移**（Breaking）：`com.hoyn.common.utils.ToastUtils` -> `com.hoyn.common.ui.toast.ToastUtils`
+- `BaseActivity` / `BaseFragment` / `BaseDialogFragment` 中 toast 扩展指向新包路径
+- `MMKVUtils` 初始化逻辑优化
+- `HttpClientUtils` / `RetrofitFactory` 调整
+
+### Removed
+- `common-ui/toast/inner/` 整个目录（BaseToast、SystemToast、SystemTN、ActivityToast、YTN、IToast、ToastDuration）
+- `common-ui/toast/ToastUtil.kt`
+- `common-utils/ToastUtils.kt`（迁移至 `common-ui/toast/ToastUtils.kt`）
+- `ContextExtensions.showToast()` 扩展
+
 ## [1.2.9] - 2026-04-02
 
 ### Added
@@ -190,6 +214,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.3.0 | 2026-04-09 | Toast 重构（迁移到 Toaster 库）、GsonUtils 新增、包路径迁移 |
 | 1.2.9 | 2026-04-02 | Unified Maven release publication configuration in root build.gradle.kts |
 | 1.2.8 | 2026-04-02 | JitPack install step with -Pgroup/-Pversion parameters, allprojects group/version propagation |
 | 1.2.7 | 2026-04-02 | JitPack allprojects group/version propagation, jitpack.yml install step |
@@ -224,6 +249,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.3.0]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.3.0
 [1.2.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.9
 [1.2.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.8
 [1.2.7]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.7

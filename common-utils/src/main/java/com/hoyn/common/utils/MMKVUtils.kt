@@ -1,7 +1,7 @@
 package com.hoyn.common.utils
 
 import android.content.Context
-import com.google.gson.Gson
+import com.hoyn.common.core.gson.GsonUtils
 import com.tencent.mmkv.MMKV
 
 /**
@@ -15,7 +15,6 @@ import com.tencent.mmkv.MMKV
 object MMKVUtils {
 
     private var mmkv: MMKV? = null
-    private val gson = Gson()
 
     /**
      * 初始化 MMKV
@@ -214,7 +213,7 @@ object MMKVUtils {
         if (obj == null) {
             remove(key)
         } else {
-            val json = gson.toJson(obj)
+            val json = GsonUtils.toJson(obj)
             put(key, json)
         }
     }
@@ -225,11 +224,7 @@ object MMKVUtils {
     fun <T> getObject(key: String, clazz: Class<T>): T? {
         val json = getString(key)
         if (json.isEmpty()) return null
-        return try {
-            gson.fromJson(json, clazz)
-        } catch (e: Exception) {
-            null
-        }
+        return GsonUtils.fromJson(json, clazz)
     }
 
     // ==================== 便捷方法 ====================

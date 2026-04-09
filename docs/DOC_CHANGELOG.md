@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-04-09 - 版本发布 1.3.0
+
+**变更概述**: Toast 重构（迁移到 Toaster 库）、GsonUtils 新增、文档版本号更新
+
+| 文档 | 变更类型 | 简介 |
+|------|----------|------|
+| CHANGELOG.md | 版本更新 | 新增 1.3.0 版本条目，记录 Toast 重构和 GsonUtils 新增 |
+| PROJECT_OVERVIEW.md | 版本更新 | 当前版本更新为 1.3.0，模块说明增加 GsonUtils/Toaster |
+| DEPENDENCIES.md | 新增依赖 | 新增 Toaster 13.5、Gson-Factory 5.0.0 |
+| api/common-core.md | 新增 API | 新增 GsonUtils、GsonParseExceptionHandler、GsonParseExceptionEvent 文档 |
+| api/common-ui.md | 新增 API | 新增 ToastUtils、ToastConfig 文档，新增 Toaster 依赖 |
+| checklist/modules.md | 版本更新 | 所有依赖版本号更新为 1.3.0，JSON 解析模块归属更正为 common-core |
+
+[查看详情](update-list/update-2026-04-09.md)
+
+---
+
 ## 2026-04-02 - 版本发布 1.2.9
 
 **变更概述**: 统一 Maven release publication 配置，版本号更新至 1.2.9

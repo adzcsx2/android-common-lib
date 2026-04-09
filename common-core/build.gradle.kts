@@ -51,6 +51,11 @@ dependencies {
     api(libs.koin.core)
     api(libs.koin.android)
 
+    // Gson (kept for MMKVUtils object serialization via common-core transitive dep)
+    api(libs.gson)
+    implementation(libs.gsonfactory)
+    implementation(libs.kotlin.reflect)
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -37,7 +37,6 @@ android {
 
 dependencies {
     api(project(":common-core"))
-    api(libs.toaster)
 
     // Utils
     api(libs.utilcodex) {
@@ -47,9 +46,7 @@ dependencies {
     // MMKV
     api(libs.mmkv)
 
-    // Gson (for object serialization in MMKVUtils)
-    api(libs.gson)
-
+    
     // AndroidX Extensions
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)

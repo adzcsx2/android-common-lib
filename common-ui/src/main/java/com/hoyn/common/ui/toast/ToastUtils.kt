@@ -1,76 +1,69 @@
-﻿package com.hoyn.common.utils
+package com.hoyn.common.ui.toast
 
 import android.app.Application
 import android.content.pm.ApplicationInfo
-import android.content.res.Resources
+import android.util.Log
 import android.view.Gravity
-import android.util.TypedValue
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import com.hjq.toast.ToastParams
 import com.hjq.toast.ToastStrategy
 import com.hjq.toast.Toaster
+import com.hjq.toast.config.IToastInterceptor
 import com.hjq.toast.config.IToastStrategy
 import com.hjq.toast.config.IToastStyle
 import com.hjq.toast.style.BlackToastStyle
 import com.hjq.toast.style.CustomToastStyle
 import com.hjq.toast.style.LocationToastStyle
 import com.hjq.toast.style.WhiteToastStyle
+import com.hoyn.common.utils.Logger
 
 /**
  * Toast 统一入口。
  *
  * 基于 Toaster 封装，统一使用 Application 初始化，避免页面级 Context 持有带来的泄露风险。
+ *
+ * 支持全局配置和单次调用覆盖：
+ * ```
+ * // 全局配置
+ * ToastUtils.init(this) {
+ *     gravity = Gravity.CENTER
+ *     stackSkips = 2
+ * }
+ *
+ * // 单次调用覆盖
+ * ToastUtils.show("message") {
+ *     xOffset = 10
+ *     yOffset = 100
+ * }
+ * ```
  */
 object ToastUtils {
 
-    /** 默认底部 Y 轴偏移量（dp） */
-    private const val DEFAULT_BOTTOM_Y_OFFSET_DP = 64F
-    /** 默认 X 轴偏移量 */
-    private const val DEFAULT_X_OFFSET = 0
-    /** 默认 Y 轴偏移量（px），由 dp 转换而来 */
-    private val DEFAULT_Y_OFFSET: Int = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        DEFAULT_BOTTOM_Y_OFFSET_DP,
-        Resources.getSystem().displayMetrics
-    ).toInt()
-
-    /**
-     * Toast 配置快照，用于保存和恢复当前的样式、策略及位置配置
-     *
-     * @property style 当前 Toast 样式
-     * @property strategy 当前 Toast 显示策略
-     * @property gravity 显示位置（如 Gravity.BOTTOM、Gravity.CENTER）
-     * @property xOffset X 轴偏移量（px）
-     * @property yOffset Y 轴偏移量（px）
-     */
-    data class Snapshot(
-        val style: IToastStyle<*>,
-        val strategy: IToastStrategy,
-        val gravity: Int,
-        val xOffset: Int,
-        val yOffset: Int
-    )
+    private const val TOASTER_LOG_TAG = "Toaster"
 
     /** 全局 Application 引用，用于初始化 Toaster 和解析字符串资源 */
     private var app: Application? = null
-    /** 默认显示位置 */
-    private var defaultGravity: Int = Gravity.BOTTOM
-    /** 默认 X 轴偏移量 */
-    private var defaultXOffset: Int = DEFAULT_X_OFFSET
-    /** 默认 Y 轴偏移量 */
-    private var defaultYOffset: Int = DEFAULT_Y_OFFSET
+
+    /** 全局配置，@Volatile 保证多线程可见性 */
+    @Volatile
+    private var globalConfig: ToastConfig = ToastConfig.defaults()
+
+    /** 用于输出真实 Toast 调用位置的拦截器 */
+    private val callSiteInterceptor: IToastInterceptor = CallSiteToastInterceptor()
 
     /**
      * 初始化 ToastUtils，必须在 Application.onCreate() 中调用
      * @param application 全局 Application 实例
+     * @param config 可选的全局配置 lambda，修改后影响所有后续 Toast
      */
-    fun init(application: Application) {
+    fun init(application: Application, config: (ToastConfig.() -> Unit)? = null) {
         app = application
         if (!Toaster.isInit()) {
             Toaster.init(application)
         }
+        config?.invoke(globalConfig)
     }
 
     /**
@@ -82,24 +75,24 @@ object ToastUtils {
     /**
      * 显示短时 Toast（底部），仅 Debug 包生效
      * @param message 显示文本，为空或空白时不显示
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun show(message: CharSequence?) {
+    fun show(message: CharSequence?, config: ToastConfig.() -> Unit = {}) {
         showWithStyle(
             message = message,
             duration = Toast.LENGTH_SHORT,
-            gravity = defaultGravity,
-            xOffset = defaultXOffset,
-            yOffset = defaultYOffset,
-            debugOnly = true
+            debugOnly = true,
+            config = config
         )
     }
 
     /**
      * 显示短时 Toast（底部），仅 Debug 包生效
      * @param messageRes 字符串资源 ID
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun show(@StringRes messageRes: Int) {
-        show(resolveText(messageRes))
+    fun show(@StringRes messageRes: Int, config: ToastConfig.() -> Unit = {}) {
+        show(resolveText(messageRes), config)
     }
 
     /**
@@ -127,134 +120,110 @@ object ToastUtils {
      * 延迟显示 Toast，仅 Debug 包生效
      * @param message 显示文本，为空或空白时不显示
      * @param delayMillis 延迟时间（毫秒）
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun delayedShow(message: CharSequence?, delayMillis: Long) {
+    fun delayedShow(
+        message: CharSequence?,
+        delayMillis: Long,
+        config: ToastConfig.() -> Unit = {}
+    ) {
         val text = message?.takeIf { it.isNotBlank() } ?: return
-        withToaster {
-            if (!isDebugBuild()) {
-                return@withToaster
-            }
-            Toaster.delayedShow(text, delayMillis)
-        }
+        show(
+            ToastParams().apply {
+                this.text = text
+                this.delayMillis = delayMillis
+            },
+            config = config
+        )
     }
 
     /**
      * 延迟显示 Toast，仅 Debug 包生效
      * @param messageRes 字符串资源 ID
      * @param delayMillis 延迟时间（毫秒）
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun delayedShow(@StringRes messageRes: Int, delayMillis: Long) {
-        withToaster {
-            if (!isDebugBuild()) {
-                return@withToaster
-            }
-            Toaster.delayedShow(messageRes, delayMillis)
-        }
-    }
-
-    /**
-     * 显示短时 Toast（底部），仅 Debug 包生效，等同于 [show]
-     * @param message 显示文本
-     */
-    fun showShort(message: CharSequence?) {
-        show(message)
-    }
-
-    /**
-     * 显示短时 Toast（底部），仅 Debug 包生效，等同于 [show]
-     * @param messageRes 字符串资源 ID
-     */
-    fun showShort(@StringRes messageRes: Int) {
-        show(messageRes)
+    fun delayedShow(
+        @StringRes messageRes: Int,
+        delayMillis: Long,
+        config: ToastConfig.() -> Unit = {}
+    ) {
+        delayedShow(resolveText(messageRes), delayMillis, config)
     }
 
     /**
      * 显示全局优先级 Toast，不会被其他 Toast 覆盖
      * @param message 显示文本，为空或空白时不显示
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showGlobal(message: CharSequence?) {
+    fun showGlobal(message: CharSequence?, config: ToastConfig.() -> Unit = {}) {
         val text = message?.takeIf { it.isNotBlank() } ?: return
         show(
             ToastParams().apply {
                 this.text = text
                 priorityType = ToastParams.PRIORITY_TYPE_GLOBAL
-            }
+            },
+            config = config
         )
     }
 
     /**
      * 显示全局优先级 Toast，不会被其他 Toast 覆盖
      * @param messageRes 字符串资源 ID
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showGlobal(@StringRes messageRes: Int) {
-        showGlobal(resolveText(messageRes))
+    fun showGlobal(@StringRes messageRes: Int, config: ToastConfig.() -> Unit = {}) {
+        showGlobal(resolveText(messageRes), config)
     }
 
     /**
      * 显示长时 Toast（底部），仅 Debug 包生效
      * @param message 显示文本，为空或空白时不显示
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showLong(message: CharSequence?) {
+    fun showLong(message: CharSequence?, config: ToastConfig.() -> Unit = {}) {
         showWithStyle(
             message = message,
             duration = Toast.LENGTH_LONG,
-            gravity = defaultGravity,
-            xOffset = defaultXOffset,
-            yOffset = defaultYOffset,
-            debugOnly = true
+            debugOnly = true,
+            config = config
         )
     }
 
     /**
      * 显示长时 Toast（底部），仅 Debug 包生效
      * @param messageRes 字符串资源 ID
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showLong(@StringRes messageRes: Int) {
-        showLong(resolveText(messageRes))
+    fun showLong(@StringRes messageRes: Int, config: ToastConfig.() -> Unit = {}) {
+        showLong(resolveText(messageRes), config)
     }
 
     /**
      * 显示短时 Toast（居中），仅 Debug 包生效
      * @param message 显示文本，为空或空白时不显示
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showCenter(message: CharSequence?) {
+    fun showCenter(message: CharSequence?, config: ToastConfig.() -> Unit = {}) {
         showWithStyle(
             message = message,
             duration = Toast.LENGTH_SHORT,
-            gravity = Gravity.CENTER,
-            yOffset = 0,
-            debugOnly = true
+            debugOnly = true,
+            config = {
+                gravity = Gravity.CENTER
+                yOffset = 0
+                config()
+            }
         )
     }
 
     /**
      * 显示短时 Toast（居中），仅 Debug 包生效
      * @param messageRes 字符串资源 ID
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showCenter(@StringRes messageRes: Int) {
-        showCenter(resolveText(messageRes))
-    }
-
-    /**
-     * 显示长时 Toast（居中），仅 Debug 包生效
-     * @param message 显示文本，为空或空白时不显示
-     */
-    fun showCenterLong(message: CharSequence?) {
-        showWithStyle(
-            message = message,
-            duration = Toast.LENGTH_LONG,
-            gravity = Gravity.CENTER,
-            yOffset = 0,
-            debugOnly = true
-        )
-    }
-
-    /**
-     * 显示长时 Toast（居中），仅 Debug 包生效
-     * @param messageRes 字符串资源 ID
-     */
-    fun showCenterLong(@StringRes messageRes: Int) {
-        showCenterLong(resolveText(messageRes))
+    fun showCenter(@StringRes messageRes: Int, config: ToastConfig.() -> Unit = {}) {
+        showCenter(resolveText(messageRes), config)
     }
 
     /** 取消当前显示的 Toast */
@@ -275,37 +244,24 @@ object ToastUtils {
         }
     }
 
-    /** 切换为黑色背景 Toast 样式 */
-    fun useBlackStyle() {
-        setGlobalStyle(BlackToastStyle())
-    }
-
-    /** 切换为白色背景 Toast 样式 */
-    fun useWhiteStyle() {
-        setGlobalStyle(WhiteToastStyle())
-    }
-
-    /**
-     * 使用自定义布局作为 Toast 样式
-     * @param layoutRes 自定义布局资源 ID
-     * @param gravity 显示位置，默认居中
-     */
-    fun useCustomStyle(@LayoutRes layoutRes: Int, gravity: Int = Gravity.CENTER) {
-        setGlobalStyle(CustomToastStyle(layoutRes, gravity))
-    }
-
     /**
      * 使用指定样式显示 Toast
      * @param message 显示文本，为空或空白时不显示
      * @param style Toast 样式
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showWithStyle(message: CharSequence?, style: IToastStyle<*>) {
+    fun showWithStyle(
+        message: CharSequence?,
+        style: IToastStyle<*>,
+        config: ToastConfig.() -> Unit = {}
+    ) {
         val text = message?.takeIf { it.isNotBlank() } ?: return
         show(
             ToastParams().apply {
                 this.text = text
                 this.style = style
-            }
+            },
+            config = config
         )
     }
 
@@ -313,9 +269,14 @@ object ToastUtils {
      * 使用指定样式显示 Toast
      * @param messageRes 字符串资源 ID
      * @param style Toast 样式
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun showWithStyle(@StringRes messageRes: Int, style: IToastStyle<*>) {
-        showWithStyle(resolveText(messageRes), style)
+    fun showWithStyle(
+        @StringRes messageRes: Int,
+        style: IToastStyle<*>,
+        config: ToastConfig.() -> Unit = {}
+    ) {
+        showWithStyle(resolveText(messageRes), style, config)
     }
 
     /**
@@ -323,13 +284,15 @@ object ToastUtils {
      * @param message 显示文本，为空或空白时不显示
      * @param layoutRes 自定义布局资源 ID
      * @param gravity 显示位置，默认居中
+     * @param config 单次调用配置，覆盖全局默认值
      */
     fun showWithLayout(
         message: CharSequence?,
         @LayoutRes layoutRes: Int,
-        gravity: Int = Gravity.CENTER
+        gravity: Int = Gravity.CENTER,
+        config: ToastConfig.() -> Unit = {}
     ) {
-        showWithStyle(message, CustomToastStyle(layoutRes, gravity))
+        showWithStyle(message, CustomToastStyle(layoutRes, gravity), config)
     }
 
     /**
@@ -337,13 +300,15 @@ object ToastUtils {
      * @param messageRes 字符串资源 ID
      * @param layoutRes 自定义布局资源 ID
      * @param gravity 显示位置，默认居中
+     * @param config 单次调用配置，覆盖全局默认值
      */
     fun showWithLayout(
         @StringRes messageRes: Int,
         @LayoutRes layoutRes: Int,
-        gravity: Int = Gravity.CENTER
+        gravity: Int = Gravity.CENTER,
+        config: ToastConfig.() -> Unit = {}
     ) {
-        showWithLayout(resolveText(messageRes), layoutRes, gravity)
+        showWithLayout(resolveText(messageRes), layoutRes, gravity, config)
     }
 
     /** 设置 Toast 显示策略为队列模式，依次排队显示 */
@@ -361,133 +326,122 @@ object ToastUtils {
     }
 
     /**
-     * 设置 Toaster 全局显示位置，影响所有使用 Toaster 直接显示的 Toast
-     * @param gravity 显示位置（如 Gravity.BOTTOM、Gravity.CENTER）
-     * @param xOffset X 轴偏移量（px），默认 0
-     * @param yOffset Y 轴偏移量（px），默认 0
-     */
-    fun setGlobalGravity(gravity: Int, xOffset: Int = 0, yOffset: Int = 0) {
-        withToaster {
-            Toaster.setGravity(gravity, xOffset, yOffset)
-        }
-    }
-
-    /**
      * 设置本工具类的默认显示位置，仅影响通过 show/showLong/showCenter 等方法显示的 Toast
      * @param gravity 显示位置
      * @param xOffset X 轴偏移量（px），默认 0
      * @param yOffset Y 轴偏移量（px），默认底部偏移
      */
-    fun setGravity(gravity: Int, xOffset: Int = DEFAULT_X_OFFSET, yOffset: Int = DEFAULT_Y_OFFSET) {
-        defaultGravity = gravity
-        defaultXOffset = xOffset
-        defaultYOffset = yOffset
+    fun setGravity(
+        gravity: Int,
+        xOffset: Int = ToastConfig.DEFAULT_X_OFFSET,
+        yOffset: Int = ToastConfig.defaults().yOffset
+    ) {
+        val current = globalConfig
+        globalConfig = current.copy().apply {
+            this.gravity = gravity
+            this.xOffset = xOffset
+            this.yOffset = yOffset
+        }
     }
 
     /** 重置默认显示位置为底部默认偏移 */
     fun resetGravity() {
-        defaultGravity = Gravity.BOTTOM
-        defaultXOffset = DEFAULT_X_OFFSET
-        defaultYOffset = DEFAULT_Y_OFFSET
-    }
-
-    /**
-     * 设置全局自定义 Toast 视图，同时指定显示位置
-     * @param layoutRes 自定义布局资源 ID
-     * @param gravity 显示位置，默认居中
-     * @param xOffset X 轴偏移量（px），默认 0
-     * @param yOffset Y 轴偏移量（px），默认 0
-     */
-    fun setGlobalCustomView(
-        @LayoutRes layoutRes: Int,
-        gravity: Int = Gravity.CENTER,
-        xOffset: Int = 0,
-        yOffset: Int = 0
-    ) {
-        withToaster {
-            Toaster.setView(layoutRes)
-            Toaster.setGravity(gravity, xOffset, yOffset)
-        }
-    }
-
-    /**
-     * 保存当前 Toast 配置快照
-     * @return 当前配置快照，未初始化时返回 null
-     */
-    fun snapshot(): Snapshot? {
-        if (!Toaster.isInit()) {
-            return null
-        }
-        return Snapshot(
-            style = Toaster.getStyle(),
-            strategy = Toaster.getStrategy(),
-            gravity = defaultGravity,
-            xOffset = defaultXOffset,
-            yOffset = defaultYOffset
-        )
-    }
-
-    /**
-     * 从快照恢复 Toast 配置
-     * @param snapshot 之前保存的配置快照，为 null 时不执行
-     */
-    fun restore(snapshot: Snapshot?) {
-        snapshot ?: return
-        defaultGravity = snapshot.gravity
-        defaultXOffset = snapshot.xOffset
-        defaultYOffset = snapshot.yOffset
-        withToaster {
-            Toaster.setStyle(snapshot.style)
-            Toaster.setStrategy(snapshot.strategy)
+        val defaults = ToastConfig.defaults()
+        val current = globalConfig
+        globalConfig = current.copy().apply {
+            this.gravity = defaults.gravity
+            this.xOffset = defaults.xOffset
+            this.yOffset = defaults.yOffset
         }
     }
 
     /**
      * 使用 ToastParams 显示 Toast，仅 Debug 包生效
      * @param params Toast 参数配置
+     * @param config 单次调用配置，覆盖全局默认值
      */
-    fun show(params: ToastParams) {
+    fun show(params: ToastParams, config: ToastConfig.() -> Unit = {}) {
         val text = params.text?.takeIf { it.isNotBlank() } ?: return
         withToaster {
             if (!isDebugBuild()) {
                 return@withToaster
             }
-            params.text = text
-            Toaster.show(params)
+            showToastInternal(params, text, config)
         }
+    }
+
+    /**
+     * 内部统一显示逻辑，不检查 debugOnly，由调用方决定
+     */
+    private fun showToastInternal(
+        params: ToastParams,
+        text: CharSequence,
+        config: ToastConfig.() -> Unit = {}
+    ) {
+        val resolved = globalConfig.copy().apply(config)
+        val downstreamInterceptor = params.interceptor ?: Toaster.getInterceptor()
+        val interceptor = ToastInterceptorComposer.compose(
+            callSiteInterceptor = callSiteInterceptor,
+            globalInterceptor = downstreamInterceptor
+        )
+        val copiedParams = ToastParamsMapper.copyOf(params, text, interceptor)
+        ToastStackSkipsStore.bind(copiedParams, resolved.stackSkips)
+        Toaster.show(copiedParams)
     }
 
     /**
      * 内部统一显示方法，通过 LocationToastStyle 包装位置参数
      * @param message 显示文本
      * @param duration 显示时长（Toast.LENGTH_SHORT / Toast.LENGTH_LONG）
-     * @param gravity 显示位置
-     * @param xOffset X 轴偏移量（px）
-     * @param yOffset Y 轴偏移量（px）
      * @param debugOnly 是否仅 Debug 包生效
+     * @param config 单次调用配置，覆盖全局默认值
      */
     private fun showWithStyle(
         message: CharSequence?,
         duration: Int,
-        gravity: Int,
-        xOffset: Int = 0,
-        yOffset: Int = 0,
-        debugOnly: Boolean = false
+        debugOnly: Boolean = false,
+        config: ToastConfig.() -> Unit = {}
     ) {
         val text = message?.takeIf { it.isNotBlank() } ?: return
         withToaster {
-            val params = ToastParams().apply {
-                this.text = text
-                this.duration = duration
-                this.style =
-                    LocationToastStyle(Toaster.getStyle(), gravity, xOffset, yOffset, 0F, 0F)
+            if (debugOnly && !isDebugBuild()) {
+                return@withToaster
             }
-            if (debugOnly) {
-                if (!isDebugBuild()) {
-                    return@withToaster
+            val resolved = globalConfig.copy().apply(config)
+            showToastInternal(
+                params = ToastParams().apply {
+                    this.text = text
+                    this.duration = duration
+                    this.style = LocationToastStyle(
+                        Toaster.getStyle(),
+                        resolved.gravity,
+                        resolved.xOffset,
+                        resolved.yOffset,
+                        0F,
+                        0F
+                    )
+                },
+                text = text,
+                config = {
+                    stackSkips = resolved.stackSkips
                 }
+            )
+        }
+    }
+
+    private class CallSiteToastInterceptor : IToastInterceptor {
+
+        override fun intercept(params: ToastParams): Boolean {
+            if (!isDebugBuild()) {
+                return false
             }
-            Toaster.show(params)
+            val stackSkips = ToastStackSkipsStore.take(params)
+            val caller =
+                ToastCallerLocator.findCallerStackTrace(Throwable().stackTrace, stackSkips)
+                    ?: return false
+            val location = ToastCallerLocator.resolveDisplayLocation(caller)
+            Log.i(TOASTER_LOG_TAG, "${location.asLogPrefix()} ${params.text}")
+            return false
         }
     }
 

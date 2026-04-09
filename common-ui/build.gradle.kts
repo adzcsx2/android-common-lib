@@ -42,7 +42,9 @@ android {
 dependencies {
     api(project(":common-core"))
     api(project(":common-utils"))
-    api(project(":common-base"))
+
+    // Toaster
+    api(libs.toaster)
 
     // AndroidX UI
     api(libs.androidx.appcompat)

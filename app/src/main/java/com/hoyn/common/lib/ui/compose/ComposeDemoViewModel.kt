@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.hoyn.common.core.UIState
 import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.data.repository.PostRepository
-import com.hoyn.common.utils.ToastUtils
+import com.hoyn.common.ui.toast.ToastUtils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

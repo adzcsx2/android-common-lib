@@ -28,7 +28,7 @@
 修改代码时必须按以下顺序检查，已有实现优先于新写：
 
 1. **View 操作**: 必须使用 `ViewExtensions` (`click`, `visible`, `gone`, `invisible`, `enable`, `disable`, `pressEffectAlpha`, `pressEffectBgColor`, `holdClick`, `releaseClick`, `setClickNotNull` 等)，禁止直接 `setOnClickListener` 或手动设 `visibility`
-2. **Toast**: 统一使用 `ToastUtils.show()` / `ToastUtils.showLong()` / `ToastUtils.showCenter()`，BaseActivity / BaseFragment / BaseDialogFragment 中优先用 `toast`
+2. **Toast**: 统一使用 `ToastUtils.show()` / `ToastUtils.showLong()` / `ToastUtils.showCenter()`（`com.hoyn.common.ui.toast`），BaseActivity / BaseFragment / BaseDialogFragment 中优先用 `toast`
 3. **日志**: 统一使用 `com.hoyn.common.utils.Logger`
 4. **存储**: 统一使用 `MMKVUtils`
 5. **图片加载**: View 体系用 `GlideUtils` / `ImageExtensions`，Compose 用 `Coil`
@@ -59,13 +59,13 @@
 
 ## 模块依赖层次与禁止依赖
 
-依赖方向: common-core -> common-utils / common-base / common-compose -> common-network / common-image -> common-ui -> common-all -> app
+依赖方向: common-core -> common-utils -> common-base -> common-network / common-image / common-compose -> common-ui -> common-all -> app
 
 | 模块                          | 禁止依赖                                             |
 | ----------------------------- | ---------------------------------------------------- |
 | common-core                   | 任何其他 common-\* 模块                              |
 | common-utils                  | common-base, common-ui, common-network, common-image |
-| common-base                   | common-ui, common-network, common-image              |
+| common-base                   | common-network, common-image                         |
 | common-network / common-image | common-ui                                            |
 
 ## 模块速查
@@ -77,7 +77,7 @@
 | common-utils   | `com.hoyn.common.utils`   | `Logger`, `MMKVUtils`, `ToastUtils`, `CoroutinesExtensions`, `ContextExtensions`                              |
 | common-network | `com.hoyn.common.network` | `RetrofitFactory`, `OkHttpClientFactory`, `NetworkConfig`, `ApiResponse`, `BaseRepository`, `ExceptionHandle` |
 | common-image   | `com.hoyn.common.image`   | `GlideUtils`, `ImageExtensions`                                                                               |
-| common-ui      | `com.hoyn.common.ui`      | `StatusBarHelper`, `NotchHelper`, `PressEffectHelper`, `LivePermissions`, `ViewExtensions`                    |
+| common-ui      | `com.hoyn.common.ui`      | `StatusBarHelper`, `NotchHelper`, `PressEffectHelper`, `LivePermissions`, `ViewExtensions`, `ToastUtils`, `ToastConfig` |
 | common-compose | `com.hoyn.common.compose` | `BaseComposeActivity`, `BaseComposeFragment`, `Theme`                                                         |
 
 ## 编码规则
