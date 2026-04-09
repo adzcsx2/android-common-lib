@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.viewbinding.ViewBinding
 import androidx.savedstate.SavedStateRegistryOwner
+import com.hoyn.common.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -49,6 +50,8 @@ abstract class BaseFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
         get() = requireNotNull(_binding) {
             "Binding is only valid between onCreateView and onDestroyView."
         }
+    protected val toast: ToastUtils
+        get() = ToastUtils
 
     protected val viewModel: VM by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelFactory.createAuto(

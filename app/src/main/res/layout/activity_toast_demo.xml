@@ -4,92 +4,237 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".ui.activity.ToastDemoActivity">
+    tools:context=".ui.toast_demo.ToastDemoActivity">
 
-    <!-- 标题栏 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp">
 
         <Button
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="返回" />
+            android:text="@string/back" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Toast 示例"
+            android:text="@string/toast_demo"
             android:textSize="18sp"
             android:textStyle="bold" />
-
     </LinearLayout>
 
-    <TextView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="ToastUtil (无需 Context)"
-        android:textColor="@color/text_section_header"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <Button
-        android:id="@+id/btnShortToast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="短 Toast (show)" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp">
 
-    <Button
-        android:id="@+id/btnLongToast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="长 Toast (showLong)" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/toast_demo_section_basic"
+                android:textColor="@color/text_section_header"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnCenterToast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="中间 Toast (showCenter)" />
+            <Button
+                android:id="@+id/btnShowToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_show" />
 
-    <Button
-        android:id="@+id/btnCenterLongToast"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="中间长 Toast (showCenterLong)" />
+            <Button
+                android:id="@+id/btnShortToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_short" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="队列优先级测试"
-        android:textColor="@color/text_section_header"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+            <Button
+                android:id="@+id/btnLongToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_long" />
 
-    <Button
-        android:id="@+id/btnQueueTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="连续点击测试 (新 Toast 会取消前一个)" />
+            <Button
+                android:id="@+id/btnCrossPageToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_cross_page" />
 
-    <Button
-        android:id="@+id/btnCancel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="取消当前 Toast"
-        android:textColor="@color/text_destructive" />
+            <Button
+                android:id="@+id/btnDelayedToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_delayed" />
+
+            <Button
+                android:id="@+id/btnThreadToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_thread" />
+
+            <Button
+                android:id="@+id/btnStartActivityToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_start_activity" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/toast_demo_section_style"
+                android:textColor="@color/text_section_header"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnWhiteStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_white_style" />
+
+            <Button
+                android:id="@+id/btnBlackStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_black_style" />
+
+            <Button
+                android:id="@+id/btnInfoStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_info_style" />
+
+            <Button
+                android:id="@+id/btnWarnStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_warn_style" />
+
+            <Button
+                android:id="@+id/btnSuccessStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_success_style" />
+
+            <Button
+                android:id="@+id/btnErrorStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_error_style" />
+
+            <Button
+                android:id="@+id/btnCustomXmlToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_custom_xml" />
+
+            <Button
+                android:id="@+id/btnCenterToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_center" />
+
+            <Button
+                android:id="@+id/btnCenterLongToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_center_long" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/toast_demo_section_queue"
+                android:textColor="@color/text_section_header"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnQueueStrategy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_queue_strategy" />
+
+            <TextView
+                android:id="@+id/tvQueueHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:text="@string/toast_demo_action_show_thrice"
+                android:textColor="@color/text_section_header"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/btnQueueTest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_queue" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/toast_demo_section_background"
+                android:textColor="@color/text_section_header"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnBackgroundToast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/toast_demo_action_background" />
+
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/toast_demo_action_cancel"
+                android:textColor="@color/text_destructive" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

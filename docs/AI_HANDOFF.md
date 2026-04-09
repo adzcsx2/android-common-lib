@@ -1201,17 +1201,17 @@ dependencies {
 
 ### 13.3 Toast API 统一
 
-当前统一入口为 `ToastUtil`，新代码无需再传入 `Context`：
+当前统一入口为 `ToastUtils`，新代码无需再传入 `Context`：
 
 ```kotlin
-ToastUtil.show("操作成功")
-ToastUtil.showLong("长提示")
-ToastUtil.showCenter("中间提示")
+ToastUtils.show("操作成功")
+ToastUtils.showLong("长提示")
+ToastUtils.showCenter("中间提示")
 ```
 
-历史调用已统一迁移到 `ToastUtil`。
+BaseActivity / BaseFragment / BaseDialogFragment 中可直接使用 `toast` 作为 `ToastUtils` 入口，调试提示优先使用 `toast.debugShow(...)`。
 
-这是一次 source-breaking 迁移，外部调用方升级时也必须将旧入口全部替换为 `ToastUtil`。
+这是一次 source-breaking 迁移，外部调用方升级时也必须将旧入口全部替换为 `ToastUtils`。
 
 ### 13.4 App Demo 实现
 

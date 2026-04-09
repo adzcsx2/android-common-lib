@@ -7,7 +7,6 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 
 /**
@@ -33,28 +32,6 @@ fun Context.getResColor(resId: Int): Int = ContextCompat.getColor(this, resId)
  * @return Drawable 对象，如果资源不存在则返回 null
  */
 fun Context.getResDrawable(resId: Int): Drawable? = ContextCompat.getDrawable(this, resId)
-
-// ==================== Toast ====================
-
-/**
- * 显示 Toast 提示
- *
- * @param message 要显示的消息内容
- * @param duration 显示时长，默认为短时间（Toast.LENGTH_SHORT）
- */
-fun Context.showToast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(this, message, duration).show()
-}
-
-/**
- * 显示 Toast 提示（使用字符串资源）
- *
- * @param messageRes 字符串资源 ID（如 R.string.message）
- * @param duration 显示时长，默认为短时间（Toast.LENGTH_SHORT）
- */
-fun Context.showToast(messageRes: Int, duration: Int = Toast.LENGTH_SHORT) {
-    Toast.makeText(this, messageRes, duration).show()
-}
 
 // ==================== 布局加载 ====================
 

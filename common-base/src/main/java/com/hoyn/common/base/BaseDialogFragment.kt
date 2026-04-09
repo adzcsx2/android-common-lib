@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.viewbinding.ViewBinding
 import com.hoyn.common.utils.Logger
+import com.hoyn.common.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -89,6 +90,8 @@ abstract class BaseDialogFragment<VB : ViewBinding, VM : BaseViewModel<*>> :
         get() = requireNotNull(_binding) {
             "Binding is only valid between onCreateView and onDestroyView."
         }
+    protected val toast: ToastUtils
+        get() = ToastUtils
 
     /**
      * 懒加载的 ViewModel 实例，通过 ViewModelFactory 自动创建。

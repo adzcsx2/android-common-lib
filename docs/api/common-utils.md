@@ -2,46 +2,27 @@
 
 ## Overview
 
-`common-utils` provides extension functions for Context and Coroutines, simplifying common Android development tasks.
+`common-utils` provides Toast, Context, and Coroutine helpers for common Android development tasks.
 
 ## Package: `com.hoyn.common.utils`
 
+### Toast
+
+#### `ToastUtils`
+
+Unified toast facade built on Toaster. It does not require page `Context` and should be initialized from `Application`.
+
+```kotlin
+ToastUtils.init(application)
+ToastUtils.show("Hello, World!")
+ToastUtils.showLong("Long message")
+ToastUtils.showCenter("Centered message")
+ToastUtils.debugShow("Only visible in debug builds")
+```
+
+In `BaseActivity`, `BaseFragment`, and `BaseDialogFragment`, prefer using the built-in `toast` shortcut.
+
 ### Context Extensions
-
-#### `showToast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT)`
-
-Displays a toast message with the specified text.
-
-```kotlin
-fun Context.showToast(message: CharSequence, duration: Int = Toast.LENGTH_SHORT)
-```
-
-**Parameters:**
-- `message` - The text message to display
-- `duration` - Duration to show the toast (default: `Toast.LENGTH_SHORT`)
-
-**Example:**
-```kotlin
-context.showToast("Hello, World!")
-context.showToast("Long message", Toast.LENGTH_LONG)
-```
-
-#### `showToast(messageRes: Int, duration: Int = Toast.LENGTH_SHORT)`
-
-Displays a toast message using a string resource.
-
-```kotlin
-fun Context.showToast(messageRes: Int, duration: Int = Toast.LENGTH_SHORT)
-```
-
-**Parameters:**
-- `messageRes` - String resource ID
-- `duration` - Duration to show the toast (default: `Toast.LENGTH_SHORT`)
-
-**Example:**
-```kotlin
-context.showToast(R.string.error_message)
-```
 
 ### Coroutine Extensions
 
@@ -54,6 +35,7 @@ fun CoroutineScope.launchIO(block: suspend CoroutineScope.() -> Unit)
 ```
 
 **Example:**
+
 ```kotlin
 lifecycleScope.launchIO {
     // IO operations like database or network
@@ -70,6 +52,7 @@ fun CoroutineScope.launchMain(block: suspend CoroutineScope.() -> Unit)
 ```
 
 **Example:**
+
 ```kotlin
 lifecycleScope.launchMain {
     // UI operations
@@ -86,6 +69,7 @@ suspend fun <T> withIO(block: suspend CoroutineScope.() -> T): T
 ```
 
 **Example:**
+
 ```kotlin
 val result = withIO {
     // Perform IO operation
@@ -102,6 +86,7 @@ suspend fun <T> withMain(block: suspend CoroutineScope.() -> T): T
 ```
 
 **Example:**
+
 ```kotlin
 withMain {
     // Update UI
@@ -111,23 +96,23 @@ withMain {
 
 ## Dependencies
 
-| Dependency | Type |
-|------------|------|
-| common-core | api |
-| androidx.core:core-ktx | implementation |
+| Dependency                     | Type           |
+| ------------------------------ | -------------- |
+| common-core                    | api            |
+| androidx.core:core-ktx         | implementation |
 | androidx.activity:activity-ktx | implementation |
 | androidx.fragment:fragment-ktx | implementation |
-| kotlinx.coroutines:core | implementation |
-| kotlinx.coroutines:android | implementation |
+| kotlinx.coroutines:core        | implementation |
+| kotlinx.coroutines:android     | implementation |
 
 ## Module Information
 
-| Property | Value |
-|---------|-------|
-| Package | `com.hoyn.common.utils` |
-| Min SDK | 24 |
-| Compile SDK | 34 |
-| Java Version | 17 |
+| Property     | Value                   |
+| ------------ | ----------------------- |
+| Package      | `com.hoyn.common.utils` |
+| Min SDK      | 24                      |
+| Compile SDK  | 34                      |
+| Java Version | 17                      |
 
 ## Integration
 

@@ -37,6 +37,7 @@ android {
 
 dependencies {
     api(project(":common-core"))
+    api(libs.toaster)
 
     // Utils
     api(libs.utilcodex) {

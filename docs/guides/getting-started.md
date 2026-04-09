@@ -105,12 +105,12 @@ Logger.d("Custom tag message", tag = "Network")
 
 ### 2. Using common-utils
 
-Context and coroutine extensions:
+Toast and coroutine helpers:
 
 ```kotlin
 // Show toast
-context.showToast("Hello, World!")
-showToast(R.string.error_message)
+ToastUtils.show("Hello, World!")
+ToastUtils.debugShow(R.string.error_message)
 
 // Coroutine dispatchers
 lifecycleScope.launchIO {

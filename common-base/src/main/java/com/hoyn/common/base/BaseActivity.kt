@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.hoyn.common.utils.LanguageHelper
+import com.hoyn.common.utils.ToastUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -41,6 +42,8 @@ abstract class BaseActivity<VB : ViewBinding, VM : BaseViewModel<*>> :
             defaultArgs = intent?.extras
         )
     }
+    protected val toast: ToastUtils
+        get() = ToastUtils
 
     /**
      * 自动生成的 TAG，使用类名

@@ -100,7 +100,7 @@ This project provides a modular Android common library with:
 
 | File                          | Purpose                      |
 | ----------------------------- | ---------------------------- |
-| toast/ToastUtil.kt            | Toast notification utilities |
+| ToastUtils.kt                 | Toast notification utilities |
 | utils/StatusBarHelper.kt      | Status bar styling           |
 | utils/NotchHelper.kt          | Notch device support         |
 | utils/PressEffectHelper.kt    | View press effects           |
@@ -407,7 +407,7 @@ class MyViewModel : BaseViewModel<MyRepository>() {
 // In Activity/Fragment
 observeAllUIEvents(
     viewModel = viewModel,
-    onToast = { message -> ToastUtil.show(message) },
+    onToast = { message -> toast.debugShow(message) },
     onShowDialog = { message -> showLoading(message) },
     onDismissDialog = { hideLoading() },
     onError = { error -> showError(error.errMsg) }
@@ -481,7 +481,7 @@ class UserActivity : BaseActivity<ActivityUserBinding>() {
         // Observe UI events
         observeAllUIEvents(
             viewModel = viewModel,
-            onToast = { ToastUtil.show(it) },
+            onToast = { toast.debugShow(it) },
             onShowDialog = { showLoading(it) },
             onDismissDialog = { hideLoading() }
         )

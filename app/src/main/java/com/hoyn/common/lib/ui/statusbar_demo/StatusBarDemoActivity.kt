@@ -8,7 +8,6 @@ import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.R
 import com.hoyn.common.lib.databinding.ActivityStatusBarDemoBinding
 import com.hoyn.common.ui.ext.click
-import com.hoyn.common.ui.toast.ToastUtil
 import com.hoyn.common.ui.utils.StatusBarHelper
 
 /**
@@ -40,37 +39,37 @@ class StatusBarDemoActivity : BaseActivity<ActivityStatusBarDemoBinding, NoViewM
         // 默认状态
         binding.btnDefault.click {
             StatusBarHelper.setStatusBarColor(this, ContextCompat.getColor(this, R.color.purple_500), exitEdgeToEdge = true)
-            ToastUtil.show("已设置为默认紫色")
+            toast.show("已设置为默认紫色")
         }
 
         // 红色状态栏
         binding.btnRed.click {
             StatusBarHelper.setStatusBarColor(this, Color.RED, exitEdgeToEdge = true)
-            ToastUtil.show("已设置为红色")
+            toast.show("已设置为红色")
         }
 
         // 绿色状态栏
         binding.btnGreen.click {
             StatusBarHelper.setStatusBarColor(this, Color.GREEN, exitEdgeToEdge = true)
-            ToastUtil.show("已设置为绿色")
+            toast.show("已设置为绿色")
         }
 
         // 蓝色状态栏
         binding.btnBlue.click {
             StatusBarHelper.setStatusBarColor(this, Color.BLUE, exitEdgeToEdge = true)
-            ToastUtil.show("已设置为蓝色")
+            toast.show("已设置为蓝色")
         }
 
         // 透明状态栏
         binding.btnTransparent.click {
             StatusBarHelper.translucent(this)
-            ToastUtil.show("已设置为透明")
+            toast.show("已设置为透明")
         }
 
         // 浅色状态栏（深色图标）
         binding.btnLight.click {
             StatusBarHelper.setStatusBarColor(this, Color.WHITE, exitEdgeToEdge = true)
-            ToastUtil.show("已设置为浅色（深色图标）")
+            toast.show("已设置为浅色（深色图标）")
         }
     }
 }

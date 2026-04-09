@@ -5,7 +5,6 @@ import com.hoyn.common.base.BaseActivity
 import com.hoyn.common.base.NoViewModel
 import com.hoyn.common.lib.databinding.ActivityMmkvDemoBinding
 import com.hoyn.common.ui.ext.click
-import com.hoyn.common.ui.toast.ToastUtil
 import com.hoyn.common.utils.MMKVUtils
 
 /**
@@ -41,9 +40,9 @@ class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding, NoViewModel>() {
             if (value.isNotBlank()) {
                 MMKVUtils.put("demo_string", value)
                 binding.tvResult.text = "已保存: $value"
-                ToastUtil.show("保存成功")
+                toast.show("保存成功")
             } else {
-                ToastUtil.show("请输入内容")
+                toast.show("请输入内容")
             }
         }
 
@@ -52,7 +51,7 @@ class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding, NoViewModel>() {
             val value = MMKVUtils.getString("demo_string", "")
             if (value.isNotBlank()) {
                 binding.tvResult.text = "读取结果: $value"
-                ToastUtil.show("读取成功")
+                toast.show("读取成功")
             } else {
                 binding.tvResult.text = "没有保存的数据"
             }
@@ -63,7 +62,7 @@ class MmkvDemoActivity : BaseActivity<ActivityMmkvDemoBinding, NoViewModel>() {
             MMKVUtils.remove("demo_string")
             binding.tvResult.text = "已删除"
             binding.etInput.setText("")
-            ToastUtil.show("已删除")
+            toast.show("已删除")
         }
     }
 

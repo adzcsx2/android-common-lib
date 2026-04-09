@@ -13,22 +13,22 @@
 
 ## 单一事实来源
 
-| 内容                 | 权威文档                                                 |
-| -------------------- | -------------------------------------------------------- |
+| 内容                 | 权威文档                                                               |
+| -------------------- | ---------------------------------------------------------------------- |
 | 构建与版本           | `build.gradle.kts` / `gradle.properties` / `gradle/libs.versions.toml` |
-| 模块列表             | `settings.gradle.kts`                                   |
-| 模块职责与 API 清单  | [docs/checklist/modules.md](./docs/checklist/modules.md) |
-| 架构设计与依赖方向   | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)           |
-| App 接入基线与模板   | [docs/APP_ARCHITECTURE.md](./docs/APP_ARCHITECTURE.md)   |
-| 历史决策与接口稳定性 | [docs/AI_HANDOFF.md](./docs/AI_HANDOFF.md)               |
-| 版本变更与迁移       | [docs/CHANGELOG.md](./docs/CHANGELOG.md)                 |
+| 模块列表             | `settings.gradle.kts`                                                  |
+| 模块职责与 API 清单  | [docs/checklist/modules.md](./docs/checklist/modules.md)               |
+| 架构设计与依赖方向   | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)                         |
+| App 接入基线与模板   | [docs/APP_ARCHITECTURE.md](./docs/APP_ARCHITECTURE.md)                 |
+| 历史决策与接口稳定性 | [docs/AI_HANDOFF.md](./docs/AI_HANDOFF.md)                             |
+| 版本变更与迁移       | [docs/CHANGELOG.md](./docs/CHANGELOG.md)                               |
 
 ## 复用优先级
 
 修改代码时必须按以下顺序检查，已有实现优先于新写：
 
 1. **View 操作**: 必须使用 `ViewExtensions` (`click`, `visible`, `gone`, `invisible`, `enable`, `disable`, `pressEffectAlpha`, `pressEffectBgColor`, `holdClick`, `releaseClick`, `setClickNotNull` 等)，禁止直接 `setOnClickListener` 或手动设 `visibility`
-2. **Toast**: 统一使用 `ToastUtil.show()` / `ToastUtil.showLong()` / `ToastUtil.showCenter()`
+2. **Toast**: 统一使用 `ToastUtils.show()` / `ToastUtils.showLong()` / `ToastUtils.showCenter()`，BaseActivity / BaseFragment / BaseDialogFragment 中优先用 `toast`
 3. **日志**: 统一使用 `com.hoyn.common.utils.Logger`
 4. **存储**: 统一使用 `MMKVUtils`
 5. **图片加载**: View 体系用 `GlideUtils` / `ImageExtensions`，Compose 用 `Coil`
@@ -74,10 +74,10 @@
 | -------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | common-core    | `com.hoyn.common.core`    | `UIState`, `IBaseResponse`, `ThrowableBean`, `Message`                                                        |
 | common-base    | `com.hoyn.common.base`    | `BaseActivity`, `BaseFragment`, `BaseViewModel`, `ViewModelFactory`, `GlobalLiveEvent`, `SingleLiveEvent`     |
-| common-utils   | `com.hoyn.common.utils`   | `Logger`, `MMKVUtils`, `CoroutinesExtensions`, `ContextExtensions`                                            |
+| common-utils   | `com.hoyn.common.utils`   | `Logger`, `MMKVUtils`, `ToastUtils`, `CoroutinesExtensions`, `ContextExtensions`                              |
 | common-network | `com.hoyn.common.network` | `RetrofitFactory`, `OkHttpClientFactory`, `NetworkConfig`, `ApiResponse`, `BaseRepository`, `ExceptionHandle` |
 | common-image   | `com.hoyn.common.image`   | `GlideUtils`, `ImageExtensions`                                                                               |
-| common-ui      | `com.hoyn.common.ui`      | `ToastUtil`, `StatusBarHelper`, `NotchHelper`, `PressEffectHelper`, `LivePermissions`, `ViewExtensions`        |
+| common-ui      | `com.hoyn.common.ui`      | `StatusBarHelper`, `NotchHelper`, `PressEffectHelper`, `LivePermissions`, `ViewExtensions`                    |
 | common-compose | `com.hoyn.common.compose` | `BaseComposeActivity`, `BaseComposeFragment`, `Theme`                                                         |
 
 ## 编码规则

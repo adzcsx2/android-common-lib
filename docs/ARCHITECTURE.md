@@ -194,7 +194,7 @@ This ensures:
 
 **Responsibilities**:
 
-- ToastUtil for toast notifications
+- ToastUtils for toast notifications
 - StatusBarHelper for status bar styling
 - NotchHelper for notch device support
 - PressEffectHelper for view press effects
@@ -275,7 +275,7 @@ fun doSomething() {
 // In Activity/Fragment
 observeAllUIEvents(
     viewModel = viewModel,
-    onToast = { ToastUtil.show(it) },
+    onToast = { toast.debugShow(it) },
     onShowDialog = { showLoading(it) },
     onDismissDialog = { hideLoading() },
     onError = { handleError(it) }

@@ -16,7 +16,6 @@ import com.hoyn.common.lib.data.model.Comment
 import com.hoyn.common.lib.data.model.Post
 import com.hoyn.common.lib.databinding.ActivityNetworkDemoBinding
 import com.hoyn.common.ui.ext.click
-import com.hoyn.common.ui.toast.ToastUtil
 import com.hoyn.common.utils.Logger
 import kotlinx.coroutines.launch
 
@@ -105,7 +104,7 @@ class NetworkDemoActivity : BaseActivity<ActivityNetworkDemoBinding, NetworkDemo
                 .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
                 .collect { fromCache ->
                     if (fromCache) {
-                        ToastUtil.show(getString(R.string.using_cached_data))
+                        toast.show(R.string.using_cached_data)
                     }
                 }
         }

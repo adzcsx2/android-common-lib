@@ -48,14 +48,14 @@ Android 模块化公共库，提供常用的工具类、网络请求、图片加
 
 ### 文档导航
 
-| 文档 | 描述 |
-|------|------|
-| [项目概览](docs/PROJECT_OVERVIEW.md) | 项目简介、版本信息、技术栈 |
-| [界面文档](docs/INTERFACES.md) | Activity/Fragment 界面与控件 |
-| [导航文档](docs/NAVIGATION.md) | 页面跳转与通信流程 |
-| [四大组件](docs/COMPONENTS.md) | Activity/Service/Receiver 清单 |
-| [依赖文档](docs/DEPENDENCIES.md) | Version Catalog 与模块依赖 |
-| [API 文档](docs/API.md) | 网络接口与框架 API |
+| 文档                                 | 描述                           |
+| ------------------------------------ | ------------------------------ |
+| [项目概览](docs/PROJECT_OVERVIEW.md) | 项目简介、版本信息、技术栈     |
+| [界面文档](docs/INTERFACES.md)       | Activity/Fragment 界面与控件   |
+| [导航文档](docs/NAVIGATION.md)       | 页面跳转与通信流程             |
+| [四大组件](docs/COMPONENTS.md)       | Activity/Service/Receiver 清单 |
+| [依赖文档](docs/DEPENDENCIES.md)     | Version Catalog 与模块依赖     |
+| [API 文档](docs/API.md)              | 网络接口与框架 API             |
 
 > 查看文档更新记录: [文档更新日志](docs/DOC_CHANGELOG.md)
 
@@ -329,7 +329,7 @@ view.gone()
 view.onClick { /* click */ }
 
 // Toast
-ToastUtil.show("Hello World")
+ToastUtils.show("Hello World")
 ```
 
 ### common-compose (Jetpack Compose)
@@ -347,15 +347,15 @@ class MyComposeActivity : BaseComposeActivity() {
 
 ### Toast API Migration
 
-New code should use `ToastUtil` as the unified toast entry point:
+New code should use `ToastUtils` as the unified toast entry point:
 
 ```kotlin
-ToastUtil.show("Hello World")
-ToastUtil.showLong("Long message")
-ToastUtil.showCenter("Centered message")
+ToastUtils.show("Hello World")
+ToastUtils.showLong("Long message")
+ToastUtils.showCenter("Centered message")
 ```
 
-Use `ToastUtil` for all toast calls.
+In `BaseActivity` / `BaseFragment` / `BaseDialogFragment`, prefer `toast.debugShow("...")` for debug-facing tips.
 
 This is a source-breaking change for any callers still using the old toast API name.
 

@@ -206,27 +206,27 @@ Logger.t("CustomTag").d("Message")
 
 ### Toast 提示
 
-**模块**: `common-ui`
+**模块**: `common-utils`
 
 **功能**: Toast 工具封装
 
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.2.7")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.2.7")
 ```
 
 **使用示例**:
 
 ```kotlin
 // 短时间显示
-ToastUtil.show("提示信息")
+ToastUtils.show("提示信息")
 
 // 长时间显示
-ToastUtil.showLong("长提示")
+ToastUtils.showLong("长提示")
 
 // 在主线程安全显示
-ToastUtil.show("安全提示")
+ToastUtils.debugShow("安全提示")
 ```
 
 ---
@@ -483,7 +483,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 // 观察 ViewModel 事件
 observeAllUIEvents(
     viewModel = viewModel,
-    onToast = { ToastUtil.show(it) },
+    onToast = { toast.debugShow(it) },
     onShowDialog = { showLoading(it) },
     onDismissDialog = { hideLoading() }
 )
