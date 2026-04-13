@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - File and preferences utilities
 - Pagination support
 
+## [1.3.3] - 2026-04-13
+
+### Added
+- EasyWindow 悬浮窗框架依赖（common-ui），基于 getActivity/EasyWindow 封装
+- ScreenUtils 副屏 displayId 解析和悬浮窗尺寸计算方法
+
 ## [1.3.1] - 2026-04-13
 
 ### Added
@@ -230,6 +236,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.3.3 | 2026-04-13 | EasyWindow 悬浮窗框架、ScreenUtils 副屏与悬浮窗尺寸计算 |
 | 1.3.1 | 2026-04-13 | PermissionUtils 权限工具类（XXPermissions 封装）、国际化、Activity 扩展 |
 | 1.3.0 | 2026-04-09 | Toast 重构（迁移到 Toaster 库）、GsonUtils 新增、包路径迁移 |
 | 1.2.9 | 2026-04-02 | Unified Maven release publication configuration in root build.gradle.kts |
@@ -266,6 +273,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.3.3]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.3.3
 [1.3.1]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.3.1
 [1.3.0]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.3.0
 [1.2.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.9

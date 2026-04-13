@@ -38,7 +38,7 @@
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.3")
 ```
 
 **使用示例**:
@@ -88,7 +88,7 @@ if (response.isSuccess()) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.3")
 ```
 
 **使用示例**:
@@ -128,7 +128,7 @@ ImageLoader.load(imageView)
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.3")
 ```
 
 **使用示例**:
@@ -182,7 +182,7 @@ lifecycleScope.launch {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.3")
 ```
 
 **使用示例**:
@@ -215,7 +215,7 @@ Logger.t("CustomTag").d("Message")
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.3")
 ```
 
 **使用示例**:
@@ -249,7 +249,7 @@ val userList = GsonUtils.fromJson<List<User>>(listJson).orEmpty()
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.3")
 ```
 
 **使用示例**:
@@ -288,7 +288,7 @@ ToastUtils.debugShow("安全提示")
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.3")
 ```
 
 **使用示例**:
@@ -324,7 +324,7 @@ val hasNotch = NotchHelper.hasNotch(activity)
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.3")
 ```
 
 **使用示例**:
@@ -360,7 +360,7 @@ if (PermissionUtils.isGranted(this, PermissionLists.getCameraPermission())) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.3")
 ```
 
 **使用示例**:
@@ -394,7 +394,7 @@ MMKVUtils.clearAll()
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.3")
 ```
 
 **使用示例**:
@@ -427,7 +427,7 @@ suspend fun computeOperation() = withDefault {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.3")
 ```
 
 **使用示例**:
@@ -464,7 +464,7 @@ val height = view.height
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.3")
 ```
 
 **使用示例**:
@@ -498,7 +498,7 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.3")
 ```
 
 **使用示例**:
@@ -545,7 +545,7 @@ observeAllUIEvents(
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-compose:1.3.1")
+implementation("com.github.adzcsx2.android-common-lib:common-compose:1.3.3")
 ```
 
 **使用示例**:
@@ -625,16 +625,16 @@ common-ui (依赖 common-base)
 ```kotlin
 dependencies {
     // 核心功能
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.1")
-    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.3")
+    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.3")
 
     // 架构基础
-    implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.3")
 
     // 按需添加
-    implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.1")
-    implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.1")
-    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.3")
+    implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.3")
+    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.3")
 }
 ```
 

@@ -6,7 +6,7 @@
 |------|------|
 | 项目名称 | Android Common Library |
 | Maven 坐标 | `com.github.adzcsx2.android-common-lib` |
-| 当前版本 | 1.3.1 |
+| 当前版本 | 1.3.3 |
 | 发布方式 | JitPack |
 | 许可证 | Apache License 2.0 |
 | 语言 | Kotlin (纯 Kotlin，禁止新增 Java 业务代码) |
