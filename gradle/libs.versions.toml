@@ -53,6 +53,8 @@ smartRefresh = "2.0.6"
 baseRecyclerViewAdapterHelper = "4.3.4"
 #吐司框架：https://github.com/getActivity/Toaster
 toaster = "15.0"
+#悬浮窗框架：https://github.com/getActivity/EasyWindow
+easywindow = "15.0"
 
 # Compose
 composeBom = "2024.04.01"
@@ -133,6 +135,7 @@ smart-refresh = { group = "io.github.scwang90", name = "refresh-layout-kernel", 
 smart-refresh-header = { group = "io.github.scwang90", name = "refresh-header-classics", version.ref = "smartRefresh" }
 base-recycler-view-adapter-helper = { group = "io.github.cymchad", name = "BaseRecyclerViewAdapterHelper4", version.ref = "baseRecyclerViewAdapterHelper" }
 toaster = { group = "com.github.getActivity", name = "Toaster", version.ref = "toaster" }
+easywindow = { group = "com.github.getActivity", name = "EasyWindow", version.ref = "easywindow" }
 
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
