@@ -76,6 +76,13 @@
                 android:text="@string/permission_demo_location" />
 
             <Button
+                android:id="@+id/btnBackgroundLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_background_location" />
+
+            <Button
                 android:id="@+id/btnContacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,6 +102,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/permission_demo_phone" />
+
+            <Button
+                android:id="@+id/btnMultiple"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_multiple" />
+
+            <Button
+                android:id="@+id/btnActivityRecognition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_activity_recognition" />
+
+            <Button
+                android:id="@+id/btnBluetooth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_bluetooth" />
+
+            <Button
+                android:id="@+id/btnWifi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_wifi" />
+
+            <Button
+                android:id="@+id/btnHealth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_health" />
 
             <!-- Storage Section -->
             <TextView
@@ -120,6 +162,20 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/permission_demo_manage_storage" />
 
+            <Button
+                android:id="@+id/btnMediaLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_media_location" />
+
+            <Button
+                android:id="@+id/btnReadMedia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_read_media" />
+
             <!-- Special Permissions Section -->
             <TextView
                 android:layout_width="match_parent"
@@ -138,6 +194,20 @@
                 android:text="@string/permission_demo_notification" />
 
             <Button
+                android:id="@+id/btnNotificationService"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_notification_service" />
+
+            <Button
+                android:id="@+id/btnNotificationListener"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_notification_listener" />
+
+            <Button
                 android:id="@+id/btnOverlay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -150,6 +220,117 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/permission_demo_install" />
+
+            <Button
+                android:id="@+id/btnWriteSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_write_settings" />
+
+            <Button
+                android:id="@+id/btnUsageStats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_usage_stats" />
+
+            <Button
+                android:id="@+id/btnAlarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_alarm" />
+
+            <Button
+                android:id="@+id/btnDnd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_dnd" />
+
+            <Button
+                android:id="@+id/btnBattery"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_battery" />
+
+            <Button
+                android:id="@+id/btnPip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_pip" />
+
+            <Button
+                android:id="@+id/btnManageMedia"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_manage_media" />
+
+            <Button
+                android:id="@+id/btnInstalledApps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_installed_apps" />
+
+            <Button
+                android:id="@+id/btnFullscreenNotification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_fullscreen_notification" />
+
+            <!-- Advanced Special Permissions Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/permission_demo_section_advanced"
+                android:textColor="@color/text_section_header"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnVpn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_vpn" />
+
+            <Button
+                android:id="@+id/btnDeviceAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_device_admin" />
+
+            <Button
+                android:id="@+id/btnAccessibility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_accessibility" />
+
+            <!-- Mixed Request Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/permission_demo_section_mixed"
+                android:textColor="@color/text_section_header"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnMixed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_mixed" />
 
             <!-- Tools Section -->
             <TextView
@@ -175,6 +356,13 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/permission_demo_open_settings" />
 
+            <Button
+                android:id="@+id/btnAppDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/permission_demo_app_details" />
+
             <!-- Log Output -->
             <TextView
                 android:layout_width="match_parent"
@@ -192,6 +380,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@color/log_background"
                 android:fontFamily="monospace"
+                android:minHeight="120dp"
                 android:padding="12dp"
                 android:textColor="@color/log_text"
                 android:textIsSelectable="true"
