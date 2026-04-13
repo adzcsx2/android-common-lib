@@ -8,7 +8,7 @@
         errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/AndroidManifest.xml"
-            line="23"
+            line="39"
             column="36"/>
     </issue>
 
@@ -21,6 +21,17 @@
             file="build.gradle.kts"
             line="17"
             column="9"/>
+    </issue>
+
+    <issue
+        id="ProtectedPermissions"
+        message="Permission is only granted to system apps"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.PACKAGE_USAGE_STATS&quot; />"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="46"
+            column="22"/>
     </issue>
 
     <issue
@@ -450,17 +461,6 @@
             file="src/main/res/values/strings.xml"
             line="81"
             column="5"/>
-    </issue>
-
-    <issue
-        id="PermissionImpliesUnsupportedChromeOsHardware"
-        message="Permission exists without corresponding hardware `&lt;uses-feature android:name=&quot;android.hardware.camera&quot; android:required=&quot;false&quot;>` tag"
-        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.CAMERA&quot; />"
-        errorLine2="     ~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/AndroidManifest.xml"
-            line="7"
-            column="6"/>
     </issue>
 
     <issue
@@ -1345,6 +1345,270 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.string.permission_demo_multiple` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_multiple&quot;>申请多个危险权限（录音+日历）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="194"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_background_location` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_background_location&quot;>申请后台定位权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="195"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_activity_recognition` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_activity_recognition&quot;>申请活动识别权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="196"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_bluetooth` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_bluetooth&quot;>申请蓝牙权限（Android 12+）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="197"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_wifi` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_wifi&quot;>申请 Wi-Fi 权限（Android 13+）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="198"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_health` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_health&quot;>申请健康数据权限（Android 14+）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="199"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_media_location` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_media_location&quot;>申请媒体位置信息权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="200"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_read_media` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_read_media&quot;>申请媒体读取权限（完整版）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="201"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_write_settings` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_write_settings&quot;>申请修改系统设置权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="202"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_notification_service` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_notification_service&quot;>申请通知服务权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="203"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_notification_listener` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_notification_listener&quot;>申请通知监听权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="204"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_usage_stats` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_usage_stats&quot;>申请使用情况访问权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="205"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_alarm` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_alarm&quot;>申请闹钟和提醒权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="206"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_dnd` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_dnd&quot;>申请勿扰模式访问权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="207"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_battery` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_battery&quot;>申请忽略电池优化权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="208"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_pip` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_pip&quot;>申请画中画权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="209"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_manage_media` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_manage_media&quot;>申请管理媒体权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="210"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_installed_apps` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_installed_apps&quot;>申请获取已安装应用权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="211"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_fullscreen_notification` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_fullscreen_notification&quot;>申请全屏通知权限（Android 14+）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="212"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_vpn` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_vpn&quot;>申请 VPN 权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="213"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_mixed` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_mixed&quot;>申请危险权限+特殊权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="216"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_app_details` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_app_details&quot;>打开应用详情页&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="217"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_section_advanced` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_section_advanced&quot;>高级特殊权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="218"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_section_mixed` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_section_mixed&quot;>混合请求&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="219"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.style.Theme_Commonlib_NoActionBar` appears to be unused"
         errorLine1="    &lt;style name=&quot;Theme.Commonlib.NoActionBar&quot; parent=&quot;Theme.MaterialComponents.DayNight.NoActionBar&quot;>"
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -1506,6 +1770,17 @@
             file="src/main/java/com/hoyn/common/lib/ui/mmkv_demo/MmkvDemoActivity.kt"
             line="75"
             column="37"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        binding.tvLog.text = &quot;$current$separator$message&quot;"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/hoyn/common/lib/ui/permission_demo/PermissionDemoActivity.kt"
+            line="443"
+            column="30"/>
     </issue>
 
     <issue
