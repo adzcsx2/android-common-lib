@@ -10,8 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Room database utilities module
 - File and preferences utilities
-- Runtime permissions handling
 - Pagination support
+
+## [1.3.1] - 2026-04-13
+
+### Added
+- `PermissionUtils` 权限工具类（common-ui），基于 XXPermissions 封装，支持危险权限、存储权限（分区存储适配）、特殊权限请求
+- Activity 扩展函数：`requestPermission`、`requestStoragePermission`、`requestManageStoragePermission`、`isPermissionGranted`
+- 权限弹窗引导跳转设置页（"不再询问"场景自动弹 Dialog）
+- 国际化资源（中文/繁体中文/俄语）
+- `PermissionDemoActivity` 权限请求演示页面
+- XXPermissions 28.2 依赖（com.hjq.permissions:xxpermissions）
+- DeviceCompat 2.6 依赖（com.github.getActivity:DeviceCompat）
+
+### Changed
+- `ToastUtilsTest` 修复缺失的 import 语句
+
+### Removed
+- 旧版权限实现（`LiveFragment`、`LivePermissions`、`PermissionResult`）
 
 ## [1.3.0] - 2026-04-09
 
@@ -214,6 +230,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.3.1 | 2026-04-13 | PermissionUtils 权限工具类（XXPermissions 封装）、国际化、Activity 扩展 |
 | 1.3.0 | 2026-04-09 | Toast 重构（迁移到 Toaster 库）、GsonUtils 新增、包路径迁移 |
 | 1.2.9 | 2026-04-02 | Unified Maven release publication configuration in root build.gradle.kts |
 | 1.2.8 | 2026-04-02 | JitPack install step with -Pgroup/-Pversion parameters, allprojects group/version propagation |
@@ -249,6 +266,7 @@ When contributing to this project, please:
 ---
 
 [Unreleased]: https://github.com/adzcsx2/android-common-lib
+[1.3.1]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.3.1
 [1.3.0]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.3.0
 [1.2.9]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.9
 [1.2.8]: https://github.com/adzcsx2/android-common-lib/releases/tag/1.2.8

@@ -16,6 +16,7 @@ import com.hoyn.common.lib.ui.statusbar_demo.StatusBarDemoActivity
 import com.hoyn.common.lib.ui.stack_demo.StackManagerDemoActivity
 import com.hoyn.common.lib.ui.toast_demo.ToastDemoActivity
 import com.hoyn.common.lib.ui.liveevent.LiveEventDemoActivity
+import com.hoyn.common.lib.ui.permission_demo.PermissionDemoActivity
 
 /**
  * Demo 列表入口
@@ -93,6 +94,12 @@ class MainActivity : BaseActivity<ActivityMainBinding, NoViewModel>() {
                 description = getString(R.string.liveevent_demo_desc)
             ) {
                 startActivity<LiveEventDemoActivity>()
+            },
+            DemoItem(
+                title = getString(R.string.permission_demo),
+                description = getString(R.string.permission_demo_desc)
+            ) {
+                startActivity<PermissionDemoActivity>()
             }
         )
     }

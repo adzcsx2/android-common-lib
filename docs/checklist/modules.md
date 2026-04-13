@@ -38,7 +38,7 @@
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.1")
 ```
 
 **使用示例**:
@@ -88,7 +88,7 @@ if (response.isSuccess()) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.1")
 ```
 
 **使用示例**:
@@ -128,7 +128,7 @@ ImageLoader.load(imageView)
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.1")
 ```
 
 **使用示例**:
@@ -182,7 +182,7 @@ lifecycleScope.launch {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
 ```
 
 **使用示例**:
@@ -215,7 +215,7 @@ Logger.t("CustomTag").d("Message")
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.1")
 ```
 
 **使用示例**:
@@ -249,7 +249,7 @@ val userList = GsonUtils.fromJson<List<User>>(listJson).orEmpty()
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
 ```
 
 **使用示例**:
@@ -288,7 +288,7 @@ ToastUtils.debugShow("安全提示")
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
 ```
 
 **使用示例**:
@@ -319,35 +319,32 @@ val hasNotch = NotchHelper.hasNotch(activity)
 
 **模块**: `common-ui`
 
-**功能**: 运行时权限请求封装
+**功能**: 基于 XXPermissions 的运行时权限请求封装
 
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
 ```
 
 **使用示例**:
 
 ```kotlin
-// 在 Activity/Fragment 中
-LivePermissions.request(this, Manifest.permission.CAMERA)
-    .observe(this) { granted ->
-        if (granted) {
-            // 权限已授予
-        } else {
-            // 权限被拒绝
-        }
-    }
+// 请求单个权限
+PermissionUtils.request(
+    activity = this,
+    permissions = arrayOf(PermissionLists.getCameraPermission()),
+    onGranted = { /* 权限已授予 */ },
+    onDenied = { /* 权限被拒绝 */ }
+)
 
-// 请求多个权限
-LivePermissions.request(this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    .observe(this) { granted ->
-        // allGranted 为 true 时全部权限已授予
-    }
+// 请求存储权限（自动适配 Android 10+ 分区存储）
+PermissionUtils.requestStorage(this) {
+    // 存储权限已授予
+}
 
 // 检查权限
-if (LivePermissions.check(context, Manifest.permission.CAMERA)) {
+if (PermissionUtils.isGranted(this, PermissionLists.getCameraPermission())) {
     // 已有权限
 }
 ```
@@ -363,7 +360,7 @@ if (LivePermissions.check(context, Manifest.permission.CAMERA)) {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
 ```
 
 **使用示例**:
@@ -397,7 +394,7 @@ MMKVUtils.clearAll()
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
 ```
 
 **使用示例**:
@@ -430,7 +427,7 @@ suspend fun computeOperation() = withDefault {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
 ```
 
 **使用示例**:
@@ -467,7 +464,7 @@ val height = view.height
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.1")
 ```
 
 **使用示例**:
@@ -501,7 +498,7 @@ class UserViewModel : BaseViewModel<UserRepository>() {
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.1")
 ```
 
 **使用示例**:
@@ -548,7 +545,7 @@ observeAllUIEvents(
 **依赖**:
 
 ```kotlin
-implementation("com.github.adzcsx2.android-common-lib:common-compose:1.3.0")
+implementation("com.github.adzcsx2.android-common-lib:common-compose:1.3.1")
 ```
 
 **使用示例**:
@@ -628,16 +625,16 @@ common-ui (依赖 common-base)
 ```kotlin
 dependencies {
     // 核心功能
-    implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.0")
-    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-core:1.3.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-utils:1.3.1")
 
     // 架构基础
-    implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-base:1.3.1")
 
     // 按需添加
-    implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.0")
-    implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.0")
-    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.0")
+    implementation("com.github.adzcsx2.android-common-lib:common-network:1.3.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-image:1.3.1")
+    implementation("com.github.adzcsx2.android-common-lib:common-ui:1.3.1")
 }
 ```
 
@@ -657,5 +654,5 @@ dependencies {
 
 ## 更新日志
 
-- **1.3.0** - 当前版本，Toast 重构（迁移到 Toaster 库）、GsonUtils 新增、包路径迁移
+- **1.3.1** - 当前版本，PermissionUtils 权限工具类（XXPermissions 封装）、国际化、Activity 扩展
 - 详见 [CHANGELOG.md](../CHANGELOG.md)

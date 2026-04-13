@@ -33,7 +33,7 @@
 4. **存储**: 统一使用 `MMKVUtils`
 5. **图片加载**: View 体系用 `GlideUtils` / `ImageExtensions`，Compose 用 `Coil`
 6. **状态栏**: 统一使用 `StatusBarHelper`
-7. **权限**: 统一使用 `LivePermissions`
+7. **权限**: 统一使用 `PermissionUtils`（`com.hoyn.common.ui.permission`），底层为 XXPermissions
 8. **基类**: Activity 继承 `BaseActivity`，Fragment 继承 `BaseFragment`，ViewModel 继承 `BaseViewModel`
 
 ## 局部一致性规则
@@ -43,6 +43,7 @@
 - **View Binding**: 已启用，禁止引入 ButterKnife/DataBinding
 - **Compose**: 仅 common-compose 和 app 启用 Compose 编译器；View 体系禁止混用 @Composable
 - **发布版本**: 通过 git tag 发布，JitPack 自动构建，无需手动维护版本号
+- **中文优先**: 代码注释统一用中文；`strings.xml` 默认文案（`values/`）使用中文，其他语言放对应 `values-xx/` 目录
 
 ## 项目强约束
 
@@ -77,7 +78,7 @@
 | common-utils   | `com.hoyn.common.utils`   | `Logger`, `MMKVUtils`, `ToastUtils`, `CoroutinesExtensions`, `ContextExtensions`                              |
 | common-network | `com.hoyn.common.network` | `RetrofitFactory`, `OkHttpClientFactory`, `NetworkConfig`, `ApiResponse`, `BaseRepository`, `ExceptionHandle` |
 | common-image   | `com.hoyn.common.image`   | `GlideUtils`, `ImageExtensions`                                                                               |
-| common-ui      | `com.hoyn.common.ui`      | `StatusBarHelper`, `NotchHelper`, `PressEffectHelper`, `LivePermissions`, `ViewExtensions`, `ToastUtils`, `ToastConfig` |
+| common-ui      | `com.hoyn.common.ui`      | `StatusBarHelper`, `NotchHelper`, `PressEffectHelper`, `PermissionUtils`, `ViewExtensions`, `ToastUtils`, `ToastConfig` |
 | common-compose | `com.hoyn.common.compose` | `BaseComposeActivity`, `BaseComposeFragment`, `Theme`                                                         |
 
 ## 编码规则

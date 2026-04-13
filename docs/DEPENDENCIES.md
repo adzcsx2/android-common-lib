@@ -35,6 +35,8 @@
 | Network | Gson | 2.11.0 |
 | Network | Gson-Factory | 5.0.0 |
 | UI | Toaster | 13.5 |
+| UI | XXPermissions | 28.2 |
+| UI | DeviceCompat | 2.6 |
 | Database | Room | 2.8.4 |
 | Image | Glide | 4.16.0 |
 | Image | Coil Compose | 2.7.0 |

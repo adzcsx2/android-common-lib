@@ -313,16 +313,14 @@ object ToastUtils {
 
     /** 设置 Toast 显示策略为队列模式，依次排队显示 */
     fun setQueueStrategy() {
-        withToaster {
-            Toaster.setStrategy(ToastStrategy(ToastStrategy.SHOW_STRATEGY_TYPE_QUEUE))
-        }
+        val application = app ?: return
+        Toaster.setStrategy(ToastStrategy(application, ToastStrategy.SHOW_STRATEGY_TYPE_QUEUE))
     }
 
     /** 设置 Toast 显示策略为立即模式，新 Toast 直接替换当前 Toast */
     fun setImmediateStrategy() {
-        withToaster {
-            Toaster.setStrategy(ToastStrategy(ToastStrategy.SHOW_STRATEGY_TYPE_IMMEDIATELY))
-        }
+        val application = app ?: return
+        Toaster.setStrategy(ToastStrategy(application, ToastStrategy.SHOW_STRATEGY_TYPE_IMMEDIATELY))
     }
 
     /**

@@ -198,7 +198,7 @@ This ensures:
 - StatusBarHelper for status bar styling
 - NotchHelper for notch device support
 - PressEffectHelper for view press effects
-- LivePermissions for runtime permissions
+- PermissionUtils (XXPermissions wrapper) for runtime permissions
 - View extensions (visibility, clicks, etc.)
 
 **Design Decisions**:

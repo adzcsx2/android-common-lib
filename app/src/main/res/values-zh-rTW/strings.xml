@@ -172,6 +172,27 @@
     <string name="unsubscribe_sticky">取消黏性訂閱</string>
     <string name="manual_subscribe">手動訂閱</string>
     <string name="cancel_manual_subscribe">取消手動訂閱</string>
+
+    <!-- Permission Demo -->
+    <string name="permission_demo">權限演示</string>
+    <string name="permission_demo_desc">XXPermissions 權限請求、分區儲存適配、設定頁跳轉</string>
+    <string name="permission_demo_section_dangerous">危險權限</string>
+    <string name="permission_demo_section_storage">儲存權限（分區儲存）</string>
+    <string name="permission_demo_section_special">特殊權限</string>
+    <string name="permission_demo_section_tools">工具</string>
+    <string name="permission_demo_camera">申請相機權限</string>
+    <string name="permission_demo_record_audio">申請錄音權限</string>
+    <string name="permission_demo_location">申請位置權限</string>
+    <string name="permission_demo_contacts">申請聯絡人權限</string>
+    <string name="permission_demo_calendar">申請日曆權限</string>
+    <string name="permission_demo_phone">申請電話狀態權限</string>
+    <string name="permission_demo_storage">申請儲存權限（自動適配）</string>
+    <string name="permission_demo_manage_storage">申請所有檔案存取權限（Android 11+）</string>
+    <string name="permission_demo_notification">申請通知權限（Android 13+）</string>
+    <string name="permission_demo_overlay">申請懸浮窗權限</string>
+    <string name="permission_demo_install">申請安裝應用權限</string>
+    <string name="permission_demo_check">檢查相機權限狀態</string>
+    <string name="permission_demo_open_settings">打開權限設定頁</string>
     <string name="log_output">日誌輸出</string>
     <string name="clear_log">清空</string>
 </resources>

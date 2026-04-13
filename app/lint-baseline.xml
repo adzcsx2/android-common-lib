@@ -2,6 +2,17 @@
 <issues format="6" by="lint 9.1.0" type="baseline" client="gradle" dependencies="false" name="AGP (9.1.0)" variant="all" version="9.1.0">
 
     <issue
+        id="ScopedStorage"
+        message="The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.MANAGE_EXTERNAL_STORAGE&quot; />"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="23"
+            column="36"/>
+    </issue>
+
+    <issue
         id="OldTargetApi"
         message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
         errorLine1="        targetSdk = 34"
@@ -162,7 +173,7 @@
         errorLine2="             ~~~~~~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="51"
+            line="58"
             column="14"/>
     </issue>
 
@@ -173,7 +184,7 @@
         errorLine2="                  ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="52"
+            line="59"
             column="19"/>
     </issue>
 
@@ -184,7 +195,7 @@
         errorLine2="                   ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="53"
+            line="60"
             column="20"/>
     </issue>
 
@@ -245,7 +256,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of io.insert-koin:koin-android than 3.5.6 is available: 4.2.0"
+        message="A newer version of io.insert-koin:koin-android than 3.5.6 is available: 4.2.1"
         errorLine1="koin = &quot;3.5.6&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -256,7 +267,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of io.insert-koin:koin-androidx-compose than 3.5.6 is available: 4.2.0"
+        message="A newer version of io.insert-koin:koin-androidx-compose than 3.5.6 is available: 4.2.1"
         errorLine1="koin = &quot;3.5.6&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -267,7 +278,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of io.insert-koin:koin-core than 3.5.6 is available: 4.2.0"
+        message="A newer version of io.insert-koin:koin-core than 3.5.6 is available: 4.2.1"
         errorLine1="koin = &quot;3.5.6&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -278,7 +289,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of io.insert-koin:koin-test than 3.5.6 is available: 4.2.0"
+        message="A newer version of io.insert-koin:koin-test than 3.5.6 is available: 4.2.1"
         errorLine1="koin = &quot;3.5.6&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -289,7 +300,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of io.insert-koin:koin-test-junit4 than 3.5.6 is available: 4.2.0"
+        message="A newer version of io.insert-koin:koin-test-junit4 than 3.5.6 is available: 4.2.1"
         errorLine1="koin = &quot;3.5.6&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -340,17 +351,6 @@
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
             line="30"
             column="10"/>
-    </issue>
-
-    <issue
-        id="NewerVersionAvailable"
-        message="A newer version of com.google.code.gson:gson than 2.11.0 is available: 2.13.2"
-        errorLine1="gson = &quot;2.11.0&quot;"
-        errorLine2="       ~~~~~~~~">
-        <location
-            file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="31"
-            column="8"/>
     </issue>
 
     <issue
@@ -426,7 +426,7 @@
         errorLine2="               ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="47"
+            line="52"
             column="16"/>
     </issue>
 
@@ -437,8 +437,30 @@
         errorLine2="               ~~~~~~~">
         <location
             file="$HOME/Documents/AndroidWorkplace/common-lib/gradle/libs.versions.toml"
-            line="47"
+            line="52"
             column="16"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;replaces&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;toast_demo_message_replace_previous&quot;>Toast #%1$d replaces the previous one&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="81"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PermissionImpliesUnsupportedChromeOsHardware"
+        message="Permission exists without corresponding hardware `&lt;uses-feature android:name=&quot;android.hardware.camera&quot; android:required=&quot;false&quot;>` tag"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.CAMERA&quot; />"
+        errorLine2="     ~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="7"
+            column="6"/>
     </issue>
 
     <issue
@@ -575,6 +597,17 @@
 
     <issue
         id="UnusedResources"
+        message="The resource `R.layout.activity_permission_demo` appears to be unused"
+        errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
+        errorLine2="^">
+        <location
+            file="src/main/res/layout/activity_permission_demo.xml"
+            line="2"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
         message="The resource `R.layout.activity_status_bar_demo` appears to be unused"
         errorLine1="&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;"
         errorLine2="^">
@@ -701,7 +734,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="40"
+            line="87"
             column="13"/>
     </issue>
 
@@ -712,7 +745,7 @@
         errorLine2="            ~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="41"
+            line="88"
             column="13"/>
     </issue>
 
@@ -723,7 +756,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="45"
+            line="92"
             column="13"/>
     </issue>
 
@@ -734,7 +767,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="46"
+            line="93"
             column="13"/>
     </issue>
 
@@ -745,7 +778,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="47"
+            line="94"
             column="13"/>
     </issue>
 
@@ -756,7 +789,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="48"
+            line="95"
             column="13"/>
     </issue>
 
@@ -767,7 +800,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="49"
+            line="96"
             column="13"/>
     </issue>
 
@@ -778,7 +811,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="50"
+            line="97"
             column="13"/>
     </issue>
 
@@ -789,7 +822,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="51"
+            line="98"
             column="13"/>
     </issue>
 
@@ -800,7 +833,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="52"
+            line="99"
             column="13"/>
     </issue>
 
@@ -811,7 +844,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="53"
+            line="100"
             column="13"/>
     </issue>
 
@@ -822,7 +855,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="54"
+            line="101"
             column="13"/>
     </issue>
 
@@ -833,7 +866,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="55"
+            line="102"
             column="13"/>
     </issue>
 
@@ -844,7 +877,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="56"
+            line="103"
             column="13"/>
     </issue>
 
@@ -855,7 +888,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="61"
+            line="108"
             column="13"/>
     </issue>
 
@@ -866,7 +899,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="62"
+            line="109"
             column="13"/>
     </issue>
 
@@ -877,7 +910,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="63"
+            line="110"
             column="13"/>
     </issue>
 
@@ -888,7 +921,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="76"
+            line="123"
             column="13"/>
     </issue>
 
@@ -899,7 +932,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="77"
+            line="124"
             column="13"/>
     </issue>
 
@@ -910,7 +943,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="90"
+            line="137"
             column="13"/>
     </issue>
 
@@ -921,7 +954,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="93"
+            line="140"
             column="13"/>
     </issue>
 
@@ -932,7 +965,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="94"
+            line="141"
             column="13"/>
     </issue>
 
@@ -943,7 +976,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="95"
+            line="142"
             column="13"/>
     </issue>
 
@@ -954,7 +987,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="96"
+            line="143"
             column="13"/>
     </issue>
 
@@ -965,7 +998,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="99"
+            line="146"
             column="13"/>
     </issue>
 
@@ -976,7 +1009,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="100"
+            line="147"
             column="13"/>
     </issue>
 
@@ -987,7 +1020,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="101"
+            line="148"
             column="13"/>
     </issue>
 
@@ -998,7 +1031,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="102"
+            line="149"
             column="13"/>
     </issue>
 
@@ -1009,7 +1042,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="103"
+            line="150"
             column="13"/>
     </issue>
 
@@ -1020,7 +1053,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="108"
+            line="155"
             column="13"/>
     </issue>
 
@@ -1031,7 +1064,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="109"
+            line="156"
             column="13"/>
     </issue>
 
@@ -1042,7 +1075,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="110"
+            line="157"
             column="13"/>
     </issue>
 
@@ -1053,7 +1086,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="111"
+            line="158"
             column="13"/>
     </issue>
 
@@ -1064,7 +1097,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="112"
+            line="159"
             column="13"/>
     </issue>
 
@@ -1075,7 +1108,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="115"
+            line="162"
             column="13"/>
     </issue>
 
@@ -1086,7 +1119,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="116"
+            line="163"
             column="13"/>
     </issue>
 
@@ -1097,7 +1130,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="117"
+            line="164"
             column="13"/>
     </issue>
 
@@ -1108,7 +1141,7 @@
         errorLine2="            ~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="124"
+            line="171"
             column="13"/>
     </issue>
 
@@ -1119,7 +1152,194 @@
         errorLine2="            ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="125"
+            line="172"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_section_dangerous` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_section_dangerous&quot;>危险权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="177"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_section_storage` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_section_storage&quot;>存储权限（分区存储）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="178"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_section_special` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_section_special&quot;>特殊权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="179"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_section_tools` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_section_tools&quot;>工具&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="180"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_camera` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_camera&quot;>申请相机权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="181"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_record_audio` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_record_audio&quot;>申请录音权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="182"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_location` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_location&quot;>申请位置权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="183"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_contacts` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_contacts&quot;>申请联系人权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="184"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_calendar` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_calendar&quot;>申请日历权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="185"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_phone` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_phone&quot;>申请电话状态权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="186"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_storage` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_storage&quot;>申请存储权限（自动适配）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="187"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_manage_storage` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_manage_storage&quot;>申请所有文件访问权限（Android 11+）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="188"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_notification` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_notification&quot;>申请通知权限（Android 13+）&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="189"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_overlay` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_overlay&quot;>申请悬浮窗权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="190"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_install` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_install&quot;>申请安装应用权限&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="191"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_check` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_check&quot;>检查相机权限状态&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="192"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.permission_demo_open_settings` appears to be unused"
+        errorLine1="    &lt;string name=&quot;permission_demo_open_settings&quot;>打开权限设置页&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="193"
             column="13"/>
     </issue>
 
@@ -1190,6 +1410,61 @@
     </issue>
 
     <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/toast_custom_view.xml"
+            line="9"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/toast_error.xml"
+            line="13"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/toast_info.xml"
+            line="13"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/toast_success.xml"
+            line="13"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="ContentDescription"
+        message="Missing `contentDescription` attribute on image"
+        errorLine1="    &lt;ImageView"
+        errorLine2="     ~~~~~~~~~">
+        <location
+            file="src/main/res/layout/toast_warn.xml"
+            line="13"
+            column="6"/>
+    </issue>
+
+    <issue
         id="SetTextI18n"
         message="Number formatting does not take into account locale settings. Consider using `String.format` instead."
         errorLine1="        binding.tvCounterValue.text = state.count.toString()"
@@ -1207,7 +1482,7 @@
         errorLine2="                                        ~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/hoyn/common/lib/ui/mmkv_demo/MmkvDemoActivity.kt"
-            line="43"
+            line="42"
             column="41"/>
     </issue>
 
@@ -1218,7 +1493,7 @@
         errorLine2="                                        ~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/hoyn/common/lib/ui/mmkv_demo/MmkvDemoActivity.kt"
-            line="54"
+            line="53"
             column="41"/>
     </issue>
 
@@ -1229,7 +1504,7 @@
         errorLine2="                                    ~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/hoyn/common/lib/ui/mmkv_demo/MmkvDemoActivity.kt"
-            line="76"
+            line="75"
             column="37"/>
     </issue>
 
@@ -1527,116 +1802,6 @@
         <location
             file="src/main/res/layout/activity_status_bar_demo.xml"
             line="82"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;返回&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;返回&quot; />"
-        errorLine2="            ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="21"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;Toast 示例&quot;, should use `@string` resource"
-        errorLine1="            android:text=&quot;Toast 示例&quot;"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="28"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;ToastUtil (无需 Context)&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;ToastUtil (无需 Context)&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="38"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;短 Toast (show)&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;短 Toast (show)&quot; />"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="48"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;长 Toast (showLong)&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;长 Toast (showLong)&quot; />"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="55"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;中间 Toast (showCenter)&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;中间 Toast (showCenter)&quot; />"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="62"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;中间长 Toast (showCenterLong)&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;中间长 Toast (showCenterLong)&quot; />"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="69"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;队列优先级测试&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;队列优先级测试&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="75"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;连续点击测试 (新 Toast 会取消前一个)&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;连续点击测试 (新 Toast 会取消前一个)&quot; />"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="85"
-            column="9"/>
-    </issue>
-
-    <issue
-        id="HardcodedText"
-        message="Hardcoded string &quot;取消当前 Toast&quot;, should use `@string` resource"
-        errorLine1="        android:text=&quot;取消当前 Toast&quot;"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/layout/activity_toast_demo.xml"
-            line="92"
             column="9"/>
     </issue>
 

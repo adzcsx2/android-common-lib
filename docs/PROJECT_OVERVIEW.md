@@ -6,7 +6,7 @@
 |------|------|
 | 项目名称 | Android Common Library |
 | Maven 坐标 | `com.github.adzcsx2.android-common-lib` |
-| 当前版本 | 1.3.0 |
+| 当前版本 | 1.3.1 |
 | 发布方式 | JitPack |
 | 许可证 | Apache License 2.0 |
 | 语言 | Kotlin (纯 Kotlin，禁止新增 Java 业务代码) |
@@ -72,7 +72,7 @@
 | common-utils | `com.hoyn.common.utils` | Context 扩展、协程扩展、Logger、MMKV | common-core |
 | common-network | `com.hoyn.common.network` | Retrofit + OkHttp 封装 | common-core, common-utils |
 | common-image | `com.hoyn.common.image` | Glide 图片加载封装 | common-core, common-utils |
-| common-ui | `com.hoyn.common.ui` | Toast(Toaster)/状态栏/权限/View 扩展 | common-base, Toaster |
+| common-ui | `com.hoyn.common.ui` | Toast(Toaster)/状态栏/权限(XXPermissions)/View 扩展 | common-base, Toaster, XXPermissions |
 | common-all | - | 聚合模块，一次性引入所有库模块 | 所有 common-* 模块 |
 
 ## 示例应用

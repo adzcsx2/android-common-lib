@@ -474,6 +474,8 @@ class MyActivity : AppCompatActivity() {
 | kotlinx.coroutines:core | implementation |
 | kotlinx.coroutines:android | implementation |
 | com.hjq.toast:Toaster | implementation |
+| com.hjq.permissions:xxpermissions | implementation |
+| com.github.getActivity:DeviceCompat | implementation |
 
 ## Module Information
 
@@ -521,3 +523,73 @@ dependencies {
 2. **Error State**: Show error message, hide content
 3. **Empty State**: Show empty message when no data
 4. **Success State**: Hide loading, show content
+
+### PermissionUtils
+
+运行时权限请求工具，基于 XXPermissions 封装，提供 Activity 扩展函数。
+
+#### PermissionUtils 方法
+
+| Method | Description |
+|--------|-------------|
+| `isGranted(context, vararg permissions)` | 检查所有给定权限是否已授予 |
+| `request(activity, permissions, onGranted, onDenied?)` | 请求权限，自动处理已授权/拒绝/"不再询问"场景 |
+| `requestStorage(activity, onGranted, onDenied?)` | 请求存储权限，自动适配 Android 10+ 分区存储 |
+| `requestManageStorage(activity, onGranted, onDenied?)` | 请求"所有文件访问"权限（Android 11+） |
+| `getStoragePermissions()` | 获取当前 Android 版本对应的存储权限列表 |
+| `getManageStoragePermission()` | 获取"所有文件访问"权限对象 |
+| `startPermissionActivity(activity, permissions, onGranted?, onDenied?)` | 跳转系统权限设置页 |
+
+#### Activity 扩展函数
+
+```kotlin
+// 请求权限
+fun Activity.requestPermission(
+    permissions: Array<IPermission>,
+    onGranted: () -> Unit,
+    onDenied: (() -> Unit)? = null
+)
+
+// 请求存储权限
+fun Activity.requestStoragePermission(
+    onGranted: () -> Unit,
+    onDenied: (() -> Unit)? = null
+)
+
+// 请求"所有文件访问"权限
+fun Activity.requestManageStoragePermission(
+    onGranted: () -> Unit,
+    onDenied: (() -> Unit)? = null
+)
+
+// 检查权限是否已授予
+fun Activity.isPermissionGranted(vararg permissions: IPermission): Boolean
+```
+
+#### Usage Example
+
+```kotlin
+// 直接调用
+PermissionUtils.request(
+    activity = this,
+    permissions = arrayOf(PermissionLists.getCameraPermission()),
+    onGranted = { /* 权限已授予 */ },
+    onDenied = { /* 权限被拒绝 */ }
+)
+
+// 使用 Activity 扩展函数（推荐）
+requestPermission(
+    permissions = arrayOf(PermissionLists.getCameraPermission()),
+    onGranted = { /* 权限已授予 */ }
+)
+
+// 请求存储权限（自动适配 Android 版本）
+requestStoragePermission {
+    // 存储权限已授予
+}
+
+// 检查权限
+if (isPermissionGranted(PermissionLists.getCameraPermission())) {
+    // 已有权限
+}
+```

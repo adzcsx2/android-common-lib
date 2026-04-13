@@ -174,4 +174,25 @@
     <string name="cancel_manual_subscribe">取消手动订阅</string>
     <string name="log_output">日志输出</string>
     <string name="clear_log">清空</string>
+
+    <!-- Permission Demo -->
+    <string name="permission_demo">权限演示</string>
+    <string name="permission_demo_desc">XXPermissions 权限请求、分区存储适配、设置页跳转</string>
+    <string name="permission_demo_section_dangerous">危险权限</string>
+    <string name="permission_demo_section_storage">存储权限（分区存储）</string>
+    <string name="permission_demo_section_special">特殊权限</string>
+    <string name="permission_demo_section_tools">工具</string>
+    <string name="permission_demo_camera">申请相机权限</string>
+    <string name="permission_demo_record_audio">申请录音权限</string>
+    <string name="permission_demo_location">申请位置权限</string>
+    <string name="permission_demo_contacts">申请联系人权限</string>
+    <string name="permission_demo_calendar">申请日历权限</string>
+    <string name="permission_demo_phone">申请电话状态权限</string>
+    <string name="permission_demo_storage">申请存储权限（自动适配）</string>
+    <string name="permission_demo_manage_storage">申请所有文件访问权限（Android 11+）</string>
+    <string name="permission_demo_notification">申请通知权限（Android 13+）</string>
+    <string name="permission_demo_overlay">申请悬浮窗权限</string>
+    <string name="permission_demo_install">申请安装应用权限</string>
+    <string name="permission_demo_check">检查相机权限状态</string>
+    <string name="permission_demo_open_settings">打开权限设置页</string>
 </resources>

@@ -2,6 +2,7 @@ package com.hoyn.common.ui.toast
 
 import com.hjq.toast.ToastParams
 import com.hjq.toast.config.IToastInterceptor
+import com.hoyn.common.ui.toast.ToastConfig.Companion.DEFAULT_TOAST_STACK_SKIPS
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -116,7 +117,7 @@ class ToastUtilsTest {
 
         val caller = ToastCallerLocator.findCallerStackTrace(
             stack,
-            stackSkips = DEFAULT_TOAST_STACK_SKIPS
+            stackSkips = 1
         ) { className ->
             when (className) {
                 "com.hoyn.common.ui.toast.ToastUtils\$CallSiteToastInterceptor" -> FakeInterceptor::class.java

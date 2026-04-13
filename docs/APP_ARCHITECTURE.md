@@ -104,7 +104,7 @@ This project provides a modular Android common library with:
 | utils/StatusBarHelper.kt      | Status bar styling           |
 | utils/NotchHelper.kt          | Notch device support         |
 | utils/PressEffectHelper.kt    | View press effects           |
-| permission/LivePermissions.kt | Runtime permission handling  |
+| permission/PermissionUtils.kt | XXPermissions wrapper for runtime permissions |
 | ext/ViewExtensions.kt         | View extension functions     |
 
 **Rules:**

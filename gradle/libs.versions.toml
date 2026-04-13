@@ -44,11 +44,15 @@ mmkv = "2.3.0"
 window = "1.3.0"
 gsonfactory = "10.5"
 
+# Permission
+xxpermissions = "28.2"
+devicecompat = "2.6"
+
 # UI
 smartRefresh = "2.0.6"
 baseRecyclerViewAdapterHelper = "4.3.4"
 #吐司框架：https://github.com/getActivity/Toaster
-toaster = "13.8"
+toaster = "15.0"
 
 # Compose
 composeBom = "2024.04.01"
@@ -119,6 +123,10 @@ koin-test-junit4 = { group = "io.insert-koin", name = "koin-test-junit4", versio
 utilcodex = { group = "com.blankj", name = "utilcodex", version.ref = "utilcodex" }
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 androidx-window = { group = "androidx.window", name = "window", version.ref = "window" }
+
+# Permission
+xxpermissions = { group = "com.github.getActivity", name = "XXPermissions", version.ref = "xxpermissions" }
+devicecompat = { group = "com.github.getActivity", name = "DeviceCompat", version.ref = "devicecompat" }
 
 # UI
 smart-refresh = { group = "io.github.scwang90", name = "refresh-layout-kernel", version.ref = "smartRefresh" }

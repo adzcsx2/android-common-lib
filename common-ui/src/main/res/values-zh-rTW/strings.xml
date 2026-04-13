@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="permission_denied_title">權限申請</string>
+    <string name="permission_denied_message">以下權限被拒絕，請前往設定手動開啟權限。</string>
+    <string name="permission_denied_settings">設定</string>
+    <string name="permission_denied_cancel">取消</string>
+</resources>

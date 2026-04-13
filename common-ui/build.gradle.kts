@@ -46,6 +46,10 @@ dependencies {
     // Toaster
     api(libs.toaster)
 
+    // Permission
+    api(libs.xxpermissions)
+    api(libs.devicecompat)
+
     // AndroidX UI
     api(libs.androidx.appcompat)
     api(libs.androidx.recyclerview)
