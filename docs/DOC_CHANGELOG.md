@@ -4,6 +4,23 @@
 
 ---
 
+## 2026-04-13 - 版本发布 1.3.3
+
+**变更概述**: 新增 EasyWindow 悬浮窗框架依赖，版本号更新至 1.3.3
+
+| 文档 | 变更类型 | 简介 |
+|------|----------|------|
+| CHANGELOG.md | 版本更新 | 新增 1.3.3 版本条目，记录 EasyWindow 和 ScreenUtils 变更 |
+| README.md | 版本更新 | 依赖示例版本号更新为 1.3.3 |
+| PROJECT_OVERVIEW.md | 版本更新 | 当前版本更新为 1.3.3 |
+| DEPENDENCIES.md | 新增依赖 | 新增 EasyWindow 15.0 |
+| checklist/modules.md | 版本更新 | 所有依赖版本号更新为 1.3.3 |
+| releases/1.3.1.md | 版本更新 | 依赖版本号更新为 1.3.3 |
+
+[查看详情](update-list/update-2026-04-13-2.md)
+
+---
+
 ## 2026-04-13 - 版本发布 1.3.1
 
 **变更概述**: PermissionUtils 权限工具类新增、国际化资源、版本号更新

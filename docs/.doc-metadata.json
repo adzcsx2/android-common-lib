@@ -1,8 +1,8 @@
 {
   "version": "1.3.3",
   "projectType": "android",
-  "lastUpdate": "2026-04-13T12:00:00Z",
-  "lastCommit": "10b11a0",
+  "lastUpdate": "2026-04-13T18:00:00Z",
+  "lastCommit": "3291eae",
   "documents": {
     "PROJECT_OVERVIEW.md": {
       "updatedAt": "2026-04-02T00:00:00Z",
@@ -30,6 +30,12 @@
     }
   },
   "updateHistory": [
+    {
+      "date": "2026-04-13",
+      "diffFile": "update-list/update-2026-04-13-2.md",
+      "summary": "版本发布 1.3.3：新增 EasyWindow 悬浮窗框架、文档版本号更新",
+      "documentsUpdated": ["CHANGELOG.md", "README.md", "PROJECT_OVERVIEW.md", "DEPENDENCIES.md", "checklist/modules.md", "DOC_CHANGELOG.md"]
+    },
     {
       "date": "2026-04-13",
       "diffFile": "update-list/update-2026-04-13.md",
