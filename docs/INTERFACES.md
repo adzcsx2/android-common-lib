@@ -251,6 +251,60 @@
 
 ---
 
+### PermissionDemoActivity
+
+- **类名**: `com.hoyn.common.lib.ui.permission_demo.PermissionDemoActivity`
+- **基类**: `BaseActivity<ActivityPermissionDemoBinding, NoViewModel>`
+- **布局**: `activity_permission_demo.xml`
+- **功能**: 权限请求演示，覆盖 XXPermissions 全部权限场景（危险/存储/特殊/高级/混合）
+
+**主要控件**:
+
+| 控件 ID | 类型 | 功能 |
+|---------|------|------|
+| `btnBack` | Button | 返回 |
+| `btnCamera` | Button | 相机权限 |
+| `btnRecordAudio` | Button | 录音权限 |
+| `btnLocation` | Button | 位置权限（粗略+精确） |
+| `btnBackgroundLocation` | Button | 后台定位权限 |
+| `btnContacts` | Button | 联系人权限 |
+| `btnCalendar` | Button | 日历权限 |
+| `btnPhone` | Button | 电话状态权限 |
+| `btnMultiple` | Button | 多个危险权限（录音+日历） |
+| `btnActivityRecognition` | Button | 活动识别权限 |
+| `btnBluetooth` | Button | 蓝牙权限（扫描+连接+广播） |
+| `btnWifi` | Button | Wi-Fi 设备权限 |
+| `btnHealth` | Button | 健康数据权限 |
+| `btnStorage` | Button | 存储权限（自动适配版本） |
+| `btnManageStorage` | Button | 所有文件访问权限 |
+| `btnMediaLocation` | Button | 媒体位置信息权限 |
+| `btnReadMedia` | Button | 媒体读取权限（完整版） |
+| `btnNotification` | Button | 通知权限 |
+| `btnNotificationService` | Button | 通知服务权限 |
+| `btnNotificationListener` | Button | 通知监听权限 |
+| `btnOverlay` | Button | 悬浮窗权限 |
+| `btnInstall` | Button | 安装应用权限 |
+| `btnWriteSettings` | Button | 修改系统设置权限 |
+| `btnUsageStats` | Button | 使用情况访问权限 |
+| `btnAlarm` | Button | 闹钟和提醒权限 |
+| `btnDnd` | Button | 勿扰模式权限 |
+| `btnBattery` | Button | 忽略电池优化权限 |
+| `btnPip` | Button | 画中画权限 |
+| `btnManageMedia` | Button | 管理媒体权限 |
+| `btnInstalledApps` | Button | 获取已安装应用权限 |
+| `btnFullscreenNotification` | Button | 全屏通知权限 |
+| `btnVpn` | Button | VPN 权限 |
+| `btnDeviceAdmin` | Button | 设备管理器权限 |
+| `btnAccessibility` | Button | 无障碍服务权限 |
+| `btnMixed` | Button | 混合权限（通话记录+悬浮窗） |
+| `btnCheckPermission` | Button | 检查相机权限状态 |
+| `btnOpenSettings` | Button | 跳转权限设置页 |
+| `btnAppDetails` | Button | 打开应用详情页 |
+| `btnClearLog` | Button | 清空日志 |
+| `tvLog` | TextView | 日志输出（保留最近 50 条） |
+
+---
+
 ## 列表项布局
 
 ### item_demo.xml

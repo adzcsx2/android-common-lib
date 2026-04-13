@@ -34,6 +34,11 @@ MainActivity (LAUNCHER)
     |       +-- FullscreenSampleDialog (show)
     |
     +-- startActivity<StackManagerDemoActivity>
+    |
+    +-- startActivity<PermissionDemoActivity>
+            |
+            +-- XXPermissions.startPermissionActivity (权限设置页)
+            +-- XXPermissions.startPermissionActivity (应用详情页)
 ```
 
 ---
@@ -58,6 +63,7 @@ MainActivity (LAUNCHER)
 | LiveEventDemoActivity | 列表点击 "LiveEvent Demo" |
 | DialogSafetyDemoActivity | 列表点击 "Dialog Safety Demo" |
 | StackManagerDemoActivity | 列表点击 "Stack Manager Demo" |
+| PermissionDemoActivity | 列表点击 "Permission Demo" |
 
 ---
 
