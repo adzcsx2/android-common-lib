@@ -46,6 +46,9 @@ dependencies {
     // Toaster
     api(libs.toaster)
 
+    // 悬浮窗框架：https://github.com/getActivity/EasyWindow
+    api(libs.easywindow)
+
     // Permission
     api(libs.xxpermissions)
     api(libs.devicecompat)
