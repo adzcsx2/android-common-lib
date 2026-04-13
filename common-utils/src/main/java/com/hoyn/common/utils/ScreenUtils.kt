@@ -2,10 +2,13 @@ package com.hoyn.common.utils;
 
 import android.app.Activity
 import android.content.Context
+import android.hardware.display.DisplayManager
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.Display
 import android.view.WindowMetrics
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -91,6 +94,12 @@ data class ScreenInfo(
     val deviceType: FoldingDeviceType
 )
 
+data class FloatingOverlayMetrics(
+    val widthPx: Int,
+    val heightPx: Int,
+    val source: String
+)
+
 /**
  * 屏幕状态变化监听器接口
  *
@@ -113,6 +122,11 @@ interface ScreenStateListener {
 object ScreenUtils {
 
     const val TAG = "ScreenUtils"
+
+    // 通用屏幕使用状态常量：避免依赖业务模块中的 FoldStateManager。
+    const val DISPLAY_IN_USE_STATE_PRIMARY = 0
+    const val DISPLAY_IN_USE_STATE_SECONDARY = 1
+    const val DISPLAY_IN_USE_STATE_BOTH = 2
 
     // 缓存最后检测的屏幕状态
     @Volatile
@@ -255,6 +269,150 @@ object ScreenUtils {
      */
     fun isBookOpen(activity: Activity): Boolean {
         return isBookFoldDevice(activity) && getScreenInfo(activity).state == ScreenState.FOLDING_FLAT
+    }
+
+    /**
+     * 解析当前可用的副屏 displayId。
+     *
+     * 解析顺序：
+     * 1. 优先使用业务约定的 preferredDisplayId（且必须有效并点亮）
+     * 2. 在常见候选 id（preferred/2/4）中探测可用项
+     * 3. 遍历系统所有 display，选择点亮且非主屏的 display
+     * 4. 兜底返回 0（主屏）
+     *
+     * @param context Context上下文
+     * @param preferredDisplayId 业务约定的副屏 displayId
+     * @return 当前可用的 displayId
+     */
+    @JvmStatic
+    fun resolveActiveSecondaryDisplayId(context: Context, preferredDisplayId: Int): Int {
+        val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as? DisplayManager
+            ?: return preferredDisplayId
+        // 先尝试业务约定的候选 id；要求“有效 + 点亮”同时成立，避免绑定到存在但未使用的 display。
+        val preferredDisplay = displayManager.getDisplay(preferredDisplayId)
+        if (preferredDisplay != null && preferredDisplay.isValid && preferredDisplay.state == Display.STATE_ON) {
+            return preferredDisplayId
+        }
+
+        // 机型差异下 secondary displayId 可能在 2/4 间变化，这里做兼容探测。
+        val candidateIds = linkedSetOf(preferredDisplayId, 2, 4).filter { it != 0 }
+        val candidateDisplay = candidateIds.firstNotNullOfOrNull { candidateId ->
+            displayManager.getDisplay(candidateId)
+                ?.takeIf { it.isValid && it.state == Display.STATE_ON }
+        }
+        if (candidateDisplay != null) {
+            return candidateDisplay.displayId
+        }
+
+        val activeSecondary = displayManager.displays.firstOrNull { display ->
+            display.displayId != 0 && display.isValid && display.state == Display.STATE_ON
+        }
+
+        if (activeSecondary != null) {
+            return activeSecondary.displayId
+        }
+
+        return 0
+    }
+
+    /**
+     * 解析悬浮窗可用的屏幕宽高。
+     *
+     * 规则：
+     * 1. 折叠态（secondary）优先使用 WindowMetrics（与实际可拖动窗口一致）
+     * 2. 若可获取到 realMetrics，则对 WindowMetrics 做上限裁剪，避免短时宽度异常放大
+     * 3. 其余场景优先使用 display.getRealMetrics()
+     * 4. 最终兜底使用 WindowManager/defaultDisplay 或 density 估算
+     *
+     * @param context Context上下文
+     * @param windowManager 当前窗口的 WindowManager
+     * @param display 当前目标 Display，可为 null
+     * @param displayInUseState 屏幕使用状态（使用 ScreenUtils.DISPLAY_IN_USE_STATE_* 常量）
+     * @return 悬浮窗可用宽高与来源标记
+     */
+    @RequiresApi(Build.VERSION_CODES.R)
+    @JvmStatic
+    fun resolveFloatingOverlayMetrics(
+        context: Context,
+        windowManager: android.view.WindowManager,
+        display: Display?,
+        displayInUseState: Int
+    ): FloatingOverlayMetrics {
+        if (displayInUseState == DISPLAY_IN_USE_STATE_SECONDARY) {
+            var realWidth = 0
+            var realHeight = 0
+            display?.let { safeDisplay ->
+                runCatching {
+                    val displayMetrics = DisplayMetrics()
+                    safeDisplay.getRealMetrics(displayMetrics)
+                    realWidth = displayMetrics.widthPixels
+                    realHeight = displayMetrics.heightPixels
+                }
+            }
+
+            runCatching {
+                val bounds = windowManager.currentWindowMetrics.bounds
+                if (bounds.width() > 0 && bounds.height() > 0) {
+                    // 外屏上 WindowMetrics 可能短暂返回偏大的宽度（如 1320），
+                    // 用 realMetrics 做上限，避免拖动右边界被放大导致可拖出屏幕。
+                    val safeWidth =
+                        if (realWidth > 0) minOf(bounds.width(), realWidth) else bounds.width()
+                    val safeHeight =
+                        if (realHeight > 0) minOf(bounds.height(), realHeight) else bounds.height()
+                    return FloatingOverlayMetrics(
+                        widthPx = safeWidth,
+                        heightPx = safeHeight,
+                        source = if (realWidth > 0 && realHeight > 0) {
+                            "WindowMetricsCappedByReal"
+                        } else {
+                            "WindowMetrics"
+                        }
+                    )
+                }
+            }
+        }
+
+        display?.let { safeDisplay ->
+            runCatching {
+                val displayMetrics = DisplayMetrics()
+                safeDisplay.getRealMetrics(displayMetrics)
+                if (displayMetrics.widthPixels > 0 && displayMetrics.heightPixels > 0) {
+                    return FloatingOverlayMetrics(
+                        widthPx = displayMetrics.widthPixels,
+                        heightPx = displayMetrics.heightPixels,
+                        source = "DisplayRealMetrics"
+                    )
+                }
+            }
+        }
+
+        return runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val bounds = windowManager.currentWindowMetrics.bounds
+                FloatingOverlayMetrics(
+                    widthPx = bounds.width(),
+                    heightPx = bounds.height(),
+                    source = "WindowMetricsFallback"
+                )
+            } else {
+                val displayMetrics = DisplayMetrics()
+                @Suppress("DEPRECATION")
+                windowManager.defaultDisplay.getRealMetrics(displayMetrics)
+                FloatingOverlayMetrics(
+                    widthPx = displayMetrics.widthPixels,
+                    heightPx = displayMetrics.heightPixels,
+                    source = "DefaultDisplayRealMetrics"
+                )
+            }
+        }.getOrElse {
+            Log.e(TAG, "resolveFloatingOverlayMetrics failed: ${it.message}")
+            val density = context.resources.displayMetrics.density
+            FloatingOverlayMetrics(
+                widthPx = (360 * density).toInt(),
+                heightPx = (640 * density).toInt(),
+                source = "DensityFallback"
+            )
+        }
     }
 
     /**
